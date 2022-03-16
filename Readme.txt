@@ -1,1 +1,1 @@
-gordun mu
+gordun mu mastera eklendi
