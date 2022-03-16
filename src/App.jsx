@@ -1,8 +1,10 @@
-import React from 'react'
 
-const App = () => {
+const App=()=> {
+
   return (
-    <div>App</div>
+    <div className="App">
+      Start the app
+    </div>
   )
 }
 
