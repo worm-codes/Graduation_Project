@@ -1,1 +1,0 @@
-gordun mu mastera eklendi , oguza da eklendi
