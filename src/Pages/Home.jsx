@@ -1,6 +1,9 @@
-import React from 'react'
+import axios from 'axios'
+import React, { useState, useEffect} from 'react'
 import { useForm } from 'react-hook-form'
 import '../Home.css'
+import { Country, State, City }  from 'country-state-city';
+
 
 const Home = () => {
 
@@ -9,6 +12,21 @@ const Home = () => {
   for(let i = 18; i <= 80; i++){
     ageArr[i-18] = i;
   }
+
+
+
+  useEffect(() => {
+  
+    // axios.get('https://battuta.medunes.net/api/country/all/?key=f1b44b67d006468c454a48e99ad7f90e')
+    // .then(res => res)
+    // .then((data)=> console.log(data));
+    // fetch("https://jsonplaceholder.typicode.com/todos/1")
+    // .then(res => res.json())
+    // .then(data => console.log(data))
+    // .catch(err => console.log(err));
+    console.log(State.getStatesOfCountry('TR'))
+    
+    }, [])
   
   //console.log(watch());
 
@@ -33,7 +51,7 @@ const Home = () => {
         
         <div className='form-group'>
         <label htmlFor="arriving">Arriving:</label>
-        <input className='form-control' {...register("arriving", { required: true })} name="arriving" type="date" />
+        <input className='form-control' {...register("arriving", { required: 'You have to select an arrival date' })} name="arriving" type="date" />
         </div>
         
         <div className='form-group'>
@@ -44,8 +62,8 @@ const Home = () => {
         <div style={{display:'flex'}} className='form-group'>
         <div>
         <label htmlFor='minAge'>From:</label>
-        <select {...register("minAge", { required: true })} className='form-control'  name="minAge" id="minAge">
-          <option selected disabled value="minAge">Age</option>
+        <select {...register("minAge", { required: 'You have to select minimum age' , min:{value: 18, message:'You have to select minimum age'} })} className='form-control'  name="minAge" id="minAge">
+          <option selected disabled value="">Age</option>
           {ageArr.map((item,key) => {
             return <option key={key} value={item}>{item}</option>
           })}
@@ -55,7 +73,7 @@ const Home = () => {
         <div>
         <label htmlFor='maxAge'>To:</label>
         <select {...register("maxAge", { required: true })} className='form-control' name="maxAge" id="maxAge">
-        <option selected disabled value="maxAge">Age</option>
+        <option selected disabled value="">Age</option>
           {ageArr.map((item,key) => {
             return <option key={key} value={item}>{item}</option>
           })}
