@@ -13,26 +13,16 @@ const Home = () => {
     ageArr[i-18] = i;
   }
 
-
-
   useEffect(() => {
-  
-    // axios.get('https://battuta.medunes.net/api/country/all/?key=f1b44b67d006468c454a48e99ad7f90e')
-    // .then(res => res)
-    // .then((data)=> console.log(data));
-    // fetch("https://jsonplaceholder.typicode.com/todos/1")
-    // .then(res => res.json())
-    // .then(data => console.log(data))
-    // .catch(err => console.log(err));
+
     console.log(State.getStatesOfCountry('TR'))
-    
     }, [])
   
   //console.log(watch());
 
   return (
-    <>
-      <div style={{display:'flex', justifyContent:'center', marginTop:'6%'}}><h2>Search for Ads</h2></div>
+    <div className='img-bg'>
+      <div style={{display:'flex', justifyContent:'center'}}><h2 style={{paddingTop:'5%'}}>Search for Ads</h2></div>
       <div>
       <form onSubmit={handleSubmit((data) => {
         console.log(data);
@@ -94,7 +84,7 @@ const Home = () => {
          
       </form>
       </div>
-    </>
+    </div>
     
   )
 }
