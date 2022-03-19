@@ -1,3 +1,6 @@
+//WATCH'LADIGIN STATE'IN SEHİRLERİNİ YENİ BİR DROPDWN İCİNDE BAS
+//COUNTRY STATE VE CİTY İNPUTLARINI YUKARI AL, DİĞERLERİNİ AŞAĞIDA KONUMLA
+
 import axios from 'axios'
 import React, { useState, useEffect} from 'react'
 import { useForm } from 'react-hook-form'
@@ -7,47 +10,55 @@ import { Country, State, City }  from 'country-state-city';
 
 const Home = () => {
 
-  const citiesArr = ['Berlin', 'Belgrad', 'Amsterdam', 'Venice', 'Brussel'];
-  // const [cities, setCities] = useState([]);
-  const [ctry, setCtry] = useState('');
-  
+
 
   const { register, handleSubmit, watch, formState: {errors} } = useForm();
   const ageArr = [];
   for(let i = 18; i <= 80; i++){
     ageArr[i-18] = i;
   }
-
+  
   console.log(Country.getAllCountries());
 
-  // // useEffect(()=>{
-  // //   const timerId = setTimeout(()=>{
-  // //      setDebouncedCountry(country);
-  // //   },700);
-     
-  // //   return(()=>{
-  // //       clearTimeout(timerId);
-  // //   })
+  console.log(watch().country)
 
-  // },[country]);
+  let countryInput = watch().country ? watch().country : '';
+  console.log(watch().state)
+   let countryEntered = "";
+  //  if(Country.getAllCountries().find((country) => country.name === countryInput)){
+  //     //countryEntered = countryInput;
+  //     console.log('Yes, finally a valid countryInput')
+  //  }
+  // for(let i = 0; i < Country.getAllCountries().length; i++){
+  //   if(countryInput === Country.getAllCountries()[i].name){
+  //     console.log("Finally a valid country")
+  //   }
+  // }
+  let states = [];
+  let isFoundCountry = false;
+  //let isFoundState = false;
+  Country.getAllCountries().forEach((country) => {
+    if(country.name === countryInput){
+      isFoundCountry = true;
+      console.log("Finally a valid city input by user")
+      states = State.getStatesOfCountry(country.isoCode);
+      console.log(states);
+    }  
+  })
 
-  // useEffect(()=>{
-  //  const search=async()=>{
-      
-  //  };
-  //   if(debouncedCountry){search();}
-   
-  // },[debouncedCountry])
-
-useEffect(() => {
-  console.log(ctry);
-
-}, [ctry])
-
-  const selectTagStatus = Country.getAllCountries().includes(ctry) ? true : false;
-  const countries = Country.getAllCountries();
+  // states.forEach((city) => {
+  //   if(city.name)
+  // })
   
-  let lengthOfCountryInput = ctry.length;
+
+
+  
+  // if(Country.getAllCountries().filter((country) => country.name === countryInput).includes(countryInput)) {
+  //   console.log("Yes, a valid country finally")
+  // }
+  //  console.log("countryInput variable:",countryInput)
+  //  console.log("countryEntered variable:",countryEntered)
+  
 
   return (
     <div className='img-bg'>
@@ -59,24 +70,26 @@ useEffect(() => {
 
         <div className='form-group'>
         <label htmlFor="country">Type in Country:</label>
-        <input value={ctry} onChange={e => setCtry(e.target.value)} className='form-control' {...register("country", { required: 'You have to enter a country to search' })} name="country" type="text" />
+        <input  className='form-control' {...register("country")} name="country"  id='country' type="text" />
         </div>
 
         <div className='form-group'>
-        <label htmlFor='location'>Choose Location:</label>
-        <select disabled={lengthOfCountryInput > 0 ? true : false} {...register("location", { required: true })} className='form-control'  name="location" id="location">
+        <label htmlFor='state'>Choose State:</label>
+        <select disabled={!isFoundCountry} {...register("state", { required: true })} className='form-control'  name="state" id="state">
           {/* The options will be created by mapping over the data that
-          comes back from the location api, for each city. */}
-          <option selected disabled value="">Choose a Location</option>
+          comes back from the state api, for each city. */}
+          <option selected disabled value="">Choose a State</option>
           {/* <option value="Berlin">Berlin</option>
           <option value="Rome">Rome</option>
           <option value="Prague">Prague</option> */}
-          {citiesArr.map((city,key) => (
-            <option key={key} value={city}>{city}</option>
+          {states.map((state) => (
+            <option value={state.name}>{state.name}</option>
           ))}
           {/* <option value={city}>{city}</option> */}
         </select>
         </div>
+
+        
         
         <div className='form-group'>
         <label htmlFor="arriving">Arriving:</label>
