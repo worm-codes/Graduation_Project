@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+import Sign_in from './sign-in-page/Sign_in'
+import Sign_up from './sign-up-page/Sign_up'
 
 
 
@@ -9,7 +10,7 @@ import App from './App'
 ReactDOM.render(
   <React.StrictMode>
 
-   <App/>
+   <Sign_up />
   </React.StrictMode>,
   document.getElementById('root')
 )
