@@ -7,18 +7,47 @@ import { Country, State, City }  from 'country-state-city';
 
 const Home = () => {
 
+  const citiesArr = ['Berlin', 'Belgrad', 'Amsterdam', 'Venice', 'Brussel'];
+  // const [cities, setCities] = useState([]);
+  const [ctry, setCtry] = useState('');
+  
+
   const { register, handleSubmit, watch, formState: {errors} } = useForm();
   const ageArr = [];
   for(let i = 18; i <= 80; i++){
     ageArr[i-18] = i;
   }
 
-  useEffect(() => {
+  console.log(Country.getAllCountries());
 
-    console.log(State.getStatesOfCountry('TR'))
-    }, [])
+  // // useEffect(()=>{
+  // //   const timerId = setTimeout(()=>{
+  // //      setDebouncedCountry(country);
+  // //   },700);
+     
+  // //   return(()=>{
+  // //       clearTimeout(timerId);
+  // //   })
+
+  // },[country]);
+
+  // useEffect(()=>{
+  //  const search=async()=>{
+      
+  //  };
+  //   if(debouncedCountry){search();}
+   
+  // },[debouncedCountry])
+
+useEffect(() => {
+  console.log(ctry);
+
+}, [ctry])
+
+  const selectTagStatus = Country.getAllCountries().includes(ctry) ? true : false;
+  const countries = Country.getAllCountries();
   
-  //console.log(watch());
+  let lengthOfCountryInput = ctry.length;
 
   return (
     <div className='img-bg'>
@@ -27,15 +56,25 @@ const Home = () => {
       <form onSubmit={handleSubmit((data) => {
         console.log(data);
       })} style={{display:'flex', justifyContent:'center', marginTop:'3%'}}>
+
+        <div className='form-group'>
+        <label htmlFor="country">Type in Country:</label>
+        <input value={ctry} onChange={e => setCtry(e.target.value)} className='form-control' {...register("country", { required: 'You have to enter a country to search' })} name="country" type="text" />
+        </div>
+
         <div className='form-group'>
         <label htmlFor='location'>Choose Location:</label>
-        <select {...register("location", { required: true })} className='form-control'  name="location" id="location">
+        <select disabled={lengthOfCountryInput > 0 ? true : false} {...register("location", { required: true })} className='form-control'  name="location" id="location">
           {/* The options will be created by mapping over the data that
           comes back from the location api, for each city. */}
           <option selected disabled value="">Choose a Location</option>
-          <option value="Berlin">Berlin</option>
+          {/* <option value="Berlin">Berlin</option>
           <option value="Rome">Rome</option>
-          <option value="Prague">Prague</option>
+          <option value="Prague">Prague</option> */}
+          {citiesArr.map((city,key) => (
+            <option key={key} value={city}>{city}</option>
+          ))}
+          {/* <option value={city}>{city}</option> */}
         </select>
         </div>
         
