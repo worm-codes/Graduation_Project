@@ -1,6 +1,7 @@
 import React from 'react'
 import './public/sign_up.css'
 import {useForm} from 'react-hook-form'
+import {Link} from 'react-router-dom'
 import axios from 'axios'
 
 
@@ -31,9 +32,9 @@ const sign_up = () => {
       
     <div class="container-fluid">
     <div class="row">
-        <div class=" col-md-7 d-none  d-md-flex intro-section">
+        <div class=" col-lg-7 d-none  d-lg-flex intro-section">
         </div>
-        <div class=" col-md-5 form-section">
+        <div class="col-lg-5 form-section">
             <div class="login-wrapper">
                 <h2 class="login-title">Sign Up</h2>
                 <form onSubmit={handleSubmit(async(data,event)=>{
@@ -94,7 +95,7 @@ const sign_up = () => {
                     <button name="login" id="login" class="btn login-btn" type="submit">Submit</button>
                     </div>
                 </form>
-                <p class="login-wrapper-footer-text">Do you have an account? <a href="/" class="text-reset"><b>Sign-in here</b></a></p>
+                <p class="login-wrapper-footer-text">Do you have an account? <Link to="/" class="text-reset"><b>Sign-in here</b></Link></p>
             </div>
         </div>
     </div>

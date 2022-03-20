@@ -29,6 +29,28 @@ app.post('/api/register',async (req,res)=>{
     }
     
 })
+//TOKEN VE BCRYPT DE KALDIM ******************************
+app.post('/api/login',async (req,res)=>{
+    
+const user=await User.findOne({
+    user_email:req.body.user_email,
+    user_password:req.body.user_password,
+})
+console.log(user)
+if(user){
+    res.json('done')
+}
+else{
+    res.json('error')
+}
+       
+   
+  
+      
+
+   
+    
+})
 
 app.listen(5000,()=>{
     console.log('server has started')
