@@ -23,41 +23,41 @@ const Home = () => {
   console.log(watch().country)
 
   let countryInput = watch().country ? watch().country : '';
+  let stateInput = watch().state ? watch().state : '';
   console.log(watch().state)
-   let countryEntered = "";
-  //  if(Country.getAllCountries().find((country) => country.name === countryInput)){
-  //     //countryEntered = countryInput;
-  //     console.log('Yes, finally a valid countryInput')
-  //  }
-  // for(let i = 0; i < Country.getAllCountries().length; i++){
-  //   if(countryInput === Country.getAllCountries()[i].name){
-  //     console.log("Finally a valid country")
-  //   }
-  // }
+  
+  
   let states = [];
   let isFoundCountry = false;
+  let isFoundState = false;
   //let isFoundState = false;
   Country.getAllCountries().forEach((country) => {
     if(country.name === countryInput){
       isFoundCountry = true;
-      console.log("Finally a valid city input by user")
+      console.log("Finally a valid country input by user")
       states = State.getStatesOfCountry(country.isoCode);
       console.log(states);
     }  
   })
 
-  // states.forEach((city) => {
-  //   if(city.name)
-  // })
-  
+  let stateNameSelected = "";
+  let chosenState = {};
 
+   states.forEach((city) => {
+      if(city.name === stateInput){
+        isFoundState = true;
+        stateNameSelected = city.name;
+        chosenState = city;
+        console.log("A valid state is selected")
+        // console.log("stateSelected variable", stateNameSelected, stateNameSelected);
+        // console.log(typeof chosenState)
+        console.log(City.getCitiesOfState(chosenState.countryCode, chosenState.isoCode))
+        // console.log(City.getAllCities());
+
+      }
+    })
 
   
-  // if(Country.getAllCountries().filter((country) => country.name === countryInput).includes(countryInput)) {
-  //   console.log("Yes, a valid country finally")
-  // }
-  //  console.log("countryInput variable:",countryInput)
-  //  console.log("countryEntered variable:",countryEntered)
   
 
   return (
@@ -84,6 +84,22 @@ const Home = () => {
           <option value="Prague">Prague</option> */}
           {states.map((state) => (
             <option value={state.name}>{state.name}</option>
+          ))}
+          {/* <option value={city}>{city}</option> */}
+        </select>
+        </div>
+
+        <div className='form-group'>
+        <label htmlFor='city'>Choose City:</label>
+        <select disabled={!isFoundState} {...register("city", { required: true })} className='form-control'  name="city" id="city">
+          {/* The options will be created by mapping over the data that
+          comes back from the state api, for each city. */}
+          <option selected disabled value="">Choose a City</option>
+          {/* <option value="Berlin">Berlin</option>
+          <option value="Rome">Rome</option>
+          <option value="Prague">Prague</option> */}
+          { City.getCitiesOfState(chosenState.countryCode,chosenState.isoCode).map((city,key)=> (
+            <option key={key} value={city.name}>{city.name}</option>
           ))}
           {/* <option value={city}>{city}</option> */}
         </select>
