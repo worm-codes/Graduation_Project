@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import './public/sign_up.css'
 import {useForm} from 'react-hook-form'
 import {Link} from 'react-router-dom'
@@ -8,8 +8,9 @@ import axios from 'axios'
 
 
 const sign_up = () => {
-    const {register ,handleSubmit,formState:{errors}}=useForm()
-    console.log(errors.user_email)
+    const {register ,handleSubmit,formState:{errors}}=useForm();
+    const [err,setErr]= useState('');
+   
 
     /*const submitOperation=(event)=>{
       event.preventDefault();
@@ -36,7 +37,8 @@ const sign_up = () => {
         </div>
         <div class="col-lg-5 form-section">
             <div class="login-wrapper">
-                <h2 class="login-title">Sign Up</h2>
+                <h2 class="login-title text-center">Sign Up</h2>
+                {err&&<p style={{color:'red'}} className='text-center pl-3'>{err}</p>}
                 <form onSubmit={handleSubmit(async(data,event)=>{
                   event.preventDefault();
                 
@@ -50,7 +52,18 @@ const sign_up = () => {
                            
                           })
                   
-                      console.log(response)
+                    
+                       if (response.data==='success'){
+                      setErr('')
+                    window.location.href='/'
+                }
+                else if(response.data==='duplicate'){
+                 setErr('This User is already Signed Up.')
+                    
+                }
+                else if(response.data==='error'){
+                  setErr('Something is wrong, Try again...')
+                }
                        
                       })}>
                  <div class="form-group"> 

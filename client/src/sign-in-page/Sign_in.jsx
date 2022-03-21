@@ -32,7 +32,7 @@ const {register ,handleSubmit,formState:{errors} /*watch*/}=useForm()
  . Burda tercihen submit den sonra alicagimiz icin, handleSubmit kullandik. */
 /*errors ile form ile ilgili hatalara ulasabiliriz */
 
-console.log(errors.user_password)
+
 
 return (
    
@@ -57,12 +57,11 @@ return (
                     const response=await axios.post('http://localhost:5000/api/login',{
                     user_email:data.user_email,
                     user_password:data.user_password
-                    
                     })
             
                 console.log(response)
                 
-                if (response.data==='done'){
+                if (response.data==='success'){
                     setErr(false)
                     window.location.href='/search'
                 }
