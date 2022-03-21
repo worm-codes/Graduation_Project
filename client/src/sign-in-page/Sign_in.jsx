@@ -61,12 +61,14 @@ return (
                     })
             
                 console.log(response)
-                if(response.data==='error'){
+                
+                if (response.data==='done'){
+                    setErr(false)
+                    window.location.href='/search'
+                }
+                else if(response.data==='error'){
                     setErr(true)
                 }
-                else if (response.data==='done'){
-                    setErr(false)
-                } /*will be deleted or changed */
                 
                 })}>
                     <div class="form-group mb-3">

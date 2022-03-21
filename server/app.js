@@ -2,7 +2,8 @@ const express=require('express');
 const app=express();
 const cors=require('cors'),
 User=require('./models/User.js')
-mongoose=require("mongoose");
+mongoose=require("mongoose"),
+dotenv=require('dotenv').config();
 
 app.use(cors())
 app.use(express.json())
@@ -37,9 +38,9 @@ const user=await User.findOne({
     user_email:req.body.user_email,
     user_password:req.body.user_password,
 })
-console.log(user)
+
 if(user){
-    res.json('done')
+   res.json('done')
 }
 else{
     res.json('error')
