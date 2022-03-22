@@ -79,7 +79,7 @@ const Home = () => {
     let dateStringToPass = `${year}-${finalMonth}-${day} `;
     let maxAgeArr = [];
     for(let i = 0; i < ageArr.length; i++){
-      if(minAge < ageArr[i]){
+      if(minAge <= ageArr[i]){
         maxAgeArr.push(ageArr[i]);
       }
     }
