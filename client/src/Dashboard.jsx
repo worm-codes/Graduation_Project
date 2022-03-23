@@ -1,19 +1,17 @@
-import React,{useEffect} from 'react'
-import axios from 'axios'
+import React,{useEffect,useState} from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
-  useEffect(()=>{
-    const request=async()=>{
-       const res=await axios.post('http://localhost:5000/api/search',{});
-       console.log(res)
-
-    }
-    request()
-   
-  },[])
+  
 
   return (
-    <h1>Secret</h1>
+    <div>
+     <h1>Secret</h1>
+    
+     
+    </div>
+   
   )
 }
 

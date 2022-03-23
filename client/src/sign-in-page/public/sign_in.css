@@ -1,12 +1,56 @@
 .login,
 .image {
-    min-height: 92vh;
+    min-height:91.8vh;
     
 }
+@media (max-width: 1594px) {
+    .bg-image {
+        margin-top: 5rem;
+    }
+
+}
+@media (max-width: 1188px) {
+    .bg-image {
+        margin-top: 8rem;
+    }
+
+}
+@media (max-width: 1536px) {
+    .login,
+    .image {
+        min-height: 91.8vh;
+
+    }
+
+}
+@media (min-width: 1537px) {
+
+    .login,
+    .image {
+        min-height: 93.5vh;
+
+    }
+
+}
+@media (max-width: 992px) {
+    .bg-image {
+        margin-top: 10rem;
+
+    }
+
+}
+@media (max-width: 990px) {
+    .login{
+       min-height: 81vh;
+
+    }
+
+}
+
 
 .bg-image {
-    
-    background-size: 99.2%;
+    margin-top: 0.4rem;
+    background-size: 99.7%;
     background-repeat: no-repeat;
     
 }

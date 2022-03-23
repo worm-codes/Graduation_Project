@@ -32,7 +32,9 @@ const {register ,handleSubmit,formState:{errors} /*watch*/}=useForm()
  . Burda tercihen submit den sonra alicagimiz icin, handleSubmit kullandik. */
 /*errors ile form ile ilgili hatalara ulasabiliriz */
 
-
+const google=()=>{
+    window.open('http://localhost:5000/auth/google','_self')
+}
 
 return (
    
@@ -47,27 +49,16 @@ return (
           
           <div class="container">
               <div class="row">
-            <div class="col-lg-10 col-xl-7 mx-auto">
+            <div class="col-lg-10 col-xl-10 mx-auto">
                 <h3 class="display-5 text-center">Local🤝Guide</h3>
                 <p class="text-muted text-center mb-4"> {quotes[pickedQuote]} </p>
                 {err&&<p style={{color:'red'}} className='text-center pl-3'>Please Check Your Email or Password</p>}
                 
                 <form onSubmit={handleSubmit(async(data,event)=>{
                     event.preventDefault();
-                    const response=await axios.post('http://localhost:5000/api/login',{
-                    user_email:data.user_email,
-                    user_password:data.user_password
-                    })
-            
-                console.log(response)
+                    
                 
-                if (response.data==='success'){
-                    setErr(false)
-                    window.location.href='/search'
-                }
-                else if(response.data==='error'){
-                    setErr(true)
-                }
+                
                 
                 })}>
                     <div class="form-group mb-3">
@@ -90,9 +81,14 @@ return (
                         <input {...register('customCheck1')} id="customCheck1" type="checkbox"  class="custom-control-input" />
                         <label for="customCheck1" class="custom-control-label">Remember password</label>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm">Sign in</button> <br />
+                    <button type="submit" class="btn btn-primary btn-block text-uppercase  rounded-pill shadow-sm">Sign in</button> <br />
                     
                 </form>
+               
+                 <div class="d-flex justify-content-center text-center  mb-3 pt-1">
+                <a href="#!" onClick={google}  ><i class="fab fa-google fa-2xl"></i></a>
+              </div>
+                 
                 <p class="login-wrapper-footer-text" style={{fontSize:'1.1rem'}}>Don't you have an account? <Link to="/register" style={{textDecoration:'none'}} class="text-reset"><b>Sign-Up</b></Link></p>
             </div>
         </div>

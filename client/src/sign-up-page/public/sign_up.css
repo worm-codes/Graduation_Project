@@ -19,7 +19,7 @@ h1>a {
     background-repeat: no-repeat;
     background-position: center;
     padding: 75px 95px;
-    min-height: 92vh;
+    min-height: 93.7vh;
     display: -webkit-box;
     display: flex;
     -webkit-box-orient: vertical;
@@ -33,6 +33,16 @@ h1>a {
     .intro-section {
         padding-left: 50px;
         padding-right: 50px
+    }
+}
+@media (max-width: 1536px) {
+    .intro-section {
+       min-height: 92vh;
+    }
+}
+@media (min-width: 1537px) {
+    .intro-section {
+        min-height: 93.7vh;
     }
 }
 

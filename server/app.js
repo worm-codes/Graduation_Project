@@ -1,32 +1,42 @@
-const express=require('express');
+const express=require('express'),
 app=express(),
 cors=require('cors'),
-User=require('./models/User.js')
+passport=require('passport'),
+User=require('./models/User.js'),
 mongoose=require("mongoose"),
-session=require('express-session'),
-MongoDBSession=require('connect-mongodb-session')(session),
+cookieSession=require('cookie-session'),
+passportSetup=require('./passport'),
+authRoute=require('./routes/auth')
+
 dotenv=require('dotenv').config(),
 mongoURI="mongodb://localhost/Local_Guide",
 CryptoJS=require('crypto-js');
 
 
-const storeSessionOptions=new MongoDBSession({
-    uri:mongoURI,
-    collection:'userSessions'
-})
-app.use(cors())
+
+app.use(cors({
+    origin:'http://localhost:3000',
+    methods:'GET,POST,PUT,DELETE',
+    credentials:true
+}))
 app.use(express.json())
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-app.use(session({
-    secret:'You know what to do',
-    resave:false,//for to be create 1 element not duplicate
-    saveUninitialized:false, //do not save if the session is not modified
-    store:storeSessionOptions
+
+app.use(cookieSession({
+  name: 'session',
+  keys: ["oski"],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
+app.use(passport.initialize());
+app.use(passport.session())
+
+app.use('/auth',authRoute)
 
 
-
+/*
 app.post('/api/register',async (req,res)=>{
     
     let user=await User.findOne({user_email:req.body.user_email,user_ID:req.body.user_ID})
@@ -61,40 +71,23 @@ app.post('/api/register',async (req,res)=>{
 })
 
 app.post('/api/login',async (req,res)=>{
+    res.redirect('/register')
     
-const user=await User.findOne({
-    user_email:req.body.user_email
-})
-
-if(user){
-
-   let Pw=await CryptoJS.AES.decrypt(user.user_password, 'secret key 123'); 
-   let toCheck=await Pw.toString(CryptoJS.enc.Utf8);
-  
-   if(toCheck===req.body.user_password){
-       req.session.user=user
-       console.log(req.session.user)
-       req.session.isAuth=true;
-        console.log(req.session)
-    
-   return res.json('success')
-   }
-}
-else{
-    res.json('error')
-}
-       
-   
-
-      
-
-   
+ 
     
 })
 app.post('/api/search',(req,res)=>{
     
-   
+  
 })
+
+app.post('/api/logout',(req,res)=>{
+ if(currentSession.userid){
+     req.session.destroy(),
+     console.log('SESSION KILLED')
+     res.json('killed')
+ }
+})*/
 
 app.listen(5000,()=>{
     console.log('server has started')

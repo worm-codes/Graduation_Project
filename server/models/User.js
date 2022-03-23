@@ -8,7 +8,8 @@ var userSchema=new mongoose.Schema({
     user_date_of_birth:{type:String, required:true},
     user_password:{type:String, required:true},
     quote:{type:String},
-    createdAt:{type:String, default:new Date().toLocaleString().replace(',','')}
+    createdAt:{type:String, default:new Date().toLocaleString().replace(',','')
+}
 	
 },{collection:'user-data'});
 
