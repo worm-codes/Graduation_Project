@@ -8,3 +8,19 @@
     font-weight: bold;
      opacity: 0.9; 
 }
+#heading {
+    display:flex;
+    justify-content: center;
+}
+
+#heading h2 {
+    padding-top: 5%;
+}
+
+
+
+/* #form {
+    display: flex;
+    justify-content: center;
+    margin-top: 3%;
+} */
