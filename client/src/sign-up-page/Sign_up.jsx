@@ -3,30 +3,40 @@ import './public/sign_up.css'
 import {useForm} from 'react-hook-form'
 import {Link} from 'react-router-dom'
 import axios from 'axios'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import {auth} from '../Auth/Firebase-Config'
 
 
 
 
-const sign_up = () => {
+const sign_up = (props) => {
     const {register ,handleSubmit,formState:{errors}}=useForm();
     const [err,setErr]= useState('');
+    
+
+
+   const registerFirebase=async(email,password)=>{
+     try{
+    const createdUser= await createUserWithEmailAndPassword(auth,email,password)
+        if(createdUser){
+           console.log('user register func')
+          console.log(auth.currentUser)
+          console.log('email')
+          console.log(auth.currentUser.email)
+      
+      
+        }
+     }
+     catch(err){
+       let message=err.message.substr(err.message.indexOf('/')+1).replace(')',' ').replace('.',' ').replace(/-/g,' ')
+    
+       setErr(message) 
+       
+       
+
+     }
+   }
    
-
-    /*const submitOperation=(event)=>{
-      event.preventDefault();
-      handleSubmit(async (data)=>{ 
-        
-        const response=await fetch('http://localhost:5000/api/register',{
-          headers:{
-            'Content-Type':'application/json'
-          },
-          body:data
-        })
-        const info=await response.json();
-        console.log(info)
-        })
-
-    }*/
 
 
   return (
@@ -38,32 +48,37 @@ const sign_up = () => {
         <div class="col-lg-5 form-section">
             <div class="login-wrapper">
                 <h2 class="login-title text-center">Sign Up</h2>
-                {err&&<p style={{color:'red'}} className='text-center pl-3'>{err}</p>}
+                {err &&<p style={{color:'red'}} className='text-center pl-3'>{err}</p>}
                 <form onSubmit={handleSubmit(async(data,event)=>{
                   event.preventDefault();
-                
+                  registerFirebase(data.user_email,data.user_password)
+
+                  if(!err){
                   const response=await axios.post('http://localhost:5000/api/register',{
                            user_ID:data.user_ID,
                            user_name:data.user_name,
                            user_surname:data.user_surname,
                            user_email:data.user_email,
                            user_date_of_birth:data.user_date_of_birth,
-                           user_password:data.user_password
-                           
                           })
+
                   
                     
                        if (response.data==='success'){
-                      setErr('')
-                    window.location.href='/'
-                }
-                else if(response.data==='duplicate'){
-                 setErr('This User is already Signed Up.')
+                         
+                         
+                            setErr('')
+                     
                     
                 }
+                else if(response.data==='duplicate'){
+                  setErr('your ID must be unique')
+                }
+                
                 else if(response.data==='error'){
                   setErr('Something is wrong, Try again...')
                 }
+              }
                        
                       })}>
                  <div class="form-group"> 
@@ -95,6 +110,8 @@ const sign_up = () => {
                       {...register('user_date_of_birth',{required:'You have to select your date of birth'})}/> 
                      {errors.user_date_of_birth &&<p style={{color:'red'}} className='pl-3'>{errors.user_date_of_birth.message}</p>}
                      </div>
+
+                     
                              
 
                     <div class="form-group mb-1"> 
@@ -105,7 +122,7 @@ const sign_up = () => {
                     message:'Your password must include minimum eight characters, at least one uppercase letter, one lowercase letter and one number:'}})} /> </div>
                      {errors.user_password &&<p style={{color:'red',fontSize:'12px'}} className='pl-3'>{errors.user_password.message}</p>}
                     <div class="d-flex justify-content-center align-items-center mb-2"> 
-                    <button name="login" id="login" class="btn login-btn" type="submit">Submit</button>
+                    <button name="login" id="login"  class="btn login-btn" type="submit">Submit</button>
                     </div>
                 </form>
                 <p class="login-wrapper-footer-text">Do you have an account? <Link to="/" class="text-reset"><b>Sign-in here</b></Link></p>

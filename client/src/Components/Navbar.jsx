@@ -1,12 +1,12 @@
 import React from 'react'
 import { Link,useLocation } from 'react-router-dom'
+import {signOut} from 'firebase/auth'
+import { auth } from '../Auth/Firebase-Config'
 import '../public/Nav.css'
 
 
 const Navbar = ({user}) => {
-  const logout=()=>{
-    window.open('http://localhost:5000/auth/logout','_self')
-  }
+
   const location=useLocation()
   const currentPath=location.pathname
   return (
@@ -34,7 +34,7 @@ const Navbar = ({user}) => {
         </li>
     
         <li class="hidden-profile d-none nav-item">
-         <a class="nav-link"onClick={logout} href="#">Logout</a>
+         <Link class="nav-link" onClick={async ()=>{await signOut(auth)}} to="/">Logout</Link>
         </li>
 
      
@@ -44,13 +44,14 @@ const Navbar = ({user}) => {
         <li class="nav-item avatar dropdown">
           <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-5" data-toggle="dropdown" aria-haspopup="true"
             aria-expanded="false">
-            <img src={user.photos[0].value} style={{width:'3.3rem',height:'3.4rem'}} class="rounded-circle z-depth-0" alt="avatar image" />
+            <img src='https://www.kindpng.com/picc/m/22-223941_transparent-avatar-png-male-avatar-icon-transparent-png.png' 
+            style={{width:'3.3rem',height:'3.4rem'}} class="rounded-circle z-depth-0" alt="avatar image" />
           </a>
           <div class="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
-            <a class="dropdown-item" href="#">{user.name.givenName} - {user.name.familyName}</a>
+            <a class="dropdown-item" href="#">Hello</a>
           <a class="dropdown-item" href="#">Profile</a>
             <a class="dropdown-item" href="#">Messages</a>
-            <a class="dropdown-item" onClick={logout} href="#">Logout</a>
+            <Link class="dropdown-item" onClick={async ()=>{await signOut(auth)}} to="/">Logout</Link>
           </div>
         </li>
       </ul>

@@ -2,6 +2,9 @@ import React,{useEffect,useState} from 'react'
 import {Link} from 'react-router-dom'
 import {useForm} from 'react-hook-form'
 import axios from 'axios'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import {auth} from '../Auth/Firebase-Config'
+
 
 import './public/sign_in.css'
 
@@ -20,6 +23,29 @@ const App = () => {
 '“True friends never apart maybe in distance never in heart.”',]
 
 const [err,setErr]= useState(false)
+
+
+const loginFirebase=async(email,password)=>{
+     try{
+    const loggedUser= await signInWithEmailAndPassword(auth,email,password)
+        if(loggedUser){
+           console.log('user register func')
+          console.log(auth.currentUser)
+          console.log('email')
+          console.log(auth.currentUser.email)
+      
+      
+        }
+     }
+     catch(err){
+       let message=err.message.substr(err.message.indexOf('/')+1).replace(')',' ').replace('.',' ').replace(/-/g,' ')
+    
+       setErr(message) 
+       
+       
+
+     }
+   }
  
 
 useEffect(()=>{ /*burda atama yapmak icin state kullanimi zorunlu */
@@ -32,9 +58,7 @@ const {register ,handleSubmit,formState:{errors} /*watch*/}=useForm()
  . Burda tercihen submit den sonra alicagimiz icin, handleSubmit kullandik. */
 /*errors ile form ile ilgili hatalara ulasabiliriz */
 
-const google=()=>{
-    window.open('http://localhost:5000/auth/google','_self')
-}
+
 
 return (
    
@@ -56,10 +80,8 @@ return (
                 
                 <form onSubmit={handleSubmit(async(data,event)=>{
                     event.preventDefault();
-                    
-                
-                
-                
+                    loginFirebase(data.user_email,data.user_password)
+
                 })}>
                     <div class="form-group mb-3">
                         <input {...register('user_email',{required:'Valid Email is Required.',pattern: {value:/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,message:'Invalid Email Adress'}})}
@@ -85,9 +107,6 @@ return (
                     
                 </form>
                
-                 <div class="d-flex justify-content-center text-center  mb-3 pt-1">
-                <a href="#!" onClick={google}  ><i class="fab fa-google fa-2xl"></i></a>
-              </div>
                  
                 <p class="login-wrapper-footer-text" style={{fontSize:'1.1rem'}}>Don't you have an account? <Link to="/register" style={{textDecoration:'none'}} class="text-reset"><b>Sign-Up</b></Link></p>
             </div>
