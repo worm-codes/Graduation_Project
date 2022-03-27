@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from 'react'
+import React,{useState} from 'react'
 import './public/sign_up.css'
 import {useForm} from 'react-hook-form'
 import {Link} from 'react-router-dom'
@@ -9,7 +9,7 @@ import {auth} from '../Auth/Firebase-Config'
 
 
 
-const sign_up = (props) => {
+const sign_up = () => {
     const {register,watch ,handleSubmit,formState:{errors}}=useForm();
     const [err,setErr]= useState('');
     

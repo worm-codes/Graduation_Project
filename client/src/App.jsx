@@ -1,10 +1,9 @@
-import React, { useEffect,useState,useNavigate } from 'react'
-import {BrowserRouter as Router,Routes,Route, Navigate, useLocation} from 'react-router-dom';
+import React, { useEffect,useState } from 'react'
+import {BrowserRouter as Router,Routes,Route, Navigate} from 'react-router-dom';
 import Sign_in from './sign-in-page/Sign_in'
 import Sign_up from './sign-up-page/Sign_up'
 import Dashboard from './Dashboard';
 import Navbar from './Components/Navbar';
-import axios from 'axios';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './Auth/Firebase-Config';
 import Errorpage from './ERRORpage'
