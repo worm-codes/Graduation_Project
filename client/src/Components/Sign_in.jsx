@@ -1,11 +1,10 @@
-import React,{useEffect,useState} from 'react'
+import React,{useEffect,useState,useContext} from 'react'
 import {Link} from 'react-router-dom'
 import {useForm} from 'react-hook-form'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import {auth} from '../Auth/Firebase-Config'
+import {AuthContext} from '../context/AuthContext'
 
 
-import './public/sign_in.css'
+import '../public/sign_in.css'
 
 
 
@@ -23,30 +22,28 @@ const App = () => {
 '“True friends never apart maybe in distance never in heart.”',]
 
 const [err,setErr]= useState(false)
-
+let useAuth=useContext(AuthContext)
+const [loading, setLoading] = useState(false)
 
 const loginFirebase=async(email,password)=>{
-     try{
-    const loggedUser= await signInWithEmailAndPassword(auth,email,password)
-        if(loggedUser){
-           console.log('user register func')
-          console.log(auth.currentUser)
-          console.log('email')
-          console.log(auth.currentUser.email)
-          window.location.href='/search'
-      
-      
-        }
-     }
-     catch(err){
+
+
+  try {
+      setErr("")
+      setLoading(true)
+      await useAuth.login(email, password)
+      window.location.href='/search'
+    } catch(err){
        let message=err.message.substr(err.message.indexOf('/')+1).replace(')',' ').replace('.',' ').replace(/-/g,' ')
     
        setErr(message) 
-       
-       
 
      }
-   }
+
+    setLoading(false)
+  }
+    
+   
  
 
 useEffect(()=>{ /*burda atama yapmak icin state kullanimi zorunlu */
@@ -105,7 +102,7 @@ return (
                         <input {...register('customCheck1')} id="customCheck1" type="checkbox"  class="custom-control-input" />
                         <label for="customCheck1" class="custom-control-label">Remember password</label>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block text-uppercase  rounded-pill shadow-sm">Sign in</button> <br />
+                    <button disabled={loading} type="submit" class="btn btn-primary btn-block text-uppercase  rounded-pill shadow-sm">Sign in</button> <br />
                     
                 </form>
                

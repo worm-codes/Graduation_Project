@@ -1,6 +1,7 @@
 import React,{useLayoutEffect,useState} from 'react';
 import axios from 'axios';
 import { auth } from './Auth/Firebase-Config';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const [userFromServer,setUserFromServer]=useState({})
@@ -21,7 +22,7 @@ const Dashboard = () => {
   return (
     <div>
      <h1>Secret {userFromServer.user_ID} </h1>
-    
+     <Link to='/resetPassword'>Reset your password</Link>
      
     </div>
    

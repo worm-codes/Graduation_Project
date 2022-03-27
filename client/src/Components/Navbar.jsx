@@ -1,11 +1,25 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link,useLocation } from 'react-router-dom'
-import {signOut} from 'firebase/auth'
-import { auth } from '../Auth/Firebase-Config'
+import {AuthContext} from '../context/AuthContext'
 import '../public/Nav.css'
 
 
-const Navbar = ({user}) => {
+const Navbar = () => {
+  let useAuth=useContext(AuthContext)
+  let user=useAuth.currentUser
+  
+ 
+
+  async function handleLogout() {
+    
+
+    try {
+      await useAuth.logout()
+      window.location.href='/'
+    } catch(err) {
+      console.log(err,'error')
+    }
+  }
 
   const location=useLocation()
   const currentPath=location.pathname
@@ -22,9 +36,9 @@ const Navbar = ({user}) => {
       <ul class="navbar-nav ml-auto mr-2 text-right">
       
         <li class="nav-item active">
-          <a class="nav-link" href="#">Home
+          <Link class="nav-link" to="/">Home
             <span class="sr-only">(current)</span>
-          </a>
+          </Link>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Features</a>
@@ -34,7 +48,7 @@ const Navbar = ({user}) => {
         </li>
     
         <li class="hidden-profile d-none nav-item">
-         <Link class="nav-link" onClick={async ()=>{await signOut(auth)}} to="/">Logout</Link>
+         <Link class="nav-link" onClick={handleLogout} to="/">Logout</Link>
         </li>
 
      
@@ -51,7 +65,7 @@ const Navbar = ({user}) => {
             <a class="dropdown-item" href="#">Hello</a>
           <a class="dropdown-item" href="#">Profile</a>
             <a class="dropdown-item" href="#">Messages</a>
-            <Link class="dropdown-item" onClick={async ()=>{await signOut(auth)}} to="/">Logout</Link>
+            <Link class="dropdown-item" onClick={handleLogout} to="/">Logout</Link>
           </div>
         </li>
       </ul>

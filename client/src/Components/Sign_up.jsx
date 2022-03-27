@@ -1,10 +1,9 @@
-import React,{useState} from 'react'
-import './public/sign_up.css'
+import React,{useState,useContext} from 'react'
+import '../public/sign_up.css'
 import {useForm} from 'react-hook-form'
 import {Link} from 'react-router-dom'
 import axios from 'axios'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import {auth} from '../Auth/Firebase-Config'
+import {AuthContext} from '../context/AuthContext'
 
 
 
@@ -12,33 +11,29 @@ import {auth} from '../Auth/Firebase-Config'
 const sign_up = () => {
     const {register,watch ,handleSubmit,formState:{errors}}=useForm();
     const [err,setErr]= useState('');
+    let useAuth=useContext(AuthContext)
+     const [loading, setLoading] = useState(false)
     
     
     
 
    const registerFirebase=async(email,password)=>{
-     try{
-    const createdUser= await createUserWithEmailAndPassword(auth,email,password)
-        if(createdUser){
-           console.log('user register func')
-          console.log(auth.currentUser)
-          console.log('email')
-          console.log(auth.currentUser.email)
-      
-      
-        }
-     }
-     catch(err){
+
+    try {
+      setErr("")
+      setLoading(true)
+      await useAuth.signup(email, password)
+       window.location.href='/search'
+    } catch(err){
        let message=err.message.substr(err.message.indexOf('/')+1).replace(')',' ').replace('.',' ').replace(/-/g,' ')
     
        setErr(message) 
-       
-       
-
+ 
      }
+     setLoading(false)
+
    }
    
-
 
   return (
       
@@ -163,7 +158,7 @@ const sign_up = () => {
                       {(errors.user_password_copy &&watch().user_password_copy==='')  &&<p  className='pl-3 mb-2'>{errors.user_password_copy.message}</p>}
                     <div class="d-flex justify-content-center align-items-center mb-2"> 
                     
-                    <button name="login" id="login"  class="btn login-btn" type="submit">Submit</button>
+                    <button disabled={loading} name="login" id="login"  class="btn login-btn" type="submit">Submit</button>
                     </div>
                 </form>
                 <p class="login-wrapper-footer-text ">Do you have an account? <Link to="/" class="text-reset"><b>Sign-in here</b></Link></p>
