@@ -57,6 +57,7 @@ app.post('/api/register',async (req,res)=>{
             user_ID:req.body.user_ID,
             user_name:req.body.user_name,
             user_surname:req.body.user_surname,
+            user_gender:req.body.user_gender,
             user_email:req.body.user_email,
             user_date_of_birth:req.body.user_date_of_birth,
           

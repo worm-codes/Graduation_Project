@@ -28,6 +28,11 @@ h1>a {
     color: black;
     
 }
+p.pl-3{
+    font-size: 0.7rem;
+    color: red;
+    margin-bottom: 0;
+}
 
 @media (max-width: 991px) {
     .intro-section {
@@ -139,9 +144,13 @@ h1>a {
     font-weight: bold;
     margin-bottom: 30px
 }
+.form-group{
+margin-bottom: 0;
+}
+
 
 .login-btn {
-    padding: 10px 20px;
+    padding: 5px 10px;
     background-color: #000;
     border-radius: 0;
     font-size: 20px;
@@ -163,6 +172,6 @@ h1>a {
 
 
 .login-wrapper-footer-text {
-    font-size: 14px;
+    color: black !important;
     text-align: center
 }

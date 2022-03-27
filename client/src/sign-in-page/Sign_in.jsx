@@ -9,6 +9,7 @@ import {auth} from '../Auth/Firebase-Config'
 import './public/sign_in.css'
 
 
+
 const App = () => {
   let image=['https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1096&q=80',
 'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
@@ -33,6 +34,7 @@ const loginFirebase=async(email,password)=>{
           console.log(auth.currentUser)
           console.log('email')
           console.log(auth.currentUser.email)
+          window.location.href='/search'
       
       
         }
@@ -80,7 +82,7 @@ return (
                 
                 <form onSubmit={handleSubmit(async(data,event)=>{
                     event.preventDefault();
-                    loginFirebase(data.user_email,data.user_password)
+                   await loginFirebase(data.user_email,data.user_password)
 
                 })}>
                     <div class="form-group mb-3">
@@ -95,8 +97,9 @@ return (
                         id="user_password" type="password"
                         placeholder="Password" class="form-control rounded-pill border-0 shadow-sm px-4 text-primary" />
                         {errors.user_password &&<p style={{color:'red'}} className='pl-3'>{errors.user_password.message}</p>}
-                        
+                      
                     </div>
+                    
                     
                     
                     <div class="custom-control custom-checkbox mb-3">

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect,useState } from 'react'
+import React, { useEffect,useState,useNavigate } from 'react'
 import {BrowserRouter as Router,Routes,Route, Navigate, useLocation} from 'react-router-dom';
 import Sign_in from './sign-in-page/Sign_in'
 import Sign_up from './sign-up-page/Sign_up'
@@ -7,7 +7,7 @@ import Navbar from './Components/Navbar';
 import axios from 'axios';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './Auth/Firebase-Config';
-
+import Errorpage from './ERRORpage'
 
 
 
@@ -16,9 +16,13 @@ import { auth } from './Auth/Firebase-Config';
 const App = () => {
   const [user, setUser] = useState(null);
 
-  onAuthStateChanged((auth),(curretUser)=>{
+  useEffect(() => {
+    const unsubscribe=onAuthStateChanged((auth),(curretUser)=>{
     setUser(curretUser)
   })
+  
+    return unsubscribe
+  }, [])
   
   
  
@@ -28,9 +32,11 @@ const App = () => {
     <div>
     <Navbar  user={user} />
     <Routes>
-       <Route path='/' element={!user ?<Sign_in/>:<Navigate to='/search'/>}></Route>
-       <Route path='/register' element={!user ?<Sign_up />:<Navigate to='/search'/>}></Route>
-       <Route path='/search' element={ user?<Dashboard />: <Navigate to='/' />}></Route>
+      
+       <Route path='/' element={!user ?<Sign_in/>: <Navigate to='/search' />}></Route>
+       <Route path='/register' element={!user ?<Sign_up />:<Navigate to='/search' />}></Route>
+       <Route path='/search' element={ user?<Dashboard />: <Navigate to='/'  />}></Route>
+       <Route path='*' element={ <Errorpage/>}></Route>
         
 
       

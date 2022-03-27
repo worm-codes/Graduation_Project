@@ -59,7 +59,7 @@ const Navbar = ({user}) => {
         <ul class="navbar-nav ml-auto mr-2 text-right">
        <li class="nav-item active">
        
-       <Link class="nav-link" to={`${currentPath==='/register'? '/':'/register'}`}><p style={{fontSize:'1.4rem'}} className='mb-0 mr-3'>{`${currentPath==='/register'? 'Sign-In':'Sign-Up'}`}</p></Link>
+       <Link class="nav-link" to={`${currentPath==='/register'? '/':'/register'}`}><p style={{fontSize:'1.4rem', color:'black'}} className='mb-0 mr-3'>{`${currentPath==='/register'? 'Sign-In':'Sign-Up'}`}</p></Link>
        </li>
        </ul>
        </>}
