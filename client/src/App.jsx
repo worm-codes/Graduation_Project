@@ -36,7 +36,7 @@ const App = () => {
     <div>
     <AuthProvider>
 
-    <Navbar  user={user} />
+    <Navbar  />
     <Routes>
       
        <Route path='/' element={<PreventForms><Sign_in/></PreventForms>}></Route>

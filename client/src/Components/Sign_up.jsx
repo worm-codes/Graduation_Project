@@ -36,7 +36,7 @@ const sign_up = () => {
    
 
   return (
-      
+      <div className="addedStyle">
     <div class="container-fluid">
     <div class="row">
         <div class=" col-lg-7 d-none  d-lg-flex intro-section">
@@ -166,6 +166,8 @@ const sign_up = () => {
         </div>
     </div>
 </div>
+</div>
+
   )
 }
 

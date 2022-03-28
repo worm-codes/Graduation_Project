@@ -2,8 +2,21 @@
     .profile {
         display: none !important
     }
+    
     .hidden-profile{
         display: block !important
+    }
+    .dropdown-menu {
+        position: absolute;
+    }
+    
+    .navbar {
+        margin-bottom: 0;
+    }
+    .nav-link{
+        
+        position: relative;
+        z-index: 100000;
     }
 
     

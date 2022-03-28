@@ -29,14 +29,14 @@ export default function ForgotPassword() {
   }
 
   return (
-    
-     <div class="wrapper fadeInDown">
+    <div className="addedStyle">
+     <div className="wrapper fadeInDown">
      <div id="formContent">
    
-    <h2 class="active"> Password Reset </h2>
+    <h2 className="active"> Password Reset </h2>
  
    
-    <div class="fadeIn first">
+    <div className="fadeIn first">
      <b className='h3'>L🤝G</b>
      {error&& <p>{error}</p>}
      {message&& <p>{message}</p>}
@@ -44,16 +44,17 @@ export default function ForgotPassword() {
 
 
     <form onSubmit={handleSubmit}>
-      <input ref={emailRef} type="email" id="login" class="fadeIn second" required name="login" placeholder="Ehter Your E-Mail"/>
-      <button disabled={loading}  type="submit" class="fadeIn fourth" value="Log In">Submit </button>
+      <input ref={emailRef} type="email" id="login" className="fadeIn second" required name="login" placeholder="Ehter Your E-Mail"/>
+      <button disabled={loading}  type="submit" className="fadeIn fourth" value="Log In">Submit </button>
     </form>
 
   
     <div id="formFooter">
-      <Link class="underlineHover"  to="/search">Home</Link>
+      <Link className="underlineHover"  to="/search">Home</Link>
     </div>
 
   </div>
+</div>
 </div>
   )
 }

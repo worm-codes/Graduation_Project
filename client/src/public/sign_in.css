@@ -1,8 +1,9 @@
 .login,
 .image {
     
-    
+   
 }
+
 @media (max-width: 1594px) {
     .bg-image {
         margin-top: 5rem;
@@ -27,7 +28,7 @@
 
     .login,
     .image {
-        min-height: 93.5vh;
+        min-height: 94vh;
 
     }
 
@@ -39,6 +40,7 @@
     }
 
 }
+
 @media (max-width: 990px) {
     .login{
        min-height: 81vh;
@@ -47,10 +49,16 @@
 
 }
 
+.container-fluid  {
+    background-color: rgba(241, 246, 247, 0.678);
+}
+.col-lg-5 .form-section .login{
+    background-color: rgba(241, 246, 247, 0.678);
+}
 
 .bg-image {
-    margin-top: 0.4rem;
-    background-size: 99.7%;
+    margin-top: 1.6rem;
+    background-size: 99.8%;
     background-repeat: no-repeat;
     
 }

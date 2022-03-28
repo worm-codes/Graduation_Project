@@ -59,14 +59,14 @@ const {register ,handleSubmit,formState:{errors} /*watch*/}=useForm()
 
 
 return (
-   
+   <div className="addedStyle">
     <div className="maincontainer">
         <div class="container-fluid">
             <div class="row no-gutter">
                
     
       
-      <div class="col-lg-4 bg-light">
+      <div class="col-lg-4 ">
           <div class="login d-flex align-items-center py-5">
           
           <div class="container">
@@ -98,16 +98,16 @@ return (
                     
                     
                     
-                    <div class="custom-control custom-checkbox mb-3">
+                    <div class="custom-control custom-checkbox mb-4">
                         <input {...register('customCheck1')} id="customCheck1" type="checkbox"  class="custom-control-input" />
                         <label for="customCheck1" class="custom-control-label">Remember password</label>
                     </div>
-                    <button disabled={loading} type="submit" class="btn btn-primary btn-block text-uppercase  rounded-pill shadow-sm">Sign in</button> <br />
+                    <button disabled={loading} style={{fontSize:'1.1rem',margin:'0', marginTop:'1.2rem'}} type="submit" class="btn mr-5 btn-primary btn-block text-uppercase  rounded-pill shadow-sm">Sign in</button> <br />
                     
                 </form>
                
                  
-                <p class="login-wrapper-footer-text" style={{fontSize:'1.1rem'}}>Don't you have an account? <Link to="/register" style={{textDecoration:'none'}} class="text-reset"><b>Sign-Up</b></Link></p>
+                <p class="login-wrapper-footer-text mt-5" style={{fontSize:'1.1rem'}}>Don't you have an account? <Link to="/register" style={{textDecoration:'none'}} class="text-reset"><b>Sign-Up</b></Link></p>
             </div>
         </div>
         </div>
@@ -121,6 +121,7 @@ return (
             
                 </div>
         </div>
+      </div>
       </div>
   
   )
