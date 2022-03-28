@@ -15,7 +15,7 @@ const Navbar = () => {
 
     try {
       await useAuth.logout()
-      window.location.href='/'
+      
     } catch(err) {
       console.log(err,'error')
     }

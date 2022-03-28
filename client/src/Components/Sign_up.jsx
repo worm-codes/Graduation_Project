@@ -20,10 +20,11 @@ const sign_up = () => {
    const registerFirebase=async(email,password)=>{
 
     try {
-      setErr("")
+     
       setLoading(true)
       await useAuth.signup(email, password)
-       window.location.href='/search'
+      setErr("")
+       
     } catch(err){
        let message=err.message.substr(err.message.indexOf('/')+1).replace(')',' ').replace('.',' ').replace(/-/g,' ')
     
@@ -49,11 +50,9 @@ const sign_up = () => {
                   event.preventDefault();
                   if(data.user_password===data.user_password_copy){
                   await registerFirebase(data.user_email,data.user_password)
-                  console.log(data)
                   
-                 
-
-                  if(!err ){
+                  if(!err){
+                    
                   const response=await axios.post('http://localhost:5000/api/register',{
                            user_ID:data.user_ID,
                            user_name:data.user_name,
@@ -61,6 +60,7 @@ const sign_up = () => {
                            user_gender:data.user_gender,
                            user_email:data.user_email,
                            user_date_of_birth:data.user_date_of_birth,
+                         
                           })
 
                   

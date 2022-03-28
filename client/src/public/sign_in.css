@@ -1,25 +1,24 @@
-.login,
-.image {
-    
-   
-}
 
 @media (max-width: 1594px) {
     .bg-image {
-        margin-top: 5rem;
+        margin-top: 5rem !important;
     }
 
 }
+.loginButton{
+    background-color:#007bff !important;
+   
+}
 @media (max-width: 1188px) {
     .bg-image {
-        margin-top: 8rem;
+        margin-top: 8rem !important;
     }
 
 }
 @media (max-width: 1536px) {
     .login,
     .image {
-        min-height: 91.8vh;
+        min-height: 91.8vh !important;
 
     }
 
@@ -28,14 +27,14 @@
 
     .login,
     .image {
-        min-height: 94vh;
+        min-height: 94vh !important;
 
     }
 
 }
 @media (max-width: 992px) {
     .bg-image {
-        margin-top: 10rem;
+        margin-top: 10rem !important;
 
     }
 
@@ -43,7 +42,7 @@
 
 @media (max-width: 990px) {
     .login{
-       min-height: 81vh;
+       min-height: 81vh !important;
 
     }
 
@@ -57,8 +56,8 @@
 }
 
 .bg-image {
-    margin-top: 1.6rem;
-    background-size: 99.8%;
+    margin-top: 1.8rem;
+    background-size: 100%;
     background-repeat: no-repeat;
     
 }

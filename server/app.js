@@ -3,9 +3,6 @@ app=express(),
 cors=require('cors'),
 User=require('./models/User.js'),
 mongoose=require("mongoose"),
-cookieSession=require('cookie-session'),
-
-dotenv=require('dotenv').config(),
 mongoURI="mongodb://localhost/Local_Guide";
 
 
@@ -20,38 +17,34 @@ app.use(express.json())
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
-app.use(cookieSession({
-  name: 'session',
-  keys: ["oski"],
-
-  // Cookie Options
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
-}))
-
-
 app.post('/api/getUser',async (req,res)=>{   
-     let checkUser=await User.findOne({user_user_email:req.body.user_email})
-    if(checkUser){
-        res.json(checkUser)
-    }
-    else{
-        res.json('couldnt find')
-    }
-   
+     let foundedUser=await User.findOne({user_email:req.body.user_email})
+         if(foundedUser){
+        let timeSignIn=(req.body.user_last_sign_in.split(' GMT')[0])
+        let timeCreation=(req.body.createdAt.split(' GMT')[0])
+       
+        if(!foundedUser.createdAt){
+         await User.findByIdAndUpdate({_id:foundedUser._id},{createdAt:timeCreation})
+        }
+        
+        await User.findByIdAndUpdate({_id:foundedUser._id},{lastSignIn:timeSignIn})
+        console.log(foundedUser)
+        res.json(foundedUser)
+            }
+            else{
+                res.json('couldnt find')
+            }
 
-})
+ })
 
 app.post('/api/register',async (req,res)=>{
-    
-   
+ 
     let checkForId=await User.findOne({user_user_ID:req.body.user_ID})
     console.log(req.body)
-    
     if(checkForId){
         return res.json('duplicate')
     }
-     
-      
+
         try{
         await User.create({
             user_ID:req.body.user_ID,
@@ -60,42 +53,15 @@ app.post('/api/register',async (req,res)=>{
             user_gender:req.body.user_gender,
             user_email:req.body.user_email,
             user_date_of_birth:req.body.user_date_of_birth,
-          
-
         })
-        
-        res.json('success')
+       res.json('success')
     }
     catch(err){
         console.log(err)
         res.json('error')
-
     }
-
-    
-    
-    
-})
-/*
-
-app.post('/api/login',async (req,res)=>{
-    res.redirect('/register')
-    
- 
-    
-})
-app.post('/api/search',(req,res)=>{
-    
-  
 })
 
-app.post('/api/logout',(req,res)=>{
- if(currentSession.userid){
-     req.session.destroy(),
-     console.log('SESSION KILLED')
-     res.json('killed')
- }
-})*/
 
 app.listen(5000,()=>{
     console.log('server has started')

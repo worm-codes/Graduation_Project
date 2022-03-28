@@ -1,11 +1,19 @@
 body {
     background-color: #fff;
     font-family: 'Karla', sans-serif;
-     caret-color: transparent;
+   
    
 
 }
 
+.login-title{
+     
+        text-decoration: none;
+        font-size: 2rem !important;
+        color: black !important;
+    
+
+}
 h1>a {
     text-decoration: none;
     color: #fff !important

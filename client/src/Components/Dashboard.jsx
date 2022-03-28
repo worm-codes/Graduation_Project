@@ -1,14 +1,18 @@
-import React,{useLayoutEffect,useState} from 'react';
+import React,{useLayoutEffect,useState,useContext} from 'react';
 import axios from 'axios';
-import { auth } from './Auth/Firebase-Config';
+import {AuthContext} from '../context/AuthContext'
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const [userFromServer,setUserFromServer]=useState({})
+  let useAuth=useContext(AuthContext)
+  console.log(useAuth.currentUser)
   const getCurrentUserInfo=async()=>{
     const response=await axios.post('http://localhost:5000/api/getUser',{
                          
-                           user_email:auth.currentUser.email
+                           user_email:useAuth.currentUser.email,
+                           user_last_sign_in:useAuth.currentUser.metadata.lastSignInTime,
+                           createdAt:useAuth.currentUser.metadata.creationTime
                           
                           })
                         setUserFromServer(response.data)
@@ -22,6 +26,8 @@ const Dashboard = () => {
   return (
     <div>
      <h1>Secret {userFromServer.user_ID} </h1>
+     <h1>Secret {useAuth.currentUser.firstName} </h1>
+     
      <Link to='/resetPassword'>Reset your password</Link>
      
     </div>

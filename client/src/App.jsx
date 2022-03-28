@@ -3,7 +3,7 @@ import {BrowserRouter as Router,Routes,Route, Navigate} from 'react-router-dom';
 import Sign_in from './Components/Sign_in'
 import Sign_up from './Components/Sign_up'
 import PasswordReset from './Components/PassswordReset'
-import Dashboard from './Dashboard';
+import Dashboard from './Components/Dashboard';
 import Navbar from './Components/Navbar';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './Auth/Firebase-Config';

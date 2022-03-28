@@ -32,7 +32,7 @@ const loginFirebase=async(email,password)=>{
       setErr("")
       setLoading(true)
       await useAuth.login(email, password)
-      window.location.href='/search'
+    
     } catch(err){
        let message=err.message.substr(err.message.indexOf('/')+1).replace(')',' ').replace('.',' ').replace(/-/g,' ')
     
@@ -74,7 +74,7 @@ return (
             <div class="col-lg-10 col-xl-10 mx-auto">
                 <h3 class="display-5 text-center">Local🤝Guide</h3>
                 <p class="text-muted text-center mb-4"> {quotes[pickedQuote]} </p>
-                {err&&<p style={{color:'red'}} className='text-center pl-3'>Please Check Your Email or Password</p>}
+                {err&&<p style={{color:'red',fontSize:'1.3rem',marginBottom:'1rem'}} className='text-center pl-3'>{err}</p>}
                 
                 <form onSubmit={handleSubmit(async(data,event)=>{
                     event.preventDefault();
@@ -98,11 +98,8 @@ return (
                     
                     
                     
-                    <div class="custom-control custom-checkbox mb-4">
-                        <input {...register('customCheck1')} id="customCheck1" type="checkbox"  class="custom-control-input" />
-                        <label for="customCheck1" class="custom-control-label">Remember password</label>
-                    </div>
-                    <button disabled={loading} style={{fontSize:'1.1rem',margin:'0', marginTop:'1.2rem'}} type="submit" class="btn mr-5 btn-primary btn-block text-uppercase  rounded-pill shadow-sm">Sign in</button> <br />
+                    
+                    <button disabled={loading} style={{fontSize:'1.1rem',margin:'0', marginTop:'1.2rem'}} type="submit" class="btn loginButton mr-5 btn-primary btn-block text-uppercase  rounded-pill shadow-sm">Sign in</button> <br />
                     
                 </form>
                
