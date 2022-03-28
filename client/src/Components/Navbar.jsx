@@ -24,8 +24,8 @@ const Navbar = () => {
   const location=useLocation()
   const currentPath=location.pathname
   return (
-    <div> 
-    <nav style={{height:'3.5rem'}} className="navbar navbar-expand-lg navbar-light bg-light ">
+    <div style={{backgroundColor:'white'}}> 
+    <nav style={{height:'3.5rem'}} className="navbar navbar-expand-lg navbar-light ">
     <Link className="navbar-brand" to="/"><b className='h3'>L🤝G</b></Link>
     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-5"
       aria-controls="navbarSupportedContent-5" aria-expanded="false" aria-label="Toggle navigation">

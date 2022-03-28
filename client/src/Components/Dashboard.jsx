@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 const Dashboard = () => {
   const [userFromServer,setUserFromServer]=useState({})
   let useAuth=useContext(AuthContext)
-  console.log(useAuth.currentUser)
   const getCurrentUserInfo=async()=>{
     const response=await axios.post('http://localhost:5000/api/getUser',{
                          
@@ -25,8 +24,8 @@ const Dashboard = () => {
 
   return (
     <div>
-     <h1>Secret {userFromServer.user_ID} </h1>
-     <h1>Secret {useAuth.currentUser.firstName} </h1>
+     <h1> {userFromServer.user_ID} </h1>
+     <h1> {useAuth.currentUser.email} </h1>
      
      <Link to='/resetPassword'>Reset your password</Link>
      
