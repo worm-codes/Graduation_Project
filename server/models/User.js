@@ -8,6 +8,10 @@ var userSchema=new mongoose.Schema({
     user_email:{type:String, required:true,unique:true},
     user_date_of_birth:{type:String, required:true},
     quote:{type:String},
+    contacts:[{
+		  type: mongoose.Schema.Types.ObjectId,
+		       ref:"User"
+	  }],
     lastSignIn:{type:String},
     createdAt:{type:String}
 	

@@ -5,7 +5,8 @@ app=express(),
 cors=require('cors'),
 User=require('./models/User.js'),
 mongoose=require("mongoose"),
-mongoURI="mongodb://localhost/Local_Guide";
+mongoURI="mongodb://localhost/Local_Guide",
+helmet=require('helmet')
 
 
 
@@ -20,14 +21,14 @@ app.use(cors({
     credentials:true
 }))
 app.use(express.json())
+app.use(helmet())
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 
 app.post('/api/getUser',MiddleWare.isAuth,async (req,res)=>{   
      let foundedUser=null
-   
-     if(MiddleWare.decodeValue){
+     if(MiddleWare.decodeValue &&req.body.user_email){
        foundedUser=await User.findOne({user_email:MiddleWare.decodeValue.email})
      
          if(foundedUser){
@@ -46,17 +47,14 @@ app.post('/api/getUser',MiddleWare.isAuth,async (req,res)=>{
                 res.json('couldnt find')
             }
         }
-        else{
-            res.json('UnAuth')
-        }
+       
+        
 
  })
 
 app.post('/api/register',async (req,res)=>{
-    console.log('helllooooooo')
     let checkForId=await User.findOne({user_ID:req.body.user_ID})
-    console.log(checkForId)
-    console.log(req)
+
     if(checkForId){
         return res.json('duplicate')
     }
@@ -77,6 +75,59 @@ app.post('/api/register',async (req,res)=>{
         console.log(err)
         res.json('error')
     }
+})
+
+app.get('/api/getAllUsers',MiddleWare.isAuth,async(req,res)=>{
+    await User.find({},(err,Users)=>{
+        if(err){
+            throw err
+            
+        }
+        else{
+            res.json(Users)
+        }
+    }).clone().catch(function(err){ console.log(err)})
+
+})
+
+app.get('/api/:id',MiddleWare.isAuth,async(req,res)=>{
+     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
+      console.log(user.contacts[1]._id.toString()) //sadece id yi elde ediyoruz
+      let user2=await User.findOne({_id:user.contacts[1]._id.toString()})
+      console.log(user2)
+      
+      if(MiddleWare.decodeValue){
+          await User.findOne({user_email:MiddleWare.decodeValue.email},async (err,currentUser)=>{
+           if(err){
+               console.log(err);
+           }
+           if (req.params.id && !currentUser.contacts.includes(req.params.id)){
+                await User.findOne({_id:req.params.id},(err,userToConnect)=>{
+                if(err){
+                console.log(err)
+                 }
+                if(!userToConnect._id.equals(currentUser._id)){
+                res.json(userToConnect)
+                currentUser.contacts.push(userToConnect)
+                currentUser.save()
+
+                userToConnect.contacts.push(currentUser)
+                userToConnect.save()
+
+                }
+
+
+                }).clone().catch(function(err){ console.log(err)})
+                
+              }
+
+              
+           }).clone().catch(function(err){ console.log(err)})
+
+      }
+      
+        
+
 })
 
 
