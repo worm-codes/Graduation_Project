@@ -59,7 +59,7 @@ const Navbar = () => {
           <a className="nav-link dropdown-toggle" id="navbarDropdownMenuLink-5" data-toggle="dropdown" aria-haspopup="true"
             aria-expanded="false">
             <img src='https://www.kindpng.com/picc/m/22-223941_transparent-avatar-png-male-avatar-icon-transparent-png.png' 
-            style={{width:'3.3rem',height:'3.4rem'}} class="rounded-circle z-depth-0" alt="avatar image" />
+            style={{width:'3.3rem',height:'3.4rem'}} className="rounded-circle z-depth-0" alt="avatar image" />
           </a>
           <div className="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
             <a className="dropdown-item" href="#">Hello</a>

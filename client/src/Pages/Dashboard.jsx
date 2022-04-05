@@ -6,20 +6,29 @@ import { Link } from 'react-router-dom';
 const Dashboard = () => {
   const [userFromServer,setUserFromServer]=useState({})
   let useAuth=useContext(AuthContext)
+
+ 
+  
   const getCurrentUserInfo=async()=>{
     const response=await axios.post('http://localhost:5000/api/getUser',{
                          
                            user_email:useAuth.currentUser.email,
                            user_last_sign_in:useAuth.currentUser.metadata.lastSignInTime,
-                           createdAt:useAuth.currentUser.metadata.creationTime
-                          
-                          })
+                           createdAt:useAuth.currentUser.metadata.creationTime,
+                          },
+                          {
+                            headers:{Authorization: 'Bearer ' + useAuth.currentToken}
+                          }
+                          )
+                          console.log(response)
                         setUserFromServer(response.data)
                        
   }
+  
   useLayoutEffect(()=>{
-   getCurrentUserInfo()
-  },[])
+    if(useAuth.currentUser,useAuth.currentToken)
+      getCurrentUserInfo()
+  },[useAuth.currentUser,useAuth.currentToken])
   
 
   return (

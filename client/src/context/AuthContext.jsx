@@ -10,6 +10,7 @@ export default function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState('')
+  const [currentToken,setCurrentToken]=useState('')
   const [loading, setLoading] = useState(true)
 
   async function signup(email, password) {
@@ -21,6 +22,7 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
+    setCurrentToken('')
     return await signOut(auth)
   }
 
@@ -28,19 +30,32 @@ export function AuthProvider({ children }) {
     return await sendPasswordResetEmail(auth,email)
   }
 
- 
+  
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth,user => {
       setCurrentUser(user)
-      setLoading(false)
+      setLoading(false);
     })
+
 
     return unsubscribe
   }, [])
+  
+ 
+  useEffect(()=>{
+    if(currentUser){
+    currentUser.getIdToken(true).then((idToken)=>{setCurrentToken(idToken)})
+    }
+    
+    
+ },[currentUser])
+
+ 
 
   const value = {
     currentUser,
+    currentToken,
     login,
     signup,
     logout,
