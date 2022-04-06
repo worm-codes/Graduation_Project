@@ -10,7 +10,7 @@ import { AuthProvider,AuthContext } from './context/AuthContext';
 import PrivateIndex from './ProtectedRoutes/PrivateIndex';
 import PreventForms from './ProtectedRoutes/PreventForms';
 import Sign_In from './Pages/Sign_In';
-import UserProfile from './Pages/UserProfile';
+import Messenger from './Pages/Messenger';
 
 
 
@@ -34,7 +34,7 @@ const App = () => {
        <Route path='/' element={<PreventForms><Sign_In/></PreventForms>}></Route>
        <Route path='/register' element={<PreventForms><Sign_up /></PreventForms>}></Route>
        <Route path='/search' element={<PrivateIndex><Dashboard /></PrivateIndex>}></Route>
-       <Route path='/:userID' element={<PrivateIndex><UserProfile /></PrivateIndex>}></Route>
+       <Route path='/:userID' element={<PrivateIndex><Messenger /></PrivateIndex>}></Route>
        <Route path='/resetPassword' element={<PrivateIndex><PasswordReset /></PrivateIndex>}></Route>
        <Route path='*' element={ <Errorpage/>}></Route>
         

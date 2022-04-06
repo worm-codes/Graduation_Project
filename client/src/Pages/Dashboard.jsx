@@ -8,55 +8,54 @@ const Dashboard = () => {
   const [users,setUsers]=useState([])
   let useAuth=useContext(AuthContext)
   
-      const getAllUsers=async()=>{
+    const getAllUsers=async()=>{
     const response=await axios.get('http://localhost:5000/api/getAllUsers',
-                          {
-                            headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
-                          }
-                          )
-                          console.log('usersssssss');
-                          console.log(response.data)
-                           if(response.data.message!='UnAuth'){
-                            setUsers(response.data)
-                           }
-                         
-                       
-                       
+      {
+        headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
+      }
+      )
+      
+      console.log(response.data)
+        if(response.data.message!='UnAuth'){
+        setUsers(response.data)
+        }                 
   }
  
   
   const getCurrentUserInfo=async()=>{
+    
     const response=await axios.post('http://localhost:5000/api/getUser',{
                          
-                           user_email:useAuth.currentUser.email,
-                           user_last_sign_in:useAuth.currentUser.metadata.lastSignInTime,
-                           createdAt:useAuth.currentUser.metadata.creationTime,
-                          },
-                          {
-                            headers:{Authorization: 'Bearer ' + useAuth.currentToken}
-                          }
-                          )
-                          console.log(response.data)
-                          if(response.data.message!='UnAuth'){
-                           setUserFromServer(response.data)
-                          }
+        user_email:useAuth.currentUser.email,
+        user_last_sign_in:useAuth.currentUser.metadata.lastSignInTime,
+        createdAt:useAuth.currentUser.metadata.creationTime,
+      },
+      {
+        headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
+      }
+      )
+      console.log(response.data)
+      if(response.data.message!='UnAuth'){
+        setUserFromServer(response.data)
+      }
                        
   }
  
   
   
   
-  useLayoutEffect(()=>{
-    if(useAuth.currentUser,useAuth.currentToken)
-      getCurrentUserInfo()
-     
-  },[useAuth.currentUser,useAuth.currentToken])
-  
-  useEffect(()=>{
-    if(userFromServer)
-      getAllUsers()
-  },[userFromServer])
-  
+      useLayoutEffect(()=>{
+        
+        if(useAuth.currentUser)
+          getCurrentUserInfo()
+        
+      },[useAuth.currentUser])
+      
+      useEffect(()=>{
+        if(userFromServer)
+           getAllUsers()
+      },[])
+      
   
   const showUsers=users.map((userDB)=>{
       return (<div key={userDB.user_ID}>

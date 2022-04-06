@@ -7,7 +7,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
-
+src/Components
+src/public/conversation.css
+src/public/messenger.css
 node_modules
 dist
 dist-ssr
