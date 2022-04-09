@@ -85,28 +85,37 @@ app.post('/api/publish', async(req,res) =>{
     try{
         console.log('inside the try block')
         let theEmail = req.body.userToProcess.email;
-        let theUser = await User.findOne({email:theEmail})
+        const { arriving, city, country, description, host, leaving, maxPeople, minTime, maxTime, state, userToProcess} = req.body;
+        let theUser = await User.findOne({user_email:theEmail})
         //theUserAge = new Date().getFullYear() - theUser.user_date_of_birth.substring(0,4).toString();
         console.log("theEmail variable",theEmail)
         console.log("theUser variable",theUser)
 
-        await Ad.create({
-        arriving_date:req.body.arriving,
-        city:req.body.city,
-        country:req.body.country,
-        owner_gender:theUser.user_gender, //buraya req.body.user_gender veya direkt user_gender gelicek
-        owner_email:theUser.user_email,
-        owner_age:'18', 
-        owner_id:theUser._id,
-        description: req.body.description,
-        host: req.body.host,
-        leaving_date: req.body.leaving,
-        maxPeople: req.body.maxPeople,
-        minTime: req.body.minTime,
-        maxTime: req.body.maxTime,
-        state: req.body.state
+    //     let theAd = await Ad.create({
+    //     arriving_date:req.body.arriving,
+    //     city:req.body.city,
+    //     country:req.body.country,
+    //     owner_gender:theUser.user_gender, //buraya req.body.user_gender veya direkt user_gender gelicek
+    //     owner_email:theUser.user_email,
+    //     owner_age:'18', 
+    //     owner_id:theUser._id,
+    //     description: req.body.description,
+    //     host: req.body.host,
+    //     leaving_date: req.body.leaving,
+    //     maxPeople: req.body.maxPeople,
+    //     minTime: req.body.minTime,
+    //     maxTime: req.body.maxTime,
+    //     state: req.body.state
 
-    })
+    // })
+    
+    const theAd = await new Ad({ arriving_date: arriving, city, country, description, host, leaving_date:leaving, maxPeople, minTime,
+         maxTime, state, owner_gender:theUser.user_gender, owner_email: theUser.user_email, owner_age: '18', owner_id: theUser._id})
+
+    theUser.user_ads.push(theAd);
+    await theAd.save();
+    await theUser.save();
+
         res.json('success')
 }
     catch(err){

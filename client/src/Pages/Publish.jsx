@@ -17,7 +17,7 @@ const Publish = () => {
 		formState: { errors },
 	} = useForm();
 	//currentUserAge = new Date().getFullYear() - currentUser.user_date_of_birth.substring(0,4);
-	//console.log(currentUser.email);
+	console.log(currentUser);
 
 	let countryInput = watch().country ? watch().country : "";
 	let stateInput = watch().state ? watch().state : "";
@@ -103,9 +103,9 @@ const Publish = () => {
 	// useEffect(()=> {
 
 	// }, [isHost])
-	let changeHostStatus = (host) => {
-		setIsHost(!host);
-	};
+	// let changeHostStatus = (host) => {
+	// 	setIsHost(!host);
+	// };
 
 	return (
 		<div

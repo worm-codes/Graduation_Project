@@ -11,7 +11,7 @@ import Navbar from './Navbar';
 function valuetext(value) {
   return `${value}`;
 }
-const minDistance = 10;
+const minDistance = 0;
 
 
 const Search = () => {
@@ -125,47 +125,37 @@ const handleChange1 = (event, newValue, activeThumb) => {
     })
 
     let dateToCheck = new Date();
-    let year = dateToCheck.getFullYear();
-    let month = dateToCheck.getMonth();
-    let day = dateToCheck.getDate();
-    let strmonth = (month + 1).toString();
-    let finalMonth = `0${strmonth}`
-    let arrivingDateSelected = `${year}-${finalMonth}-${day}`;
-    // if(month >=9){
-    //   arrivingDateSelected = `${year}-${strmonth}-${day}`;
-    // }
-   
-    let hour = dateToCheck.getHours();
-    let minutes = dateToCheck.getMinutes();
-    let todayDate = new Date().toISOString().slice(0, 10);
-    
-   
-    
-    let minimumTime = `${hour}:${minutes}`
-    // let seconds = dateToCheck.getSeconds();
-    
-//     const monthNames = ["January", "February", "March", "April", "May", "June",
-//   "July", "August", "September", "October", "November", "December"
-// ];
+	let year = dateToCheck.getFullYear();
+	let month = dateToCheck.getMonth();
+	let day = '0'+dateToCheck.getDate().toString();
+	let hour = dateToCheck.getHours();
+	let minutes = dateToCheck.getMinutes();
+	let minimumTime = `${hour}:${minutes}`;
+	let todayDate = new Date().toISOString().slice(0, 10);
+    let isLargerThanNineMonth = '';
+    let isLessThanNineMonth = '';
+    let finalMonthToUse = '';
+    if(month >= 9){
+        isLargerThanNineMonth = (month + 1).toString()
+        finalMonthToUse = isLargerThanNineMonth;
+    }
+    else {
+        isLessThanNineMonth = '0'+(month + 1).toString()
+        finalMonthToUse = isLessThanNineMonth;
+    }
 
-    let dateStringToPass = `${year}-${finalMonth}-${day} ${hour}:${minutes}`;
-    // let maxAgeArr = [];
-    // let minAgeArr = [];
-    // if(maxAge){
-    //   for(let i = 0; i < ageArr.length; i++){
-    //     if(maxAge >= ageArr[i]){
-    //       minAgeArr.push(ageArr[i])
-    //     }
-    //   }
-    // } else {
-    //   minAgeArr = ageArr;
-    // }
+    // console.log("arrival date day",arrivalDate.substring(8,10))
+    // console.log(typeof finalMonthToUse);
+    let boolVarForMinTime = false;
+    // finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10)
+    //boolVarForMinTime = finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10)
+    if(finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10)){
+        boolVarForMinTime = true;
+    }
+     console.log(boolVarForMinTime)
 
-    // for(let i = 0; i < ageArr.length; i++){
-    //   if(minAge <= ageArr[i]){
-    //     maxAgeArr.push(ageArr[i]);
-    //   }
-    // }
+    //let dateStringToPass = `${year}-${finalMonth}-${day} ${hour}:${minutes}`;
+  
 
     let selectedStatesIsoCode = chosenStateArr[1];
     let selectedStatesCountryCode = chosenStateArr[2];
@@ -184,9 +174,9 @@ const handleChange1 = (event, newValue, activeThumb) => {
         /* important */
         style={{
           display: "flex",
-          "flex-direction": "column",
-          "justify-content": "center",
-          "align-items": "center",
+          "flexDirection": "column",
+          "justifyContent": "center",
+          "alignItems": "center",
           height: "100vh",
           width: "100vw",
         }}
@@ -309,7 +299,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
                     <label htmlFor="arriving">Arriving in:</label>
                     <input
                       min={todayDate}
-                      max={`${new Date().getFullYear() + 1}-${finalMonth}-${day}`}
+                      max={`${new Date().getFullYear() + 1}-${finalMonthToUse}-${day}`}
                       {...register("arriving", { required: "You have to select an arrival date" })}
                       name="arriving"
                       id="arriving"
@@ -339,7 +329,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
                   <div className="columnn" id="minTime">
                     <label htmlFor="minTime">From:</label>
                     <input
-                      min={minimumTime}
+                      min={boolVarForMinTime ? minimumTime : ''}
                       {...register("minTime", { required: true })}
                       name="minTime"
                       id="minTime"

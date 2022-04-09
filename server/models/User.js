@@ -10,6 +10,10 @@ var userSchema=new mongoose.Schema({
     quote:{type:String},
     lastSignIn:{type:String},
     createdAt:{type:String},
+    user_ads: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'AdData'
+    }]
     
 	
 },{collection:'userdata'});
