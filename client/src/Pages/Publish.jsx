@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
@@ -9,6 +9,14 @@ import Navbar from "./Navbar";
 
 const Publish = () => {
 	// const [isHost, setIsHost] = useState(false)
+	//const isFoundCountryy = useRef(false);
+	const stateRef = useRef('Type in Stateeeee');
+	const [countryVar, setCountryVar] = useState([])
+	const [cityVar, setCityVar] = useState('')
+	const [stateVar, setStateVar] = useState([])
+	const [textInputState, setTextInputState] = useState('')
+
+
 	const { currentUser } = useContext(AuthContext);
 	const {
 		register,
@@ -17,7 +25,13 @@ const Publish = () => {
 		formState: { errors },
 	} = useForm();
 	//currentUserAge = new Date().getFullYear() - currentUser.user_date_of_birth.substring(0,4);
-	console.log(currentUser);
+	//console.log(currentUser);
+
+	//const allCountries = Country.getAllCountries();
+	//console.log(allCountries.name)
+	// for(let ctr of allCountries){
+	// 	console.log(ctr.name)
+	// }
 
 	let countryInput = watch().country ? watch().country : "";
 	let stateInput = watch().state ? watch().state : "";
@@ -37,26 +51,134 @@ const Publish = () => {
 	let states = [];
 	let isFoundCountry = false;
 	let isFoundState = false;
+	let countryToSetTheStateArr = []
+	let countryToSetStateObj = {}
+	// const settingAsyncCountry = async (ctr) => {
+	// 	await setCountryVar(ctr)
+	// }
+
+	
 
 	Country.getAllCountries().forEach((country) => {
 		if (country.name === countryInput) {
 			isFoundCountry = true;
+			//setCountryVar(countryInput)
+			// settingAsyncCountry(country.name)
+			//countryToSetTheStateArr.push(country.name);
+			countryToSetStateObj = country
 			states = State.getStatesOfCountry(country.isoCode);
 		}
+		
 	});
+
+	//while(allCountries.includes(countryInput) === true)
+
+	
 
 	let stateNameSelected = "";
 	let chosenState = {};
 	let chosenStateArr = [];
 
+	let isCountryVarEmpty = Object.keys(countryVar).length === 0;
+	let isStateVarEmpty = Object.keys(stateVar).length === 0;
+
 	states.forEach((state) => {
-		if (state.name === stateInput) {
-			isFoundState = true;
-			stateNameSelected = state.name;
-			chosenState = state;
-			chosenStateArr = Object.values(chosenState);
+		// en dıştaki if yerine while yazılabilir
+		if(countryVar.name === countryInput && !isCountryVarEmpty){
+			if (state.name === stateInput) {
+				isFoundState = true;
+				//setStateVar(state.name)
+				stateNameSelected = state.name;
+				chosenState = state;
+				chosenStateArr = Object.values(chosenState);
+			}
+		} else {
+			isFoundState = false;
+			stateNameSelected = '';
+			chosenState = {};
+			chosenStateArr.length = 0;
+			states.length = 0;
+			//console.log(stateRef.current.value); 
 		}
 	});
+
+	// if(allCountries.includes(countryInput) === false) {
+
+	// }
+
+	//setCityVar(cityInput)
+
+	const objectsEqual = (o1, o2) => {
+    Object.keys(o1).length === Object.keys(o2).length 
+        && Object.keys(o1).every(p => o1[p] === o2[p])
+	};
+
+	useEffect(() => {	
+		// const countrySelection = async () => {
+		// 	Country.getAllCountries().forEach((country) => {
+		// 		if (country.name === countryInput) {
+		// 			isFoundCountryy.current = true;
+		// 			setCountryVar(countryInput)
+		// 			states = State.getStatesOfCountry(country.isoCode);
+		// 		}
+		// 	});
+		// }
+		// countrySelection();
+		
+		// console.log("countryVar variable",countryVar)
+		// console.log("countryInput variable",countryInput)
+		// console.log("isFoundCountry variable", isFoundCountry)
+		setCountryVar(countryToSetStateObj)
+		setStateVar([])
+		setTextInputState('');
+		// console.log("stateRef.current before:",stateRef.current)
+		// stateRef.current = ""
+
+		
+	}, [countryInput])
+
+	// useEffect(() => {
+	// 	console.log("Inside the second useEffect and printing countryVar", countryVar)
+	// }, [countryVar])
+
+	useEffect(() => {
+		// states.forEach((state) => {
+		// 	if (state.name === stateInput) {
+		// 		isFoundState = true;
+		// 		setStateVar(state.name)
+		// 		stateNameSelected = state.name;
+		// 		chosenState = state;
+		// 		chosenStateArr = Object.values(chosenState);
+		// 	}
+		// });
+		
+		
+		
+			setStateVar(chosenState)
+			setTextInputState(chosenState.name)
+		
+	}, [stateInput])
+
+	console.log(isFoundCountry)
+	console.log("countryVar",countryVar)
+	console.log("countryInput", countryInput);
+	//console.log("countryToSetTheState arr variable:", countryToSetTheStateArr);
+	console.log("stateInput var",stateInput)
+	console.log("stateVar", stateVar);
+	console.log("textInputState var",textInputState);
+	// console.log("stateRef.current after:",stateRef.current)
+	//console.log("stateRef var:", stateRef.current.value);
+
+	//console.log("states arr:", states);
+
+	// useEffect(() => {
+	// 	if(states.length > 0){
+	// 		if(objectsEqual(states, State.getStatesOfCountry(countryVar.isoCode)) === false){
+	// 			setStateVar('');
+	// 			cityInput = '';
+	// 		}
+	// 		}		
+	// }, [countryVar])
 
 	let dateToCheck = new Date();
 	let year = dateToCheck.getFullYear();
@@ -87,13 +209,14 @@ const Publish = () => {
     if(finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10)){
         boolVarForMinTime = true;
     }
-     console.log(boolVarForMinTime)
+     //console.log(boolVarForMinTime)
     // console.log(day)
     // console.log(arrivalDate.substring(8,10))
 
 
 	let selectedStatesIsoCode = chosenStateArr[1];
 	let selectedStatesCountryCode = chosenStateArr[2];
+	// if(states)
 	let filteredStates = states.filter((state) => state.name.startsWith(stateInput));
 	let filteredCountries = Country.getAllCountries().filter((country) => country.name.startsWith(countryInput));
 	let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter((city) =>
@@ -106,6 +229,18 @@ const Publish = () => {
 	// let changeHostStatus = (host) => {
 	// 	setIsHost(!host);
 	// };
+
+	// const displayStateName = () => {
+	// 	if(countryToSetTheStateArr[0] !== countryInput){
+	// 		filteredStates = [''];
+	// 		isFoundCountry = false;
+	// 	}
+	// }
+	// let emptyStringToShow = '';
+	// let isCountryValid = true;
+	// if(countryVar.isoCode !== stateVar.countryCode){
+	// 	isCountryValid = false
+	// }
 
 	return (
 		<div
@@ -172,7 +307,9 @@ const Publish = () => {
 								</div>
 								<div className="columnn">
 									<label htmlFor="state">State</label>
-									<input
+									<input 
+									    value={textInputState}
+										//ref={stateRef}
 										autoComplete="off"
 										placeholder="Type in State"
 										disabled={!isFoundCountry}
@@ -183,14 +320,18 @@ const Publish = () => {
 										list="states"
 									/>
 									<datalist name="states" id="states">
-										<option selected disabled value="">
-											Choose a State
-										</option>
-										{filteredStates.map((state, key) => (
+										{
+											filteredStates.map((state, key) => (
+												<option key={key} value={state.name}>
+													{state.name}
+												</option>
+											))
+										 }
+										{/* {filteredStates.map((state, key) => (
 											<option key={key} value={state.name}>
 												{state.name}
 											</option>
-										))}
+										))} */}
 									</datalist>
 								</div>
 								<div className="columnn">
@@ -234,6 +375,7 @@ const Publish = () => {
 								<div className="columnn">
 									<label htmlFor="arriving">Arriving in:</label>
 									<input
+										
 										min={todayDate}
 										max={`${new Date().getFullYear() + 1}-${finalMonthToUse}-${day}`}
 										{...register("arriving", { required: "You have to select an arrival date" })}

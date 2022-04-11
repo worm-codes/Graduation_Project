@@ -152,7 +152,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
     if(finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10)){
         boolVarForMinTime = true;
     }
-     console.log(boolVarForMinTime)
+     //console.log(boolVarForMinTime)
 
     //let dateStringToPass = `${year}-${finalMonth}-${day} ${hour}:${minutes}`;
   
