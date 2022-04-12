@@ -136,6 +136,7 @@ input:focus {
 @media (max-width: 1200px) {
 	.yusuf-container .roww {
 		display: block;
+		margin-left: 2rem;
 	}
 	.submitButton {
 		justify-content: flex-start;

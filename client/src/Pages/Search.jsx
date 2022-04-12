@@ -363,7 +363,9 @@ const handleChange1 = (event, newValue, activeThumb) => {
                       <option value={false}>No</option> 
                     </select>
                   </div>
-
+                    <div id='searchButtonDiv' className='columnn searchButton'>
+                    <button>Submit</button>
+                    </div>
                 </div>
               </div>
               {/* <div className="roww">
@@ -378,7 +380,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
                   ></textarea>
                 </div>
               </div> */}
-              <button>Submit</button>
+              {/* <button>Submit</button> */}
             </form>
           </div>
         </div>

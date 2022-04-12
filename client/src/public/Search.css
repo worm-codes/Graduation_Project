@@ -28,7 +28,7 @@
 	max-height: 80vh;
 	overflow-y: auto;
 	min-width: 420px;
-	padding: 35px 50px;
+	padding: 25px 25px;
 	/* transform: translate(-50%, -50%); */
 	/* position: absolute; */
 	/* left: 50%; */
@@ -102,6 +102,18 @@ input:focus {
 	border-radius: 3px;
 }
 
+.searchButton {
+	display: flex;
+	justify-content: flex-end;
+	width: 50%;
+	margin-top: 2.2rem;
+	margin-right: 5.5rem;
+}
+
+#searchButtonDiv {
+	width: 15rem;
+}
+
 @media (max-width: 728px) {
 	.containerr {
 		/* grid-template-columns: none;
@@ -120,5 +132,13 @@ input:focus {
 @media (max-width: 1200px) {
 	.yusuf-container .roww {
 		display: block;
+		margin-left: 2rem;
+	}
+	.searchButton {
+		justify-content: flex-start;
+		margin-top: 1rem
+	}
+	#searchButtonDiv {
+		width: 50%;
 	}
 }
