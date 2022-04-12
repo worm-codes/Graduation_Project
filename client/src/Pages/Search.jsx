@@ -63,6 +63,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
   let stateInput = watch().state ? watch().state : '';
   let cityInput = watch().city ? watch().city : '';
   let arrivalDate = watch().arriving ? watch().arriving : '';
+  let leavingDate = watch().leaving ? watch().leaving : '';
   
   let maxPeople = watch().maxPeople ? watch().maxPeople : '';
   // let Gender1 = watch().Gender1 ? watch().Gender1 : '';
@@ -171,6 +172,16 @@ const handleChange1 = (event, newValue, activeThumb) => {
     //   setStateDateData(arrivalDate)
       
     // }, [arrivalDate])
+
+    let isLeavingSelected = false;
+	  let isDatesSelected = false;
+	  if(arrivalDate && leavingDate) {
+		  isDatesSelected = true
+	  }
+	  console.log("isDatesSelected:",isDatesSelected)
+	  if(leavingDate){
+		  isLeavingSelected = true;
+	  }
     
     return (
       <div
@@ -302,7 +313,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
                     <label htmlFor="arriving">Arriving in:</label>
                     <input
                       min={todayDate}
-                      max={`${new Date().getFullYear() + 1}-${finalMonthToUse}-${day}`}
+                      max={isLeavingSelected === false ? `${new Date().getFullYear() + 1}-${finalMonthToUse}-${day}` : leavingDate}
                       {...register("arriving", { required: "You have to select an arrival date" })}
                       name="arriving"
                       id="arriving"
@@ -312,7 +323,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
   
                   <div className="columnn">
                     <label htmlFor="leaving">Leaving in:</label>
-                    <input min={`${arrivalDate}`} {...register("leaving", { required: true })} name="leaving" type="date" />
+                    <input min={`${arrivalDate}`} {...register("leaving", { required: true })} id="leaving" name="leaving" type="date" />
                   </div>
                 </div>
                 <div className="roww">
@@ -332,6 +343,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
                   <div className="columnn" id="minTime">
                     <label htmlFor="minTime">From:</label>
                     <input
+                      disabled={!isDatesSelected}
                       min={boolVarForMinTime ? minimumTime : ''}
                       {...register("minTime", { required: true })}
                       name="minTime"
@@ -342,7 +354,12 @@ const handleChange1 = (event, newValue, activeThumb) => {
   
                   <div className="columnn" id="maxTime">
                     <label htmlFor="maxTime">To:</label>
-                    <input {...register("maxTime", { required: true })} name="maxTime" id="maxTime" type="time" />
+                    <input disabled={!isDatesSelected}
+                     {...register("maxTime", { required: true })}
+                      name="maxTime"
+                       id="maxTime"
+                        type="time"
+                         />
                   </div>
                 </div>
                 <div className='roww'>

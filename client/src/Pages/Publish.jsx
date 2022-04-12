@@ -37,6 +37,7 @@ const Publish = () => {
 	let stateInput = watch().state ? watch().state : "";
 	let cityInput = watch().city ? watch().city : "";
 	let arrivalDate = watch().arriving ? watch().arriving : "";
+	let leavingDate = watch().leaving ? watch().leaving : "";
 	let maxPeople = watch().maxPeople ? watch().maxPeople : "";
 	let host = watch().host ? watch().host : "";
 	let minTime = watch().minTime ? watch().minTime : "";
@@ -246,6 +247,15 @@ const Publish = () => {
 	// if(countryVar.isoCode !== stateVar.countryCode){
 	// 	isCountryValid = false
 	// }
+	let isLeavingSelected = false;
+	let isDatesSelected = false;
+	if(arrivalDate && leavingDate) {
+		isDatesSelected = true
+	}
+	console.log("isDatesSelected:",isDatesSelected)
+	if(leavingDate){
+		isLeavingSelected = true;
+	}
 
 	return (
 		<div
@@ -383,7 +393,7 @@ const Publish = () => {
 									<input
 										
 										min={todayDate}
-										max={`${new Date().getFullYear() + 1}-${finalMonthToUse}-${day}`}
+										max={isLeavingSelected === false ? `${new Date().getFullYear() + 1}-${finalMonthToUse}-${day}` : leavingDate}
 										{...register("arriving", { required: "You have to select an arrival date" })}
 										name="arriving"
 										id="arriving"
@@ -393,7 +403,12 @@ const Publish = () => {
 
 								<div className="columnn">
 									<label htmlFor="leaving">Leaving in:</label>
-									<input min={`${arrivalDate}`} {...register("leaving", { required: true })} name="leaving" type="date" />
+									<input
+									 min={`${arrivalDate}`}
+									 {...register("leaving", { required: true })}
+									 name="leaving"
+									 type="date"
+									/>
 								</div>
 							</div>
 							<div className="roww">
@@ -413,6 +428,7 @@ const Publish = () => {
 								<div className="columnn" id="minTime">
 									<label htmlFor="minTime">From:</label>
 									<input
+										disabled={!isDatesSelected}
 										// min={finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10) ? minimumTime : ''}
                                         min={boolVarForMinTime ? minimumTime : ''}
 										{...register("minTime", { required: true })}
@@ -425,7 +441,7 @@ const Publish = () => {
 
 								<div className="columnn" id="maxTime">
 									<label htmlFor="maxTime">To:</label>
-									<input  {...register("maxTime", { required: true })} name="maxTime" id="maxTime" type="time" />
+									<input disabled={!isDatesSelected}  {...register("maxTime", { required: true })} name="maxTime" id="maxTime" type="time" />
 								</div>
 							</div>
 							<div className="roww">
