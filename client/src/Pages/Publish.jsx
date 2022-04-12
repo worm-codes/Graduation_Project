@@ -159,13 +159,14 @@ const Publish = () => {
 		
 	}, [stateInput])
 
-	console.log(isFoundCountry)
-	console.log("countryVar",countryVar)
-	console.log("countryInput", countryInput);
+	// console.log(isFoundCountry)
+	// console.log("countryVar",countryVar)
+	// console.log("countryInput", countryInput);
+	
+	// console.log("stateInput var",stateInput)
+	// console.log("stateVar", stateVar);
+	// console.log("textInputState var",textInputState);
 	//console.log("countryToSetTheState arr variable:", countryToSetTheStateArr);
-	console.log("stateInput var",stateInput)
-	console.log("stateVar", stateVar);
-	console.log("textInputState var",textInputState);
 	// console.log("stateRef.current after:",stateRef.current)
 	//console.log("stateRef var:", stateRef.current.value);
 
@@ -183,7 +184,7 @@ const Publish = () => {
 	let dateToCheck = new Date();
 	let year = dateToCheck.getFullYear();
 	let month = dateToCheck.getMonth();
-	let day = '0'+dateToCheck.getDate().toString();
+	let day = dateToCheck.getDate().toString();
 	let hour = dateToCheck.getHours();
 	let minutes = dateToCheck.getMinutes();
 	let minimumTime = `${hour}:${minutes}`;
@@ -200,6 +201,10 @@ const Publish = () => {
         finalMonthToUse = isLessThanNineMonth;
     }
 
+	if(parseInt(day) < 10) {
+		day = '0'+day
+	}
+
 	let dateStringToPass = `${year}-${finalMonthToUse}-${day} ${hour}:${minutes}`;
     // console.log("arrival date day",arrivalDate.substring(8,10))
     // console.log(typeof finalMonthToUse);
@@ -209,8 +214,8 @@ const Publish = () => {
     if(finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10)){
         boolVarForMinTime = true;
     }
-     //console.log(boolVarForMinTime)
-    // console.log(day)
+    //  console.log(boolVarForMinTime)
+    //  console.log(day)
     // console.log(arrivalDate.substring(8,10))
 
 
@@ -310,6 +315,7 @@ const Publish = () => {
 									<input 
 									    value={textInputState}
 										//ref={stateRef}
+										onChange={(e) => setTextInputState(e.target.value)}
 										autoComplete="off"
 										placeholder="Type in State"
 										disabled={!isFoundCountry}
@@ -415,14 +421,14 @@ const Publish = () => {
 										type="time"
 									/>
 								</div>
+								
 
 								<div className="columnn" id="maxTime">
 									<label htmlFor="maxTime">To:</label>
-									<input {...register("maxTime", { required: true })} name="maxTime" id="maxTime" type="time" />
+									<input  {...register("maxTime", { required: true })} name="maxTime" id="maxTime" type="time" />
 								</div>
 							</div>
-						</div>
-						<div className="roww">
+							<div className="roww">
 							<div className="columnn">
 								<label htmlFor="description">Describe your guidance plan</label>
 								<textarea
@@ -430,11 +436,16 @@ const Publish = () => {
 									{...register("description", { required: true })}
 									id="description"
 									placeholder="Describe your guidance plan in detail here"
-									rows="5"
+									rows="3"
 								></textarea>
 							</div>
+							<div id="buttonDiv" className="columnn submitButton">
+								<button>Submit</button>
+							</div>
 						</div>
-						<button>Submit</button>
+						</div>
+						
+						
 					</form>
 				</div>
 			</div>

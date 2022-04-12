@@ -127,7 +127,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
     let dateToCheck = new Date();
 	let year = dateToCheck.getFullYear();
 	let month = dateToCheck.getMonth();
-	let day = '0'+dateToCheck.getDate().toString();
+	let day = dateToCheck.getDate().toString();
 	let hour = dateToCheck.getHours();
 	let minutes = dateToCheck.getMinutes();
 	let minimumTime = `${hour}:${minutes}`;
@@ -142,6 +142,9 @@ const handleChange1 = (event, newValue, activeThumb) => {
     else {
         isLessThanNineMonth = '0'+(month + 1).toString()
         finalMonthToUse = isLessThanNineMonth;
+    }
+    if(parseInt(day) < 10) {
+      day = '0'+day
     }
 
     // console.log("arrival date day",arrivalDate.substring(8,10))
