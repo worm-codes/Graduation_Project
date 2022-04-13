@@ -19,6 +19,7 @@ const Publish = () => {
 
 
 	const { currentUser } = useContext(AuthContext);
+	let useAuth=useContext(AuthContext)
 	const {
 		register,
 		handleSubmit,
@@ -239,10 +240,14 @@ const Publish = () => {
 	if(arrivalDate && leavingDate) {
 		isDatesSelected = true
 	}
-	console.log("isDatesSelected:",isDatesSelected)
+	//console.log("isDatesSelected:",isDatesSelected)
 	if(leavingDate){
 		isLeavingSelected = true;
 	}
+
+	//console.log(countryVar.name)
+	console.log(currentUser)
+	console.log(useAuth)
 
 	return (
 		<div
@@ -264,12 +269,12 @@ const Publish = () => {
 					{/* <p id="subheader">Let's make new connections along the way!</p> */}
 					<form
 						onSubmit={handleSubmit(async (data,event) => {
-							event.preventDefault();
+							//event.preventDefault();
 							// let readyData = Object.assign(data,HostData)
 							const response = await axios.post("http://localhost:5000/api/publish", {
 								arriving: data.arriving,
 								city: cityVar,
-								country: countryVar[0].name,
+								country: countryVar.name,
 								// user_gender:currentUser.user_gender,
 								user_email: currentUser.email,
 								// user_date_of_birth:currentUser.user_date_of_birth,
@@ -281,10 +286,14 @@ const Publish = () => {
 								maxPeople: data.maxPeople,
 								minTime: data.minTime,
 								maxTime: data.maxTime,
-								state: stateVar[0].name,
-								userToProcess: currentUser,
+								state: stateVar.name,
+								userToProcess: currentUser
 							});
 							console.log(response);
+							if(response.data === 'success'){
+								//window.location.assign('/myads/')
+								
+							}
 						})}
 					>
 						<div className="yusuf-container">

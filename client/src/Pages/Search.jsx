@@ -267,8 +267,8 @@ const handleChange1 = (event, newValue, activeThumb) => {
                 // let readyData = Object.assign(data,HostData)
                 // const response = await axios.post("http://localhost:5000/api/publish", {
                 //   arriving: data.arriving,
-                //   city: data.city,
-                //   country: data.country,
+                //   city: cityVar,
+                //   country: countryVar.name,
                 //   // user_gender:currentUser.user_gender,
                 //   user_email: currentUser.email,
                 //   // user_date_of_birth:currentUser.user_date_of_birth,
@@ -280,7 +280,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
                 //   maxPeople: data.maxPeople,
                 //   minTime: data.minTime,
                 //   maxTime: data.maxTime,
-                //   state: data.state,
+                //   state: stateVar.name,
                 //   userToProcess: currentUser,
                 // });
                 console.log(data);

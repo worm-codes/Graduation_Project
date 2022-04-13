@@ -14,7 +14,8 @@ var adSchema=new mongoose.Schema({
     maxPeople: {type:String, required:true},
     maxTime: {type: String, required:true},
     minTime: {type:String, required:true},
-    state: {type:String, required: true}
+    state: {type:String, required: true},
+    isActive: {type:Boolean, default:true}
     // quote:{type:String},
     // lastSignIn:{type:String},
     // createdAt:{type:String},

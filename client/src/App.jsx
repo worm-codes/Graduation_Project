@@ -12,6 +12,7 @@ import PreventForms from './ProtectedRoutes/PreventForms';
 import Sign_In from './Pages/Sign_In';
 import Search from './Pages/Search';
 import Publish from './Pages/Publish';
+import MyAds from './Pages/MyAds';
 
 
 
@@ -36,8 +37,9 @@ const App = () => {
        <Route path='/register' element={<PreventForms><Sign_up /></PreventForms>}></Route>
        <Route path='/search' element={<PrivateIndex><Search /></PrivateIndex>}></Route>
        <Route path='/publish' element={<PrivateIndex><Publish /></PrivateIndex>}></Route>
+       <Route path='/myads' element={<PrivateIndex><MyAds /></PrivateIndex>}></Route>
        <Route path='/resetPassword' element={<PrivateIndex><PasswordReset /></PrivateIndex>}></Route>
-       <Route path='*' element={ <Errorpage/>}></Route>
+       {/* <Route path='*' element={ <Errorpage/>}></Route> */}
         
 
       
