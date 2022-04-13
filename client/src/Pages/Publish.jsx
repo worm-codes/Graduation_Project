@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
+import React, { useState, useEffect, useContext} from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
@@ -10,11 +10,12 @@ import Navbar from "./Navbar";
 const Publish = () => {
 	// const [isHost, setIsHost] = useState(false)
 	//const isFoundCountryy = useRef(false);
-	const stateRef = useRef('Type in Stateeeee');
+	//const stateRef = useRef('Type in Stateeeee');
 	const [countryVar, setCountryVar] = useState([])
 	const [cityVar, setCityVar] = useState('')
 	const [stateVar, setStateVar] = useState([])
-	const [textInputState, setTextInputState] = useState('')
+	const [err, setErr] = useState('')
+	//const [textInputState, setTextInputState] = useState('')
 
 
 	const { currentUser } = useContext(AuthContext);
@@ -52,29 +53,16 @@ const Publish = () => {
 	let states = [];
 	let isFoundCountry = false;
 	let isFoundState = false;
-	let countryToSetTheStateArr = []
 	let countryToSetStateObj = {}
-	// const settingAsyncCountry = async (ctr) => {
-	// 	await setCountryVar(ctr)
-	// }
-
-	
 
 	Country.getAllCountries().forEach((country) => {
 		if (country.name === countryInput) {
 			isFoundCountry = true;
-			//setCountryVar(countryInput)
-			// settingAsyncCountry(country.name)
-			//countryToSetTheStateArr.push(country.name);
 			countryToSetStateObj = country
 			states = State.getStatesOfCountry(country.isoCode);
-		}
-		
+		}	
 	});
 
-	//while(allCountries.includes(countryInput) === true)
-
-	
 
 	let stateNameSelected = "";
 	let chosenState = {};
@@ -84,7 +72,6 @@ const Publish = () => {
 	let isStateVarEmpty = Object.keys(stateVar).length === 0;
 
 	states.forEach((state) => {
-		// en dıştaki if yerine while yazılabilir
 		if(countryVar.name === countryInput && !isCountryVarEmpty){
 			if (state.name === stateInput) {
 				isFoundState = true;
@@ -99,13 +86,13 @@ const Publish = () => {
 			chosenState = {};
 			chosenStateArr.length = 0;
 			states.length = 0;
-			//console.log(stateRef.current.value); 
 		}
 	});
 
 	// if(allCountries.includes(countryInput) === false) {
 
 	// }
+	
 
 	//setCityVar(cityInput)
 
@@ -115,50 +102,18 @@ const Publish = () => {
 	};
 
 	useEffect(() => {	
-		// const countrySelection = async () => {
-		// 	Country.getAllCountries().forEach((country) => {
-		// 		if (country.name === countryInput) {
-		// 			isFoundCountryy.current = true;
-		// 			setCountryVar(countryInput)
-		// 			states = State.getStatesOfCountry(country.isoCode);
-		// 		}
-		// 	});
-		// }
-		// countrySelection();
-		
-		// console.log("countryVar variable",countryVar)
-		// console.log("countryInput variable",countryInput)
-		// console.log("isFoundCountry variable", isFoundCountry)
 		setCountryVar(countryToSetStateObj)
 		setStateVar([])
-		setTextInputState('');
-		// console.log("stateRef.current before:",stateRef.current)
-		// stateRef.current = ""
-
-		
 	}, [countryInput])
 
-	// useEffect(() => {
-	// 	console.log("Inside the second useEffect and printing countryVar", countryVar)
-	// }, [countryVar])
 
 	useEffect(() => {
-		// states.forEach((state) => {
-		// 	if (state.name === stateInput) {
-		// 		isFoundState = true;
-		// 		setStateVar(state.name)
-		// 		stateNameSelected = state.name;
-		// 		chosenState = state;
-		// 		chosenStateArr = Object.values(chosenState);
-		// 	}
-		// });
-		
-		
-		
-			setStateVar(chosenState)
-			setTextInputState(chosenState.name)
-		
+		setStateVar(chosenState)	
 	}, [stateInput])
+
+	useEffect(() => {
+		setCityVar(cityInput)
+	}, [cityInput])
 
 	// console.log(isFoundCountry)
 	// console.log("countryVar",countryVar)
@@ -229,24 +184,56 @@ const Publish = () => {
 		city.name.startsWith(cityInput)
 	);
 
-	// useEffect(()=> {
+	
+	if(errors.country){
+		errors.state.message = ''
+		errors.city.message = ''
+		errors.arriving.message = ''
+		errors.leaving.message = ''
+		errors.minTime.message = ''
+		errors.maxTime.message = ''
+		errors.description.message = ''
+	  }
+  
+	  if(errors.state){
+		errors.city.message = ''
+		errors.arriving.message = ''
+		errors.leaving.message = ''
+		errors.minTime.message = ''
+		errors.maxTime.message = ''
+		errors.description.message = ''
+	  }
+  
+	  if(errors.city){
+		errors.arriving.message = ''
+		errors.leaving.message = ''
+		errors.minTime.message = ''
+		errors.maxTime.message = ''
+		errors.description.message = ''
+	  }
+  
+	  if(errors.arriving){
+		errors.leaving.message = ''
+		errors.minTime.message = ''
+		errors.maxTime.message = ''
+		errors.description.message = ''
+	  }
+  
+	  if(errors.leaving){
+		errors.minTime.message = ''
+		errors.maxTime.message = ''
+		errors.description.message = ''
+	  }
+  
+	  if(errors.minTime){
+		errors.maxTime.message = ''
+		errors.description.message = ''
+	  }
 
-	// }, [isHost])
-	// let changeHostStatus = (host) => {
-	// 	setIsHost(!host);
-	// };
+	  if(errors.maxTime){
+		errors.description.message = ''
+	  }
 
-	// const displayStateName = () => {
-	// 	if(countryToSetTheStateArr[0] !== countryInput){
-	// 		filteredStates = [''];
-	// 		isFoundCountry = false;
-	// 	}
-	// }
-	// let emptyStringToShow = '';
-	// let isCountryValid = true;
-	// if(countryVar.isoCode !== stateVar.countryCode){
-	// 	isCountryValid = false
-	// }
 	let isLeavingSelected = false;
 	let isDatesSelected = false;
 	if(arrivalDate && leavingDate) {
@@ -274,14 +261,15 @@ const Publish = () => {
 			<div className="general">
 				<div className="containerr">
 					<h1>PUBLISH AN AD</h1>
-					<p>Let's make new connections along the way!</p>
+					{/* <p id="subheader">Let's make new connections along the way!</p> */}
 					<form
-						onSubmit={handleSubmit(async (data) => {
+						onSubmit={handleSubmit(async (data,event) => {
+							event.preventDefault();
 							// let readyData = Object.assign(data,HostData)
 							const response = await axios.post("http://localhost:5000/api/publish", {
 								arriving: data.arriving,
-								city: data.city,
-								country: data.country,
+								city: cityVar,
+								country: countryVar[0].name,
 								// user_gender:currentUser.user_gender,
 								user_email: currentUser.email,
 								// user_date_of_birth:currentUser.user_date_of_birth,
@@ -293,7 +281,7 @@ const Publish = () => {
 								maxPeople: data.maxPeople,
 								minTime: data.minTime,
 								maxTime: data.maxTime,
-								state: data.state,
+								state: stateVar[0].name,
 								userToProcess: currentUser,
 							});
 							console.log(response);
@@ -306,12 +294,13 @@ const Publish = () => {
 									<input
 										autoComplete="off"
 										placeholder="Type in Country"
-										{...register("country")}
+										{...register("country", {required:'Please select a country'})}
 										list="countries"
 										name="country"
 										id="country"
 										type="text"
 									/>
+									{errors.country &&<p style={{color:'red'}}>{errors.country.message}</p>}
 									<datalist id="countries">
 										{filteredCountries.map((country, key) => (
 											<option key={key} value={country.name}>
@@ -323,18 +312,19 @@ const Publish = () => {
 								<div className="columnn">
 									<label htmlFor="state">State</label>
 									<input 
-									    value={textInputState}
+									    //value={textInputState}
 										//ref={stateRef}
-										onChange={(e) => setTextInputState(e.target.value)}
+										//onChange={(e) => setTextInputState(e.target.value)}
 										autoComplete="off"
 										placeholder="Type in State"
 										disabled={!isFoundCountry}
-										{...register("state", { required: true })}
+										{...register("state", {required:'Please select a state'})}
 										type="text"
 										name="state"
 										id="state"
 										list="states"
 									/>
+									{(errors.state && !errors.country && isFoundCountry) ? <p style={{color:'red'}}>{errors.state.message}</p> : ''}
 									<datalist name="states" id="states">
 										{
 											filteredStates.map((state, key) => (
@@ -356,12 +346,13 @@ const Publish = () => {
 										autoComplete="off"
 										placeholder="Type in City"
 										disabled={!isFoundState}
-										{...register("city", { required: true })}
+										{...register("city", {required:'Please select a city'})}
 										type="text"
 										name="city"
 										id="city"
 										list="cities"
 									/>
+									{(errors.city && !errors.country && !errors.state && isFoundCountry && isFoundState) ? <p style={{color:'red'}}>{errors.city.message}</p> : ''}
 									<datalist name="cities" id="cities">
 										<option selected disabled value="">
 											Choose a City
@@ -399,16 +390,18 @@ const Publish = () => {
 										id="arriving"
 										type="date"
 									/>
+									{(errors.arriving && !errors.country && !errors.state && !errors.city && isFoundCountry && isFoundState && cityInput) ? <p style={{color:'red'}}>{errors.arriving.message}</p> : ''}
 								</div>
 
 								<div className="columnn">
 									<label htmlFor="leaving">Leaving in:</label>
 									<input
 									 min={`${arrivalDate}`}
-									 {...register("leaving", { required: true })}
+									 {...register("leaving", { required: "You have to select a leaving date" })}
 									 name="leaving"
 									 type="date"
 									/>
+									{(errors.leaving && !errors.country && !errors.state && !errors.city && !errors.arriving && isFoundCountry && isFoundState && cityInput && arrivalDate) ? <p style={{color:'red'}}>{errors.leaving.message}</p> : ''}
 								</div>
 							</div>
 							<div className="roww">
@@ -431,17 +424,24 @@ const Publish = () => {
 										disabled={!isDatesSelected}
 										// min={finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10) ? minimumTime : ''}
                                         min={boolVarForMinTime ? minimumTime : ''}
-										{...register("minTime", { required: true })}
+										{...register("minTime", { required: 'Please choose your lower time range' })}
 										name="minTime"
 										id="minTime"
 										type="time"
 									/>
+									{(errors.minTime && !errors.country && !errors.state && !errors.city && !errors.arriving && !errors.leaving && isFoundCountry && isFoundState && cityInput && arrivalDate && leavingDate) ? <p style={{color:'red'}}>{errors.minTime.message}</p> : ''}
 								</div>
 								
 
 								<div className="columnn" id="maxTime">
 									<label htmlFor="maxTime">To:</label>
-									<input disabled={!isDatesSelected}  {...register("maxTime", { required: true })} name="maxTime" id="maxTime" type="time" />
+									<input disabled={!isDatesSelected}
+									  {...register("maxTime", { required: 'Please choose your upper time range' })}
+									   name="maxTime"
+									    id="maxTime"
+										 type="time"
+										  />
+									{(errors.maxTime && !errors.country && !errors.state && !errors.city && !errors.arriving && !errors.leaving && !errors.minTime && isFoundCountry && isFoundState && cityInput && arrivalDate && leavingDate && minTime) ? <p style={{color:'red'}}>{errors.maxTime.message}</p> : ''}
 								</div>
 							</div>
 							<div className="roww">
@@ -449,11 +449,12 @@ const Publish = () => {
 								<label htmlFor="description">Describe your guidance plan</label>
 								<textarea
 									name="description"
-									{...register("description", { required: true })}
+									{...register("description", { required: 'Please describe your plan of guidance' })}
 									id="description"
 									placeholder="Describe your guidance plan in detail here"
 									rows="3"
 								></textarea>
+								{(errors.description && !errors.country && !errors.state && !errors.city && !errors.arriving && !errors.leaving && !errors.minTime && !errors.maxTime && isFoundCountry && isFoundState && cityInput && arrivalDate && leavingDate && minTime && maxTime) ? <p style={{color:'red'}}>{errors.description.message}</p> : ''}
 							</div>
 							<div id="buttonDiv" className="columnn submitButton">
 								<button>Submit</button>

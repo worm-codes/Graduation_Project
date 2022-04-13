@@ -1,8 +1,10 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import { useForm } from 'react-hook-form'
+import { AuthContext } from "../context/AuthContext";
 import { Link } from 'react-router-dom'
 import '../public/Search.css'
 import { Country, State, City }  from 'country-state-city';
+import axios from "axios";
 import  Slider  from '@mui/material/Slider';
 import Box from '@mui/material/Box';
 import Navbar from './Navbar';
@@ -19,7 +21,11 @@ const Search = () => {
 
 const [value1, setValue1] = useState([18,80])
 const [genderr, setGenderr] = useState('');
-const [availableHost, setAvailableHost] = useState(false)
+//const [availableHost, setAvailableHost] = useState(false)
+const [countryVar, setCountryVar] = useState([])
+const [cityVar, setCityVar] = useState('')
+const [stateVar, setStateVar] = useState([])
+const [err, setErr] = useState('')
 
 
 
@@ -64,7 +70,9 @@ const handleChange1 = (event, newValue, activeThumb) => {
   let cityInput = watch().city ? watch().city : '';
   let arrivalDate = watch().arriving ? watch().arriving : '';
   let leavingDate = watch().leaving ? watch().leaving : '';
-  
+  let host = watch().host ? watch().host : "";
+  let minTime = watch().minTime ? watch().minTime : '';
+  let maxTime = watch().maxTime ? watch().maxTime : '';
   let maxPeople = watch().maxPeople ? watch().maxPeople : '';
   // let Gender1 = watch().Gender1 ? watch().Gender1 : '';
   // let Gender2 = watch().Gender2 ? watch().Gender2 : '';
@@ -74,14 +82,12 @@ const handleChange1 = (event, newValue, activeThumb) => {
   let StateData = {
     minAge: value1[0],
     maxAge: value1[1],
-    gender: genderr,
-    host: availableHost
+    gender: genderr
   }
   
   
   // let maxAge = watch().maxAge ? watch().maxAge : '';
-  let minTime = watch().minTime ? watch().minTime : '';
-  let maxTime = watch().maxTime ? watch().maxTime : '';
+ 
   // console.log(watch().state)
   // console.log(watch().arriving)
   // console.log(watch().minAge)
@@ -90,40 +96,55 @@ const handleChange1 = (event, newValue, activeThumb) => {
   let states = [];
   let isFoundCountry = false;
   let isFoundState = false;
-  //let isFoundState = false;
+  let countryToSetStateObj = {}
+  
   Country.getAllCountries().forEach((country) => {
-      
-    if(country.name === countryInput){
-      isFoundCountry = true;
-      //console.log("Finally a valid country input by user")
-      states = State.getStatesOfCountry(country.isoCode);
-
-      //  console.log(states);
-    }  
-  })
+		if (country.name === countryInput) {
+			isFoundCountry = true;
+			countryToSetStateObj = country
+			states = State.getStatesOfCountry(country.isoCode);
+		}	
+	});
 
   let stateNameSelected = "";
   let chosenState = {};
   let chosenStateArr = [];
   
+  let isCountryVarEmpty = Object.keys(countryVar).length === 0;
+	let isStateVarEmpty = Object.keys(stateVar).length === 0;
   
 
-   states.forEach((state) => {
-      if(state.name === stateInput){
-        isFoundState = true;
-        stateNameSelected = state.name;
-        chosenState = state;
-        chosenStateArr = Object.values(chosenState);
-        // console.log("A valid state is selected")
-        // console.log("Chosen state as object",chosenState)
-        // console.log("Chosen state as array", chosenStateArr)
-        // console.log("stateSelected variable", stateNameSelected, stateNameSelected);
-        // console.log(typeof chosenState)
-        // console.log(City.getCitiesOfState(chosenState.countryCode, chosenState.isoCode))
-        // console.log(City.getAllCities());
+  states.forEach((state) => {
+		if(countryVar.name === countryInput && !isCountryVarEmpty){
+			if (state.name === stateInput) {
+				isFoundState = true;
+				//setStateVar(state.name)
+				stateNameSelected = state.name;
+				chosenState = state;
+				chosenStateArr = Object.values(chosenState);
+			}
+		} else {
+			isFoundState = false;
+			stateNameSelected = '';
+			chosenState = {};
+			chosenStateArr.length = 0;
+			states.length = 0;
+		}
+	});
 
-      }
-    })
+    useEffect(() => {	
+      setCountryVar(countryToSetStateObj)
+      setStateVar([])
+    }, [countryInput])
+  
+  
+    useEffect(() => {
+      setStateVar(chosenState)	
+    }, [stateInput])
+  
+    useEffect(() => {
+      setCityVar(cityInput)
+    }, [cityInput])
 
     let dateToCheck = new Date();
 	let year = dateToCheck.getFullYear();
@@ -159,7 +180,46 @@ const handleChange1 = (event, newValue, activeThumb) => {
      //console.log(boolVarForMinTime)
 
     //let dateStringToPass = `${year}-${finalMonth}-${day} ${hour}:${minutes}`;
-  
+    //console.log(errors.arriving)
+
+    if(errors.country){
+      errors.state.message = ''
+      errors.city.message = ''
+      errors.arriving.message = ''
+      errors.leaving.message = ''
+      errors.minTime.message = ''
+      errors.maxTime.message = ''
+    }
+
+    if(errors.state){
+      errors.city.message = ''
+      errors.arriving.message = ''
+      errors.leaving.message = ''
+      errors.minTime.message = ''
+      errors.maxTime.message = ''
+    }
+
+    if(errors.city){
+      errors.arriving.message = ''
+      errors.leaving.message = ''
+      errors.minTime.message = ''
+      errors.maxTime.message = ''
+    }
+
+    if(errors.arriving){
+      errors.leaving.message = ''
+      errors.minTime.message = ''
+      errors.maxTime.message = ''
+    }
+
+    if(errors.leaving){
+      errors.minTime.message = ''
+      errors.maxTime.message = ''
+    }
+
+    if(errors.minTime){
+      errors.maxTime.message = ''
+    }
 
     let selectedStatesIsoCode = chosenStateArr[1];
     let selectedStatesCountryCode = chosenStateArr[2];
@@ -178,7 +238,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
 	  if(arrivalDate && leavingDate) {
 		  isDatesSelected = true
 	  }
-	  console.log("isDatesSelected:",isDatesSelected)
+	  //console.log("isDatesSelected:",isDatesSelected)
 	  if(leavingDate){
 		  isLeavingSelected = true;
 	  }
@@ -202,7 +262,8 @@ const handleChange1 = (event, newValue, activeThumb) => {
             <h1>SEARCH FOR AN AD</h1>
             <p>Let's make new connections along the way!</p>
             <form
-              onSubmit={handleSubmit(async (data) => {
+              onSubmit={handleSubmit(async (data,event) => {
+                event.preventDefault();
                 // let readyData = Object.assign(data,HostData)
                 // const response = await axios.post("http://localhost:5000/api/publish", {
                 //   arriving: data.arriving,
@@ -232,12 +293,13 @@ const handleChange1 = (event, newValue, activeThumb) => {
                     <input
                       autoComplete="off"
                       placeholder="Type in Country"
-                      {...register("country")}
+                      {...register("country", {required:'Please select a country'})}
                       list="countries"
                       name="country"
                       id="country"
                       type="text"
                     />
+                    {errors.country &&<p style={{color:'red'}}>{errors.country.message}</p>}
                     <datalist id="countries">
                       {filteredCountries.map((country, key) => (
                         <option key={key} value={country.name}>
@@ -252,12 +314,13 @@ const handleChange1 = (event, newValue, activeThumb) => {
                       autoComplete="off"
                       placeholder="Type in State"
                       disabled={!isFoundCountry}
-                      {...register("state", { required: true })}
+                      {...register("state", {required:'Please select a state'})}
                       type="text"
                       name="state"
                       id="state"
                       list="states"
                     />
+                    {(errors.state && !errors.country && isFoundCountry) ? <p style={{color:'red'}}>{errors.state.message}</p> : ''}
                     <datalist name="states" id="states">
                       <option selected disabled value="">
                         Choose a State
@@ -275,12 +338,13 @@ const handleChange1 = (event, newValue, activeThumb) => {
                       autoComplete="off"
                       placeholder="Type in City"
                       disabled={!isFoundState}
-                      {...register("city", { required: true })}
+                      {...register("city", {required:'Please select a city'})}
                       type="text"
                       name="city"
                       id="city"
                       list="cities"
                     />
+                    {(errors.city && !errors.country && !errors.state && isFoundCountry && isFoundState) ? <p style={{color:'red'}}>{errors.city.message}</p> : ''}
                     <datalist name="cities" id="cities">
                       <option selected disabled value="">
                         Choose a City
@@ -319,11 +383,13 @@ const handleChange1 = (event, newValue, activeThumb) => {
                       id="arriving"
                       type="date"
                     />
+                    {(errors.arriving && !errors.country && !errors.state && !errors.city && isFoundCountry && isFoundState && cityInput) ? <p style={{color:'red'}}>{errors.arriving.message}</p> : ''}
                   </div>
   
                   <div className="columnn">
                     <label htmlFor="leaving">Leaving in:</label>
-                    <input min={`${arrivalDate}`} {...register("leaving", { required: true })} id="leaving" name="leaving" type="date" />
+                    <input min={`${arrivalDate}`} {...register("leaving", { required: "You have to select a leaving date" })} id="leaving" name="leaving" type="date" />
+                    {(errors.leaving && !errors.country && !errors.state && !errors.city && !errors.arriving && isFoundCountry && isFoundState && cityInput && arrivalDate) ? <p style={{color:'red'}}>{errors.leaving.message}</p> : ''}
                   </div>
                 </div>
                 <div className="roww">
@@ -345,21 +411,23 @@ const handleChange1 = (event, newValue, activeThumb) => {
                     <input
                       disabled={!isDatesSelected}
                       min={boolVarForMinTime ? minimumTime : ''}
-                      {...register("minTime", { required: true })}
+                      {...register("minTime", { required: 'Please choose your lower time range' })}
                       name="minTime"
                       id="minTime"
                       type="time"
                     />
+                    {(errors.minTime && !errors.country && !errors.state && !errors.city && !errors.arriving && !errors.leaving && isFoundCountry && isFoundState && cityInput && arrivalDate && leavingDate) ? <p style={{color:'red'}}>{errors.minTime.message}</p> : ''}
                   </div>
   
                   <div className="columnn" id="maxTime">
                     <label htmlFor="maxTime">To:</label>
                     <input disabled={!isDatesSelected}
-                     {...register("maxTime", { required: true })}
+                     {...register("maxTime", { required: 'Please choose your upper time range' })}
                       name="maxTime"
                        id="maxTime"
                         type="time"
                          />
+                    {(errors.maxTime && !errors.country && !errors.state && !errors.city && !errors.arriving && !errors.leaving && !errors.minTime && isFoundCountry && isFoundState && cityInput && arrivalDate && leavingDate && minTime) ? <p style={{color:'red'}}>{errors.maxTime.message}</p> : ''}
                   </div>
                 </div>
                 <div className='roww'>
