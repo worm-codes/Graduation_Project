@@ -9,10 +9,15 @@ const MyAds = () => {
 
     const { currentUser } = useContext(AuthContext);
     let useAuth=useContext(AuthContext)
-    const [adsArrState, setAdsArrState] = useState([])
+    //const [adsArrState, setAdsArrState] = useState([])
+    const [adArrState, setAdArrState] = useState([])
     const { handleSubmit } = useForm();
     // const { id } = useParams();
     let generalData = []
+    //setAdArrState([])
+    useEffect(()=> {
+      setAdArrState([])
+    }, [])
     useEffect(() => {
         const getAds = async () => {
             const response = await axios.get(`http://localhost:5000/api/myads`,{
@@ -20,12 +25,13 @@ const MyAds = () => {
               })
               
               
-              setAdsArrState(response.data[0])
+              setAdArrState(response.data[0])
         }
         
         getAds();
     }, [])
-    //console.log(adsArrState)
+    console.log(adArrState)
+    //setAdArrState([])
 
   return (
     <>
@@ -44,7 +50,8 @@ const MyAds = () => {
     </tr>
   </thead>
   <tbody>
-      {adsArrState.map((ad,key) => (
+      {adArrState.map((ad,key) => (
+        
           <tr key={key}>
               <th scope='row'>{key+1}</th>
               <td>{ad.owner_email}</td>
@@ -53,7 +60,7 @@ const MyAds = () => {
               <td>{ad.city}</td>
               <td>
                   <form onSubmit={handleSubmit(async (data) => {
-                      const changedAd = await axios.put(`http://localhost:5000/api/myads`, {ad})
+                      const changedAd = await axios.put(`http://localhost:5000/api/myads`,  {adID: ad._id})
                       console.log(changedAd)
                       
                   })}>

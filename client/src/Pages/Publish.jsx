@@ -291,7 +291,7 @@ const Publish = () => {
 							});
 							console.log(response);
 							if(response.data === 'success'){
-								//window.location.assign('/myads/')
+								window.location.assign('/myads')
 								
 							}
 						})}

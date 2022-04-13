@@ -112,27 +112,43 @@ app.post('/api/publish', async(req,res) =>{
 
 app.get('/api/myads', MiddleWare.isAuth, async(req,res) => {
     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
-    console.log("user variable",user)
-    let usersAdsArr = []
+    //console.log("user variable",user)
+    // let usersAdsArr = []
+    let userAdArr = []
     for(let ad of user.user_ads){
          let temp = await Ad.findById(ad._id)
-        usersAdsArr.push(temp)
+        userAdArr.push(temp)
     }
     //console.log("usersAdsArr var",usersAdsArr)
+    console.log(userAdArr)
+    let arrToUse = userAdArr.splice(16, userAdArr.length - 16)
+//     let lastValid = userAdArr.slice(-1)
+
+//     for(let adv of user.user_ads){
+//         let temp = await Ad.findById(adv._id)
+//         if(temp !== null) {
+//             lastValid.push(temp)
+//             console.log("temp var:",temp)
+            
+//         }    
+//    }
+//     console.log("lasValid:", lastValid)
  
-    res.send([usersAdsArr])
+    res.send([arrToUse])
 })
 
-app.put('/api/myads', MiddleWare.isAuth, async(req,res) => {
+app.put('/api/myads', async(req,res) => {
     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
     console.log("user variable",user)
+    // const { id } = req.params;
     // let usersAdsArr = []
     // for(let ad of user.user_ads){
     //      let temp = await Ad.findById(ad._id)
     //     usersAdsArr.push(temp)
     // }
-    const { ad } = req.body;
-    console.log("the clicked ad:", ad)
+    const { adID } = req.body;
+    let theAdToChange = await Ad.findByIdAndUpdate({_id: adID}, { isActive : false});
+    console.log("the clicked ads id:", adID)
     //console.log("usersAdsArr var",usersAdsArr)
  
     // res.send([usersAdsArr])
