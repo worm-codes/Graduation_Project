@@ -39,11 +39,11 @@ const Navbar = () => {
 					{user ? (
 						<>
 							<ul className="navbar-nav ml-auto mr-2 text-right">
-							{/* <li className="nav-item ">
+							<li className="nav-item ">
 									<Link className="nav-link" to="/myads">
 										My Ads
 									</Link>
-								</li> */}
+								</li>
 								<li className="nav-item ">
 									<Link className="nav-link" to="/search">
 										Search for an Ad

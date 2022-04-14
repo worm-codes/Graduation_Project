@@ -117,11 +117,13 @@ app.get('/api/myads', MiddleWare.isAuth, async(req,res) => {
     let userAdArr = []
     for(let ad of user.user_ads){
          let temp = await Ad.findById(ad._id)
-        userAdArr.push(temp)
+         if(temp !== null){
+            userAdArr.push(temp)
+         }      
     }
     //console.log("usersAdsArr var",usersAdsArr)
-    console.log(userAdArr)
-    let arrToUse = userAdArr.splice(16, userAdArr.length - 16)
+    // console.log(userAdArr)
+    // let arrToUse = userAdArr.splice(16, userAdArr.length - 16)
 //     let lastValid = userAdArr.slice(-1)
 
 //     for(let adv of user.user_ads){
@@ -134,7 +136,7 @@ app.get('/api/myads', MiddleWare.isAuth, async(req,res) => {
 //    }
 //     console.log("lasValid:", lastValid)
  
-    res.send([arrToUse])
+    res.send([userAdArr])
 })
 
 app.put('/api/myads', async(req,res) => {
