@@ -22,23 +22,13 @@ const Dashboard = () => {
   }
  
   
-  const getCurrentUserInfo=async()=>{
+  
+   const getCurrentUserInfo=async()=>{
     
-    const response=await axios.post('http://localhost:5000/api/getUser',{
-                         
-        user_email:useAuth.currentUser.email,
-        user_last_sign_in:useAuth.currentUser.metadata.lastSignInTime,
-        createdAt:useAuth.currentUser.metadata.creationTime,
-      },
-      {
-        headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
-      }
-      )
-      console.log(response.data)
-      if(response.data.message!='UnAuth'){
-        setUserFromServer(response.data)
-      }
-                       
+    const response=await useAuth.getCurrentUserInfo()
+    setUserFromServer(response)
+   
+            
   }
  
   
@@ -48,18 +38,35 @@ const Dashboard = () => {
         
         if(useAuth.currentUser)
           getCurrentUserInfo()
-        
+        return setUserFromServer({})
       },[useAuth.currentUser])
       
       useEffect(()=>{
         if(userFromServer)
            getAllUsers()
+           return setUsers([])
       },[])
+
+      const makeConversationAndRedirect=async(id)=>{
+         const response=await axios.post(`http://localhost:5000/api/conversation/`,{
+                          senderId:userFromServer._id,
+                          receiverId:id
+         },{
+                            headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
+                          }
+                          
+                          )
+                          console.log(response.data)
+                          if(response.data.message!='UnAuth'){
+                           window.location.href='/messenger'
+                          }
+
+      }
       
   
   const showUsers=users.map((userDB)=>{
       return (<div key={userDB.user_ID}>
-      <Link to={`/${userDB._id}`}> {userDB.user_ID}</Link>
+      <a href='#' onClick={()=>makeConversationAndRedirect(userDB._id)}> {userDB.user_ID}</a>
       </div>)
     })
   

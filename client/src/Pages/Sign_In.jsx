@@ -3,6 +3,7 @@ import '../public/sign_in.css'
 import {useForm} from 'react-hook-form'
 import {Link} from 'react-router-dom'
 import {AuthContext} from '../context/AuthContext'
+import axios from 'axios'
 
 
 
@@ -20,16 +21,16 @@ let image=['https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-1
 '“The best things in life are the people we love, the places we’ve been, and the memories we’ve made along the way.”',
 '“True friends never apart maybe in distance never in heart.”',]
 
-const [err,setErr]= useState(false)
-let useAuth=useContext(AuthContext)
-const [loading, setLoading] = useState(false)
-
+const [err,setErr]= useState(false);
+let useAuth=useContext(AuthContext);
+const [loading, setLoading] = useState(false);
 const loginFirebase=async(email,password)=>{
 
 
   try {
       setErr("")
       setLoading(true)
+      
       await useAuth.login(email, password)
     
     } catch(err){
@@ -48,6 +49,8 @@ const loginFirebase=async(email,password)=>{
 useEffect(()=>{ /*state e atama yapmak icin useffect kullanmayi unutmaa !!!!! */
 setPickedImage(Math.floor(Math.random() * image.length))
 setPickedQuote(Math.floor(Math.random() * quotes.length))
+
+
 },[])
 
 

@@ -2,11 +2,13 @@ import React, { useContext } from 'react'
 import { Link,useLocation } from 'react-router-dom'
 import {AuthContext} from '../context/AuthContext'
 import '../public/Nav.css'
+import axios from 'axios'
 
 
 const Navbar = () => {
   let useAuth=useContext(AuthContext)
   let user=useAuth.currentUser
+  
   
  
 
@@ -14,7 +16,27 @@ const Navbar = () => {
     
 
     try {
-      await useAuth.logout()
+      
+      const logoutServer=async()=>{
+      const response=await axios.post('http://localhost:5000/api/logout',{
+                         
+        user_email:useAuth.currentUser?.email,
+        isOnline:new Date().toLocaleDateString(navigator.language, {hour: '2-digit', minute:'2-digit'})
+       
+      },
+      {
+        headers:{Authorization: 'Bearer ' + await useAuth.currentUser?.getIdToken(true)}
+      }
+      )
+      
+      
+       
+      
+    }
+     logoutServer()
+     await useAuth.logout()
+    
+
       
     } catch(err) {
       console.log(err,'error')

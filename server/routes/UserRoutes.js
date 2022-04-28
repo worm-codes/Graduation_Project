@@ -7,10 +7,16 @@ MiddleWare=require('../middleware/CheckAuth');
 
 
 router.post('/getUser',MiddleWare.isAuth,async (req,res)=>{   
+    console.log('--------------------------');
+     console.log('girdik ana user');
+    console.log('--------------------------');
+    
      let foundedUser=null
      
      if(MiddleWare.decodeValue &&req.body.user_email){
+      
        foundedUser=await User.findOne({user_email:MiddleWare.decodeValue.email})
+      
      
          if(foundedUser){
         let timeSignIn=(req.body.user_last_sign_in?.split(' GMT')[0])
@@ -21,14 +27,33 @@ router.post('/getUser',MiddleWare.isAuth,async (req,res)=>{
         }
          
         await User.findByIdAndUpdate({_id:foundedUser._id},{lastSignIn:timeSignIn})
-      
-        res.json(foundedUser)
+        console.log(foundedUser);
+        return res.json(foundedUser)
             }
             else{
                 res.json('couldnt find')
             }
         }
 
+
+ })
+ router.get('/getUser/:id',MiddleWare.isAuth,async (req,res)=>{  
+     console.log('--------------------------');
+     console.log('girdik id li user al');
+    console.log('--------------------------');
+     let foundedUser=null
+     
+     if(MiddleWare.decodeValue && req.params.id){
+       
+       foundedUser=await User.findOne({_id:req.params.id})
+    
+         if(foundedUser){
+           res.json(foundedUser)
+         }
+            }
+            else{
+                res.json('couldnt find')
+            }
 
  })
 
@@ -58,56 +83,92 @@ router.post('/register',async (req,res)=>{
 })
 
 router.get('/getAllUsers',MiddleWare.isAuth,async(req,res)=>{
+    console.log('--------------------------');
+     console.log('girdik alluser');
+    console.log('--------------------------');
     await User.find({},(err,Users)=>{
         if(err){
             throw err
             
         }
         else{
+            
             res.json(Users)
+            
         }
     }).clone().catch(function(err){ console.log(err)})
 
 })
+router.post('/login',async(req,res)=>{
+    console.log('--------------------------');
+     console.log('girdik loginnnn');
+    console.log('--------------------------');
+    if(req.body.user_email){
+        await User.findOneAndUpdate({user_email:req.body.user_email},{isOnline:'Online'},(err,okey)=>{
+        if(err){
+            console.log(err);
+        }
+        else{
+            
+            res.json('done')
+            
+        }
+    }).clone().catch(function(err){ console.log(err)})
+    }
+    else if (req.body.userId){
+        await User.findByIdAndUpdate({_id:req.body.userId},{isOnline:'Online'},(err,okey)=>{
+        if(err){
+            console.log(err);
+        }
+        else{
+            console.log(okey);
+            res.json('done')
+            
+        }
+    }).clone().catch(function(err){ console.log(err)})
 
-router.get('/getContact/:id',MiddleWare.isAuth,async(req,res)=>{
-     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
-      console.log(user.contacts[1]._id.toString()) //sadece id yi elde ediyoruz
-      let user2=await User.findOne({_id:user.contacts[1]._id.toString()})
-      console.log(user2)
-      
-      if(MiddleWare.decodeValue){
-          await User.findOne({user_email:MiddleWare.decodeValue.email},async (err,currentUser)=>{
-           if(err){
-               console.log(err);
-           }
-           if (req.params.id && !currentUser.contacts.includes(req.params.id)){
-                await User.findOne({_id:req.params.id},(err,userToConnect)=>{
-                if(err){
-                console.log(err)
-                 }
-                if(!userToConnect._id.equals(currentUser._id)){
-                res.json(userToConnect)
-                currentUser.contacts.push(userToConnect)
-                currentUser.save()
-
-                userToConnect.contacts.push(currentUser)
-                userToConnect.save()
-
-                }
-
-
-                }).clone().catch(function(err){ console.log(err)})
-                
-              }
-
-              
-           }).clone().catch(function(err){ console.log(err)})
-
-      }
-      
-        
+    }
+  
+    
+    
 
 })
+router.post('/logout',async(req,res)=>{
+    console.log('--------------------------');
+     console.log('girdik logout');
+    console.log('--------------------------');
+    if(req.body.user_email){
+    await User.findOneAndUpdate({user_email:req.body.user_email},{isOnline:req.body.isOnline},(err,okey)=>{
+        if(err){
+            console.log(err);
+        }
+        else{
+           
+            res.json('done')
+            
+        }
+    }).clone().catch(function(err){ console.log(err)})
+}
+else if(req.body.userId){
+    
+     await User.findByIdAndUpdate({_id:req.body.userId},{isOnline:req.body.isOnline},(err,okey)=>{
+        if(err){
+            console.log(err);
+        }
+        else{
+            console.log(okey);
+           
+                console.log('donneeeeeeee');
+            res.json('done')
+            
+        }
+    }).clone().catch(function(err){ console.log(err)})
+
+}
+    
+
+})
+
+
 
 module.exports=router;

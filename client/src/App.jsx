@@ -17,6 +17,7 @@ import Messenger from './Pages/Messenger';
 
 
 
+
 const App = () => {
  
   
@@ -34,7 +35,7 @@ const App = () => {
        <Route path='/' element={<PreventForms><Sign_In/></PreventForms>}></Route>
        <Route path='/register' element={<PreventForms><Sign_up /></PreventForms>}></Route>
        <Route path='/search' element={<PrivateIndex><Dashboard /></PrivateIndex>}></Route>
-       <Route path='/:userID' element={<PrivateIndex><Messenger /></PrivateIndex>}></Route>
+       <Route path='/messenger' element={<PrivateIndex><Messenger /></PrivateIndex>}></Route>
        <Route path='/resetPassword' element={<PrivateIndex><PasswordReset /></PrivateIndex>}></Route>
        <Route path='*' element={ <Errorpage/>}></Route>
         
