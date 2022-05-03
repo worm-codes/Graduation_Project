@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react'
+import React, {useState, useEffect, useContext, useRef} from 'react'
 import { useForm } from 'react-hook-form'
 import { AuthContext } from "../context/AuthContext";
 import { Link } from 'react-router-dom'
@@ -18,14 +18,18 @@ const minDistance = 0;
 
 const Search = () => {
 
+  const { currentUser } = useContext(AuthContext);
+	let useAuth=useContext(AuthContext)
 
 const [value1, setValue1] = useState([18,80])
-const [genderr, setGenderr] = useState('');
+// const [genderr, setGenderr] = useState('');
 //const [availableHost, setAvailableHost] = useState(false)
 const [countryVar, setCountryVar] = useState([])
 const [cityVar, setCityVar] = useState('')
 const [stateVar, setStateVar] = useState([])
 const [err, setErr] = useState('')
+
+const inputEl = useRef(null);
 
 
 
@@ -79,11 +83,10 @@ const handleChange1 = (event, newValue, activeThumb) => {
   // let Host = watch().Host ? watch().Host : '';
   //let ageRange = [value1[0], value1[1]];
   //let ageInput = watch().ageRange ? watch().ageRange : '';
-  let StateData = {
-    minAge: value1[0],
-    maxAge: value1[1],
-    gender: genderr
-  }
+  // let ageData = {
+  //   minAge: value1[0],
+  //   maxAge: value1[1],
+  // }
   
   
   // let maxAge = watch().maxAge ? watch().maxAge : '';
@@ -123,28 +126,34 @@ const handleChange1 = (event, newValue, activeThumb) => {
 				chosenState = state;
 				chosenStateArr = Object.values(chosenState);
 			}
-		} else {
-			isFoundState = false;
-			stateNameSelected = '';
-			chosenState = {};
-			chosenStateArr.length = 0;
-			states.length = 0;
-		}
-	});
+		// } else {
+		// 	isFoundState = false;
+		// 	stateNameSelected = '';
+		// 	chosenState = {};
+		// 	chosenStateArr.length = 0;
+		// 	states.length = 0;
+		// }
+  }});
 
     useEffect(() => {	
       setCountryVar(countryToSetStateObj)
       setStateVar([])
+      // console.log("stateVar after country entered or changed",stateVar)
+      //inputEl.current.value = ""
     }, [countryInput])
-  
+    // console.log("stateVar outside useeffect countryınput",stateVar);
   
     useEffect(() => {
-      setStateVar(chosenState)	
+      setStateVar(chosenState)
+      // console.log("Stateınput:", stateInput);
+      // inputEl.current.value = stateInput
     }, [stateInput])
   
     useEffect(() => {
       setCityVar(cityInput)
     }, [cityInput])
+
+    // console.log("Outside countryVar, stateVar", countryVar, stateVar);
 
     let dateToCheck = new Date();
 	let year = dateToCheck.getFullYear();
@@ -264,26 +273,26 @@ const handleChange1 = (event, newValue, activeThumb) => {
             <form
               onSubmit={handleSubmit(async (data,event) => {
                 event.preventDefault();
-                // let readyData = Object.assign(data,HostData)
-                // const response = await axios.post("http://localhost:5000/api/publish", {
-                //   arriving: data.arriving,
-                //   city: cityVar,
-                //   country: countryVar.name,
-                //   // user_gender:currentUser.user_gender,
-                //   user_email: currentUser.email,
-                //   // user_date_of_birth:currentUser.user_date_of_birth,
-                //   // user_objID:currentUser._id,
-                //   // user_age: currentUserAge,
-                //   description: data.description,
-                //   host: data.host,
-                //   leaving: data.leaving,
-                //   maxPeople: data.maxPeople,
-                //   minTime: data.minTime,
-                //   maxTime: data.maxTime,
-                //   state: stateVar.name,
-                //   userToProcess: currentUser,
-                // });
-                console.log(data);
+                //  let readyData = Object.assign(data,ageData)
+                const response = await axios.post("http://localhost:5000/api/searchresult", {
+                  arriving: data.arriving,
+                  cityy: cityVar,
+                  countryy: countryVar.name,
+                  host: data.host,
+                  leaving: data.leaving,
+                  maxPeople: data.maxPeople,
+                  minTime: data.minTime,
+                  maxTime: data.maxTime,
+                  statee: stateVar.name,
+                  gender: data.gender,
+                  minAge: value1[0],
+                  maxAge: value1[1]
+                });
+                 console.log(data);
+                 if(response.data === 'success'){
+                  window.location.assign('/searchresult')
+                  
+                }
               })}
             >
               <div className="yusuf-container">
@@ -315,6 +324,8 @@ const handleChange1 = (event, newValue, activeThumb) => {
                       placeholder="Type in State"
                       disabled={!isFoundCountry}
                       {...register("state", {required:'Please select a state'})}
+                      //value={stateInput}
+                      //ref={inputEl}
                       type="text"
                       name="state"
                       id="state"

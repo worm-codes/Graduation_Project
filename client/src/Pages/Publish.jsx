@@ -139,16 +139,17 @@ const Publish = () => {
 	// }, [countryVar])
 
 	let dateToCheck = new Date();
+	let todayDate = new Date().toISOString().slice(0, 10);
 	let year = dateToCheck.getFullYear();
 	let month = dateToCheck.getMonth();
 	let day = dateToCheck.getDate().toString();
 	let hour = dateToCheck.getHours();
 	let minutes = dateToCheck.getMinutes();
 	let minimumTime = `${hour}:${minutes}`;
-	let todayDate = new Date().toISOString().slice(0, 10);
     let isLargerThanNineMonth = '';
     let isLessThanNineMonth = '';
     let finalMonthToUse = '';
+	let boolVarForMinTime = false;
     if(month >= 9){
         isLargerThanNineMonth = (month + 1).toString()
         finalMonthToUse = isLargerThanNineMonth;
@@ -162,23 +163,14 @@ const Publish = () => {
 		day = '0'+day
 	}
 
-	let dateStringToPass = `${year}-${finalMonthToUse}-${day} ${hour}:${minutes}`;
-    // console.log("arrival date day",arrivalDate.substring(8,10))
-    // console.log(typeof finalMonthToUse);
-    let boolVarForMinTime = false;
-    // finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10)
-    //boolVarForMinTime = finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10)
     if(finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10)){
         boolVarForMinTime = true;
     }
-    //  console.log(boolVarForMinTime)
-    //  console.log(day)
-    // console.log(arrivalDate.substring(8,10))
+
 
 
 	let selectedStatesIsoCode = chosenStateArr[1];
 	let selectedStatesCountryCode = chosenStateArr[2];
-	// if(states)
 	let filteredStates = states.filter((state) => state.name.startsWith(stateInput));
 	let filteredCountries = Country.getAllCountries().filter((country) => country.name.startsWith(countryInput));
 	let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter((city) =>
@@ -235,17 +227,18 @@ const Publish = () => {
 		errors.description.message = ''
 	  }
 
-	let isLeavingSelected = false;
 	let isDatesSelected = false;
-	if(arrivalDate && leavingDate) {
-		isDatesSelected = true
-	}
-	//console.log("isDatesSelected:",isDatesSelected)
+	let isLeavingSelected = false;
+	
 	if(leavingDate){
 		isLeavingSelected = true;
 	}
+	
+	if(arrivalDate && leavingDate) {
+		isDatesSelected = true
+	}
 
-	//console.log(countryVar.name)
+	
 	console.log(currentUser)
 	console.log(useAuth)
 
@@ -269,17 +262,11 @@ const Publish = () => {
 					{/* <p id="subheader">Let's make new connections along the way!</p> */}
 					<form
 						onSubmit={handleSubmit(async (data,event) => {
-							//event.preventDefault();
-							// let readyData = Object.assign(data,HostData)
 							const response = await axios.post("http://localhost:5000/api/publish", {
 								arriving: data.arriving,
 								city: cityVar,
 								country: countryVar.name,
-								// user_gender:currentUser.user_gender,
 								user_email: currentUser.email,
-								// user_date_of_birth:currentUser.user_date_of_birth,
-								// user_objID:currentUser._id,
-								// user_age: currentUserAge,
 								description: data.description,
 								host: data.host,
 								leaving: data.leaving,
@@ -389,7 +376,7 @@ const Publish = () => {
 									</select>
 								</div>
 								<div className="columnn">
-									<label htmlFor="arriving">Arriving in:</label>
+									<label htmlFor="arriving">Available From:</label>
 									<input
 										
 										min={todayDate}
@@ -403,7 +390,7 @@ const Publish = () => {
 								</div>
 
 								<div className="columnn">
-									<label htmlFor="leaving">Leaving in:</label>
+									<label htmlFor="leaving">Available Until:</label>
 									<input
 									 min={`${arrivalDate}`}
 									 {...register("leaving", { required: "You have to select a leaving date" })}

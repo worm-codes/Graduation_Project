@@ -110,10 +110,42 @@ app.post('/api/publish', async(req,res) =>{
 }
 })
 
+let filteredAds = [];
+
+app.post('/api/searchresult', async(req,res) => {
+    try {
+        // let theEmail = req.body.userToProcess.email;
+        const { arriving, cityy, countryy, host, leaving, maxPeople, minTime, maxTime, statee, gender, minAge, maxAge } = req.body;
+        let allTheAds = await Ad.find({});
+        
+        for(let adv of allTheAds){
+           if(parseInt(adv.owner_age) >= minAge && parseInt(adv.owner_age) <= maxAge && parseInt(adv.maxTime.substring(0,2)) >= parseInt(maxTime.substring(0,2)) && parseInt(adv.maxTime.substring(3,5)) >= parseInt(adv.maxTime.substring(3,5))
+             && adv.country === countryy && adv.state === statee && adv.city === cityy && adv.owner_gender === gender && adv.host === host
+             && adv.leaving_date === leaving && adv.arriving_date === arriving && adv.maxPeople === maxPeople) {
+            filteredAds.push(adv);
+            // let theAds = await Ad.find({arriving_date:arriving, city: city, country: country, state: state, host: host, leaving_date:leaving, maxPeople: maxPeople, owner_gender: gender})
+           } 
+        }
+        console.log("filteredAds array inside post request to searchresult", filteredAds)
+        res.json('success')
+        // res.send(filteredAds)
+
+     }
+    catch(e) {
+        console.log("error occured!", e)
+    }
+})
+
+console.log("filteredAds array global scope of app.js", filteredAds)
+
+app.get('/api/searchresult', async(req,res) => {
+    console.log("filteredAds array inside get request to searchresult", filteredAds)
+    res.send(filteredAds);
+    // res.send("hello mf")
+})
+
 app.get('/api/myads', MiddleWare.isAuth, async(req,res) => {
     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
-    //console.log("user variable",user)
-    // let usersAdsArr = []
     let userAdArr = []
     for(let ad of user.user_ads){
          let temp = await Ad.findById(ad._id)
@@ -121,39 +153,17 @@ app.get('/api/myads', MiddleWare.isAuth, async(req,res) => {
             userAdArr.push(temp)
          }      
     }
-    //console.log("usersAdsArr var",usersAdsArr)
-    // console.log(userAdArr)
-    // let arrToUse = userAdArr.splice(16, userAdArr.length - 16)
-//     let lastValid = userAdArr.slice(-1)
 
-//     for(let adv of user.user_ads){
-//         let temp = await Ad.findById(adv._id)
-//         if(temp !== null) {
-//             lastValid.push(temp)
-//             console.log("temp var:",temp)
-            
-//         }    
-//    }
-//     console.log("lasValid:", lastValid)
- 
     res.send([userAdArr])
 })
 
 app.put('/api/myads', async(req,res) => {
     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
     console.log("user variable",user)
-    // const { id } = req.params;
-    // let usersAdsArr = []
-    // for(let ad of user.user_ads){
-    //      let temp = await Ad.findById(ad._id)
-    //     usersAdsArr.push(temp)
-    // }
     const { adID } = req.body;
     let theAdToChange = await Ad.findByIdAndUpdate({_id: adID}, { isActive : false});
     console.log("the clicked ads id:", adID)
-    //console.log("usersAdsArr var",usersAdsArr)
- 
-    // res.send([usersAdsArr])
+
 })
 
 app.listen(5000,()=>{

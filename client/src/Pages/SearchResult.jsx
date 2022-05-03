@@ -5,36 +5,41 @@ import { useForm } from 'react-hook-form'
 import axios from "axios";
 import Navbar from "./Navbar";
 
-const MyAds = () => {
+const SearchResult = () => {
 
     const { currentUser } = useContext(AuthContext);
     let useAuth=useContext(AuthContext)
     //const [adsArrState, setAdsArrState] = useState([])
-    const [adArrState, setAdArrState] = useState([])
+    const [filteredAdsState, setFilteredAdsState] = useState([])
     const { handleSubmit } = useForm();
     // const { id } = useParams();
     let generalData = []
     //setAdArrState([])
     useEffect(()=> {
-      setAdArrState([])
+      setFilteredAdsState([])
     }, [])
+
     useEffect(() => {
-        const getAds = async () => {
-            const response = await axios.get(`http://localhost:5000/api/myads`,{
+        const getFilteredAds = async () => {
+            const response = await axios.get(`http://localhost:5000/api/searchresult`,{
                 headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
               }) 
-              setAdArrState(response.data[0])
+              setFilteredAdsState(response.data[0])
         } 
-        getAds();
+        getFilteredAds();
     }, [])
-    console.log(adArrState)
+    console.log(filteredAdsState)
     //setAdArrState([])
-
+ {/* <form onSubmit={handleSubmit(async (data) => {
+                      const changedAd = await axios.put(`http://localhost:5000/api/myads`,  {adID: ad._id})  
+                  })}>
+                      
+                  </form> */}
   return (
     <>
         <div>
             <Navbar/>
-        <div className="table-responsive">
+        {/* <div className="table-responsive">
             <table className="table table hover">
             <thead className='thead-dark'>
     <tr>
@@ -43,11 +48,11 @@ const MyAds = () => {
       <th scope="col">Country</th>
       <th scope="col">State</th>
       <th scope="col">City</th>
-      <th scope="col">Detail</th>
+      <th scope="col">Apply</th>
     </tr>
   </thead>
   <tbody>
-      {adArrState.map((ad,key) => (
+      {filteredAdsState.map((ad,key) => (
         
           <tr key={key}>
               <th scope='row'>{key+1}</th>
@@ -56,11 +61,8 @@ const MyAds = () => {
               <td>{ad.state}</td>
               <td>{ad.city}</td>
               <td>
-                  <form onSubmit={handleSubmit(async (data) => {
-                      const changedAd = await axios.put(`http://localhost:5000/api/myads`,  {adID: ad._id})  
-                  })}>
-                      <button className='btn btn-warning'>Cancel</button>
-                  </form>
+                 
+                  <button className='btn btn-success'>Apply</button>
               </td>
           </tr>
       ))}
@@ -68,10 +70,11 @@ const MyAds = () => {
   </tbody>
 
             </table>
-        </div>
+        </div> */}
+        <p>{filteredAdsState.city}</p>
         </div>
     </>
   )
 }
 
-export default MyAds
+export default SearchResult
