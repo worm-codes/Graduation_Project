@@ -71,7 +71,7 @@ const SearchResult = () => {
         
         <tr key={key}>
             <th scope='row'>{key+1}</th>
-            <td>{ad.arriving_date}</td>
+            <td>{`${ad.arriving_date_day}/${ad.arriving_date_month}/${ad.arriving_date_year}`}</td>
             <td>{ad.country}</td>
             <td>{ad.state}</td>
             <td>{ad.city}</td>

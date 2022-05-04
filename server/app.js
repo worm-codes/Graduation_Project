@@ -160,9 +160,10 @@ app.post('/api/searchresult', async(req,res) => {
 
         // localStorage.setItem('advertisements', JSON.stringify(theAds));
         //THIS STORE.SET WORKS, BUT I WANNA TRY SESSION STORAGE SINCE IT IS A BETTER OPTION FOR MY USECASE
-        // store.set('advertisements', JSON.stringify(theAds))
-        req.session.advertisements = theAds;
-        console.log("req.session.advertisements var inside post request:", req.session.advertisements)
+         store.set('advertisements', JSON.stringify(theAds))
+        // req.session.advertisements = theAds;
+        // req.session.save()
+        // console.log("req.session.advertisements var inside post request:", req.session.advertisements)
         console.log("theAds variable:", theAds)
          res.json('success')
         
@@ -176,9 +177,10 @@ app.post('/api/searchresult', async(req,res) => {
 7
 
 app.get('/api/searchresult', async(req,res) => {
-    // let searchedAds = JSON.parse(store.get('advertisements'));
-    console.log("req.session.advertisements var inside get request:", req.session.advertisements)
-      res.send(req.session.advertisements)
+    let searchedAds = JSON.parse(store.get('advertisements'));
+    // console.log("req.session.advertisements var inside get request:", req.session.advertisements)
+    //   res.send(req.session.advertisements)
+    res.send(searchedAds)
 })
 
 app.get('/api/myads', MiddleWare.isAuth, async(req,res) => {
