@@ -7,7 +7,8 @@ User=require('./models/User.js'),
 Ad = require('./models/Ads'),
 mongoose=require("mongoose"),
 mongoURI="mongodb://localhost:27017/Local_Guide";
-
+var store = require('store')
+const session = require('express-session');
 // mongoose.connect(process.env.DB_URL || 'mongodb://localhost:27017/LocalGuide', { useNewUrlParser: true, useUnifiedTopology: true });
 
  
@@ -21,6 +22,11 @@ app.use(cors({
     credentials:true
 }))
 app.use(express.json())
+app.use(session({
+    secret: 'secretKey',
+    resave: false,
+    saveUninitialized: false
+}));
 mongoose.connect('mongodb://localhost:27017/LocalGuide', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
@@ -116,8 +122,7 @@ app.post('/api/publish', async(req,res) =>{
 }
 })
 
-let filteredAds = [];
-let searchCounter = 0;
+
 
 app.post('/api/searchresult', async(req,res) => {
     try {
@@ -125,9 +130,7 @@ app.post('/api/searchresult', async(req,res) => {
         
         // let allTheAds = await Ad.find({});
 
-        if(searchCounter > 0){
-            filteredAds.length = 0;
-        }
+       
         
         // for(let adv of allTheAds){
         //    if(parseInt(adv.owner_age) >= minAge && parseInt(adv.owner_age) <= maxAge && parseInt(adv.maxTime.substring(0,2)) >= parseInt(maxTime.substring(0,2)) && parseInt(adv.maxTime.substring(3,5)) >= parseInt(adv.maxTime.substring(3,5))
@@ -154,11 +157,15 @@ app.post('/api/searchresult', async(req,res) => {
             city: city, state: state, country: country, host: host, maxPeople: maxPeople, minTimeHour: minTimeHour,
             maxTimeHour: maxTimeHour, minTimeMinute: minTimeMinute, maxTimeMinute: maxTimeMinute, owner_gender: gender
         })
-            
-        searchCounter = searchCounter + 1;
+
+        // localStorage.setItem('advertisements', JSON.stringify(theAds));
+        //THIS STORE.SET WORKS, BUT I WANNA TRY SESSION STORAGE SINCE IT IS A BETTER OPTION FOR MY USECASE
+        // store.set('advertisements', JSON.stringify(theAds))
+        req.session.advertisements = theAds;
+        console.log("req.session.advertisements var inside post request:", req.session.advertisements)
         console.log("theAds variable:", theAds)
-        res.json('success')
-        // res.send(theAds)
+         res.json('success')
+        
 
      }
     catch(e) {
@@ -166,12 +173,12 @@ app.post('/api/searchresult', async(req,res) => {
     }
 })
 
-console.log("filteredAds array global scope of app.js", filteredAds)
+7
 
 app.get('/api/searchresult', async(req,res) => {
-    console.log("filteredAds array inside get request to searchresult", filteredAds)
-    res.send(filteredAds);
-    // res.send("hello mf")
+    // let searchedAds = JSON.parse(store.get('advertisements'));
+    console.log("req.session.advertisements var inside get request:", req.session.advertisements)
+      res.send(req.session.advertisements)
 })
 
 app.get('/api/myads', MiddleWare.isAuth, async(req,res) => {

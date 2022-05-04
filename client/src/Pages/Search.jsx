@@ -295,10 +295,11 @@ const handleChange1 = (event, newValue, activeThumb) => {
                   maxAge: value1[1]
                 });
                  console.log(data);
-                 if(response.data === 'success'){
-                  window.location.assign('/searchresult')
+                //  if(response.data === 'success'){
+                //   window.location.assign('/searchresult')
                   
-                }
+                // }
+                window.location.assign('/searchresult')
               })}
             >
               <div className="yusuf-container">
