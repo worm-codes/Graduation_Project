@@ -85,14 +85,20 @@ app.post('/api/publish', async(req,res) =>{
     try{
         console.log('inside the try block')
         let theEmail = req.body.userToProcess.email;
-        const { arriving, city, country, description, host, leaving, maxPeople, minTime, maxTime, state, userToProcess } = req.body;
+        const { arrivingDateYear, arrivingDateMonth, arrivingDateDay,
+                leavingDateYear, leavingDateMonth, leavingDateDay,
+             city, country, description, host, maxPeople,
+              minTimeHour, minTimeMinute, maxTimeHour, maxTimeMinute, state, userToProcess } = req.body;
         let theUser = await User.findOne({user_email:theEmail})
         theUserAge = new Date().getFullYear() - parseInt(theUser.user_date_of_birth.substring(0,4).toString());
         console.log("theEmail variable",theEmail)
         console.log("theUser variable",theUser)
     
-    const theAd = await new Ad({ arriving_date: arriving, city, country, description, host, leaving_date:leaving, maxPeople, minTime,
-         maxTime, state, owner_gender:theUser.user_gender, owner_email: theUser.user_email, owner_age: theUserAge.toString(), owner_id: theUser._id})
+    const theAd = await new Ad({ arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,
+            arriving_date_day: arrivingDateDay, city: city, country, description, host, leaving_date_year:leavingDateYear,
+            leaving_date_month: leavingDateMonth, leaving_date_day: leavingDateDay, maxPeople, minTimeHour: minTimeHour,
+            maxTimeHour: maxTimeHour, minTimeMinute: minTimeMinute, maxTimeMinute: maxTimeMinute,state,
+            owner_gender:theUser.user_gender,owner_email: theUser.user_email, owner_age: theUserAge, owner_id: theUser._id})
 
     theUser.populate('user_ads');
 
@@ -111,24 +117,48 @@ app.post('/api/publish', async(req,res) =>{
 })
 
 let filteredAds = [];
+let searchCounter = 0;
 
 app.post('/api/searchresult', async(req,res) => {
     try {
         // let theEmail = req.body.userToProcess.email;
-        const { arriving, cityy, countryy, host, leaving, maxPeople, minTime, maxTime, statee, gender, minAge, maxAge } = req.body;
-        let allTheAds = await Ad.find({});
         
-        for(let adv of allTheAds){
-           if(parseInt(adv.owner_age) >= minAge && parseInt(adv.owner_age) <= maxAge && parseInt(adv.maxTime.substring(0,2)) >= parseInt(maxTime.substring(0,2)) && parseInt(adv.maxTime.substring(3,5)) >= parseInt(adv.maxTime.substring(3,5))
-             && adv.country === countryy && adv.state === statee && adv.city === cityy && adv.owner_gender === gender && adv.host === host
-             && adv.leaving_date === leaving && adv.arriving_date === arriving && adv.maxPeople === maxPeople) {
-            filteredAds.push(adv);
-            // let theAds = await Ad.find({arriving_date:arriving, city: city, country: country, state: state, host: host, leaving_date:leaving, maxPeople: maxPeople, owner_gender: gender})
-           } 
+        // let allTheAds = await Ad.find({});
+
+        if(searchCounter > 0){
+            filteredAds.length = 0;
         }
-        console.log("filteredAds array inside post request to searchresult", filteredAds)
+        
+        // for(let adv of allTheAds){
+        //    if(parseInt(adv.owner_age) >= minAge && parseInt(adv.owner_age) <= maxAge && parseInt(adv.maxTime.substring(0,2)) >= parseInt(maxTime.substring(0,2)) && parseInt(adv.maxTime.substring(3,5)) >= parseInt(adv.maxTime.substring(3,5))
+        //      && adv.country === countryy && adv.state === statee && adv.city === cityy && adv.owner_gender === gender && adv.host === host
+        //      && adv.leaving_date === leaving && adv.arriving_date === arriving && adv.maxPeople === maxPeople) {
+                 
+        //     filteredAds.push(adv);
+            
+        //    } 
+        // }
+        const { arrivingDateYear, arrivingDateMonth, arrivingDateDay, leavingDateYear, leavingDateMonth, leavingDateDay,
+             city, country, host, maxPeople, minTimeHour, maxTimeHour, minTimeMinute, maxTimeMinute, state, gender, minAge, maxAge } = req.body;
+       
+             // I WILL IMPLEMENT THE LOGIC OF BEING ABLE TO QUERY THE DATABASE ACCORDING TO THE INPUTS THAT THE USER
+             // HAS PROVIDED UNDER THE REQ.BODY, E.G. IF(REQ.BODY.GENDER === DOESN'T MATTER) THEN RUN THE QUERY WITHOUT
+             // THE GENDER PROPERTY SO THAT IT RETURNS THE DOCUMENTS WITH BOTH MALE AND FEMALE VALUES OF GENDER.
+             // ELSE, THAT MEANS USER HAS SELECTED EITHER FEMALE OR MALE, THEN RUN THE QUERY AS OWNER_GENDER: GENDER
+        let theAds = await Ad.find({
+            $and: [
+                { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge} }     
+            ],
+            arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth, arriving_date_day: arrivingDateDay,
+            leaving_date_year: leavingDateYear, leaving_date_month: leavingDateMonth, leaving_date_day: leavingDateDay,
+            city: city, state: state, country: country, host: host, maxPeople: maxPeople, minTimeHour: minTimeHour,
+            maxTimeHour: maxTimeHour, minTimeMinute: minTimeMinute, maxTimeMinute: maxTimeMinute, owner_gender: gender
+        })
+            
+        searchCounter = searchCounter + 1;
+        console.log("theAds variable:", theAds)
         res.json('success')
-        // res.send(filteredAds)
+        // res.send(theAds)
 
      }
     catch(e) {

@@ -275,15 +275,21 @@ const handleChange1 = (event, newValue, activeThumb) => {
                 event.preventDefault();
                 //  let readyData = Object.assign(data,ageData)
                 const response = await axios.post("http://localhost:5000/api/searchresult", {
-                  arriving: data.arriving,
-                  cityy: cityVar,
-                  countryy: countryVar.name,
+                  arrivingDateYear: parseInt(data.arriving.substring(0,4)),
+								  arrivingDateMonth: parseInt(data.arriving.substring(5,7)),
+								  arrivingDateDay: parseInt(data.arriving.substring(8,10)),
+								  leavingDateYear: parseInt(data.leaving.substring(0,4)),
+								  leavingDateMonth: parseInt(data.leaving.substring(5,7)),
+								  leavingDateDay: parseInt(data.leaving.substring(8,10)),
+                  city: cityVar,
+                  country: countryVar.name,
                   host: data.host,
-                  leaving: data.leaving,
                   maxPeople: data.maxPeople,
-                  minTime: data.minTime,
-                  maxTime: data.maxTime,
-                  statee: stateVar.name,
+                  minTimeHour: parseInt(data.minTime.substring(0,2)),
+								  minTimeMinute: parseInt(data.minTime.substring(3,5)),
+								  maxTimeHour: parseInt(data.maxTime.substring(0,2)),
+								  maxTimeMinute: parseInt(data.maxTime.substring(3,5)),
+                  state: stateVar.name,
                   gender: data.gender,
                   minAge: value1[0],
                   maxAge: value1[1]
@@ -409,12 +415,12 @@ const handleChange1 = (event, newValue, activeThumb) => {
                       For:
                     </label>
                     <select {...register("maxPeople", { required: true })} name="maxPeople" id="maxPeople">
-                      <option selected value="1">
+                      <option selected value={1}>
                         One People
                       </option>
-                      <option value="2">Two People</option>
-                      <option value="3">Three People</option>
-                      <option value="4">Four People</option>
+                      <option value={2}>Two People</option>
+                      <option value={3}>Three People</option>
+                      <option value={4}>Four People</option>
                     </select>
                   </div>
                   <div className="columnn" id="minTime">

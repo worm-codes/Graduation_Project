@@ -239,8 +239,8 @@ const Publish = () => {
 	}
 
 	
-	console.log(currentUser)
-	console.log(useAuth)
+	// console.log(currentUser)
+	// console.log(useAuth)
 
 	return (
 		<div
@@ -263,23 +263,28 @@ const Publish = () => {
 					<form
 						onSubmit={handleSubmit(async (data,event) => {
 							const response = await axios.post("http://localhost:5000/api/publish", {
-								arriving: data.arriving,
+								arrivingDateYear: parseInt(data.arriving.substring(0,4)),
+								arrivingDateMonth: parseInt(data.arriving.substring(5,7)),
+								arrivingDateDay: parseInt(data.arriving.substring(8,10)),
+								leavingDateYear: parseInt(data.leaving.substring(0,4)),
+								leavingDateMonth: parseInt(data.leaving.substring(5,7)),
+								leavingDateDay: parseInt(data.leaving.substring(8,10)),
 								city: cityVar,
 								country: countryVar.name,
 								user_email: currentUser.email,
 								description: data.description,
 								host: data.host,
-								leaving: data.leaving,
 								maxPeople: data.maxPeople,
-								minTime: data.minTime,
-								maxTime: data.maxTime,
+								minTimeHour: parseInt(data.minTime.substring(0,2)),
+								minTimeMinute: parseInt(data.minTime.substring(3,5)),
+								maxTimeHour: parseInt(data.maxTime.substring(0,2)),
+								maxTimeMinute: parseInt(data.maxTime.substring(3,5)),
 								state: stateVar.name,
 								userToProcess: currentUser
 							});
 							console.log(response);
 							if(response.data === 'success'){
-								window.location.assign('/myads')
-								
+								window.location.assign('/myads')							
 							}
 						})}
 					>
@@ -406,12 +411,12 @@ const Publish = () => {
 										For:
 									</label>
 									<select {...register("maxPeople", { required: true })} name="maxPeople" id="maxPeople">
-										<option selected value="1">
+										<option selected value={1}>
 											One People
 										</option>
-										<option value="2">Two People</option>
-										<option value="3">Three People</option>
-										<option value="4">Four People</option>
+										<option value={2}>Two People</option>
+										<option value={3}>Three People</option>
+										<option value={4}>Four People</option>
 									</select>
 								</div>
 								<div className="columnn" id="minTime">
