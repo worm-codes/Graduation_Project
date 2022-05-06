@@ -375,9 +375,6 @@ const Publish = () => {
 								<div className="columnn">
 									<label htmlFor="state">State</label>
 									<input 
-									    //value={textInputState}
-										//ref={stateRef}
-										//onChange={(e) => setTextInputState(e.target.value)}
 										autoComplete="off"
 										placeholder="Type in State"
 										disabled={!isFoundCountry}
@@ -397,11 +394,7 @@ const Publish = () => {
 												</option>
 											))
 										 }
-										{/* {filteredStates.map((state, key) => (
-											<option key={key} value={state.name}>
-												{state.name}
-											</option>
-										))} */}
+										
 									</datalist>
 								</div>
 								<div className="columnn">

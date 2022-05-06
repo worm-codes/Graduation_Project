@@ -1,0 +1,14 @@
+*, *::before, *::after {
+    box-sizing:border-box;
+}
+img {
+    max-width: 100%
+}
+
+.col {
+    width: fit-content;
+}
+
+.query-results {
+    border: 5px solid red;
+}
