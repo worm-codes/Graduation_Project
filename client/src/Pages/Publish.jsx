@@ -12,7 +12,7 @@ const Publish = () => {
 	//const isFoundCountryy = useRef(false);
 	//const stateRef = useRef('Type in Stateeeee');
 	const [countryVar, setCountryVar] = useState([])
-	const [cityVar, setCityVar] = useState('')
+	const [cityVar, setCityVar] = useState([])
 	const [stateVar, setStateVar] = useState([])
 	const [err, setErr] = useState('')
 	//const [textInputState, setTextInputState] = useState('')
@@ -56,11 +56,20 @@ const Publish = () => {
 	let isFoundState = false;
 	let countryToSetStateObj = {}
 
+	let isStateValidForCountry;
+
 	Country.getAllCountries().forEach((country) => {
 		if (country.name === countryInput) {
 			isFoundCountry = true;
 			countryToSetStateObj = country
 			states = State.getStatesOfCountry(country.isoCode);
+			
+			if(State.getStatesOfCountry(country.isoCode).includes(stateVar)){
+				isStateValidForCountry = true;
+			}
+			else {
+				isStateValidForCountry = false;
+			}
 		}	
 	});
 
@@ -72,6 +81,8 @@ const Publish = () => {
 	let isCountryVarEmpty = Object.keys(countryVar).length === 0;
 	let isStateVarEmpty = Object.keys(stateVar).length === 0;
 
+	let isCityValidForState;
+
 	states.forEach((state) => {
 		if(countryVar.name === countryInput && !isCountryVarEmpty){
 			if (state.name === stateInput) {
@@ -80,6 +91,12 @@ const Publish = () => {
 				stateNameSelected = state.name;
 				chosenState = state;
 				chosenStateArr = Object.values(chosenState);
+				if(City.getCitiesOfState(countryVar.isoCode, chosenState.isoCode).includes(cityVar)){
+					isCityValidForState = true;
+				}
+				else {
+					isCityValidForState = false;
+				}
 			}
 		} else {
 			isFoundState = false;
@@ -90,10 +107,26 @@ const Publish = () => {
 		}
 	});
 
+	let cityObj = {}
+
+	City.getAllCities().forEach((city) => {
+		if (city.name === cityInput) {
+			cityObj = city	
+		}	
+	});
+
 	// if(allCountries.includes(countryInput) === false) {
 
 	// }
 	
+
+	useEffect(()=> {
+		isStateValidForCountry = true;
+	}, [])
+
+	useEffect(()=> {
+		isStateValidForCountry = true;
+	}, [])
 
 	//setCityVar(cityInput)
 
@@ -103,17 +136,18 @@ const Publish = () => {
 	};
 
 	useEffect(() => {	
-		setCountryVar(countryToSetStateObj)
-		setStateVar([])
+		setCountryVar(countryToSetStateObj)	
 	}, [countryInput])
 
 
 	useEffect(() => {
-		setStateVar(chosenState)	
+		setStateVar(chosenState)
+		isStateValidForCountry = true;	
 	}, [stateInput])
 
 	useEffect(() => {
-		setCityVar(cityInput)
+		setCityVar(cityObj)
+		isCityValidForState = true;
 	}, [cityInput])
 
 	// console.log(isFoundCountry)
@@ -137,6 +171,14 @@ const Publish = () => {
 	// 		}
 	// 		}		
 	// }, [countryVar])
+
+	console.log("countryVar variable:", countryVar)
+	console.log("countryInput variable:", countryInput)
+	console.log("stateVar variable:", stateVar);
+	console.log("stateInput variable", stateInput);
+	console.log("Country state'i içeriyor:",State.getStatesOfCountry(countryVar.isoCode).includes(stateVar))
+	console.log("State city'i içeriyor:",City.getCitiesOfState(countryVar.isoCode, stateVar.isoCode).includes(cityVar))
+	console.log("cityVar variable:", cityVar);
 
 	let dateToCheck = new Date();
 	let todayDate = new Date().toISOString().slice(0, 10);
@@ -176,6 +218,8 @@ const Publish = () => {
 	let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter((city) =>
 		city.name.startsWith(cityInput)
 	);
+
+	
 
 	
 	if(errors.country){
@@ -238,6 +282,7 @@ const Publish = () => {
 		isDatesSelected = true
 	}
 
+
 	
 	// console.log(currentUser)
 	// console.log(useAuth)
@@ -262,6 +307,12 @@ const Publish = () => {
 					{/* <p id="subheader">Let's make new connections along the way!</p> */}
 					<form
 						onSubmit={handleSubmit(async (data,event) => {
+							
+							 if(State.getStatesOfCountry(countryVar.isoCode).includes(stateVar) === true
+								&& City.getCitiesOfState(countryVar.isoCode, stateVar.isoCode).includes(cityVar) === true ){
+							// errors.state.message = ''
+							// errors.city.message = ''
+
 							const response = await axios.post("http://localhost:5000/api/publish", {
 								arrivingDateYear: parseInt(data.arriving.substring(0,4)),
 								arrivingDateMonth: parseInt(data.arriving.substring(5,7)),
@@ -269,7 +320,7 @@ const Publish = () => {
 								leavingDateYear: parseInt(data.leaving.substring(0,4)),
 								leavingDateMonth: parseInt(data.leaving.substring(5,7)),
 								leavingDateDay: parseInt(data.leaving.substring(8,10)),
-								city: cityVar,
+								city: cityVar.name,
 								country: countryVar.name,
 								user_email: currentUser.email,
 								description: data.description,
@@ -281,11 +332,22 @@ const Publish = () => {
 								maxTimeMinute: parseInt(data.maxTime.substring(3,5)),
 								state: stateVar.name,
 								userToProcess: currentUser
-							});
-							console.log(response);
+								
+			
+							})
 							if(response.data === 'success'){
-								window.location.assign('/myads')							
+								window.location.assign('/myads')
 							}
+						} 
+
+							// else if (State.getStatesOfCountry(countryVar.isoCode).includes(stateVar) === false) {
+							// 	//  errors.state.message = 'State does not belong to country'
+								
+							// }
+							// else {
+							// 	errors.city.message = 'City does not belong to state'
+							// }
+
 						})}
 					>
 						<div className="yusuf-container">
@@ -325,7 +387,8 @@ const Publish = () => {
 										id="state"
 										list="states"
 									/>
-									{(errors.state && !errors.country && isFoundCountry) ? <p style={{color:'red'}}>{errors.state.message}</p> : ''}
+									{(errors.state && !errors.country && isFoundCountry) ? <p style={{color:'red'}}>{errors.state.message}</p>  : ''}
+									{(!errors.state && !errors.country && isFoundCountry && stateVar.name && !isStateValidForCountry) ? <p style={{color:'red'}}>State does not belong to country</p> : ''}
 									<datalist name="states" id="states">
 										{
 											filteredStates.map((state, key) => (
@@ -354,6 +417,7 @@ const Publish = () => {
 										list="cities"
 									/>
 									{(errors.city && !errors.country && !errors.state && isFoundCountry && isFoundState) ? <p style={{color:'red'}}>{errors.city.message}</p> : ''}
+									{(!errors.city && !errors.country && !errors.state && isFoundCountry && isFoundState && cityVar.name && !isCityValidForState) ? <p style={{color:'red'}}>City does not belong to state</p> : ''}
 									<datalist name="cities" id="cities">
 										<option selected disabled value="">
 											Choose a City
