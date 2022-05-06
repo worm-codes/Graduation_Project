@@ -21,7 +21,7 @@ const Navbar = () => {
       const response=await axios.post('http://localhost:5000/api/logout',{
                          
         user_email:useAuth.currentUser?.email,
-        isOnline:new Date().toLocaleDateString(navigator.language, {hour: '2-digit', minute:'2-digit'})
+        LastSeen:new Date().toLocaleDateString(navigator.language, {hour: '2-digit', minute:'2-digit'})
        
       },
       {
@@ -48,7 +48,7 @@ const Navbar = () => {
   return (
     <div style={{backgroundColor:'white'}}> 
     <nav style={{height:'3.5rem'}} className="navbar navbar-expand-lg navbar-light ">
-    <Link className="navbar-brand" to="/"><b className='h3'>L🤝G</b></Link>
+    <a className="navbar-brand" href="/"><b className='h3'>L🤝G</b></a>
     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-5"
       aria-controls="navbarSupportedContent-5" aria-expanded="false" aria-label="Toggle navigation">
       <span className="navbar-toggler-icon"></span>
@@ -58,9 +58,9 @@ const Navbar = () => {
       <ul className="navbar-nav ml-auto mr-2 text-right">
       
         <li className="nav-item active">
-          <Link className="nav-link" to="/">Home
+          <a className="nav-link" href="/">Home
             <span className="sr-only">(current)</span>
-          </Link>
+          </a>
         </li>
         <li className="nav-item">
           <a className="nav-link" href="#">Features</a>
@@ -70,7 +70,7 @@ const Navbar = () => {
         </li>
     
         <li className="hidden-profile d-none nav-item">
-         <Link className="nav-link" onClick={handleLogout} to="/">Logout</Link>
+         <a className="nav-link" onClick={handleLogout} href="/">Logout</a>
         </li>
 
      
@@ -87,7 +87,7 @@ const Navbar = () => {
             <a className="dropdown-item" href="#">Hello</a>
           <a className="dropdown-item" href="#">Profile</a>
             <a className="dropdown-item" href="#">Messages</a>
-            <Link className="dropdown-item" onClick={handleLogout} to="/">Logout</Link>
+            <a className="dropdown-item" onClick={handleLogout} href="/">Logout</a>
           </div>
         </li>
       </ul>

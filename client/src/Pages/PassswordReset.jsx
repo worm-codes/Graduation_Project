@@ -50,7 +50,7 @@ export default function ForgotPassword() {
 
   
     <div id="formFooter">
-      <Link className="underlineHover"  to="/search">Home</Link>
+      <a className="underlineHover"  href="/search">Home</a>
     </div>
 
   </div>

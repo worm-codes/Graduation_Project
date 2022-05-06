@@ -81,7 +81,7 @@ const Dashboard = () => {
      </div>
      
      
-     <Link to='/resetPassword'>Reset your password</Link>
+     <a href='/resetPassword'>Reset your password</a>
 
      
     </div>

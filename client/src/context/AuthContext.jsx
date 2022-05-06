@@ -19,10 +19,7 @@ export function AuthProvider({ children }) {
   }
 
   async function login(email, password) {
-     /*const loginResponse=await axios.post('http://localhost:5000/api/login',{
-           user_email:email
-           })
-      console.log(loginResponse.data);*/
+    
     return await signInWithEmailAndPassword(auth,email, password)
   }
 
@@ -31,7 +28,7 @@ export function AuthProvider({ children }) {
       const response=await axios.post('http://localhost:5000/api/logout',{
                          
         user_email:currentUser?.email,
-        isOnline:new Date().toLocaleDateString(navigator.language, {hour: '2-digit', minute:'2-digit'})
+        LastSeen:new Date().toLocaleDateString(navigator.language, {hour: '2-digit', minute:'2-digit'})
       }  
       )    
     }

@@ -9,7 +9,7 @@ var userSchema=new mongoose.Schema({
     user_date_of_birth:{type:String, required:true},
     quote:{type:String},
     lastSignIn:{type:String},
-    isOnline:{type:String},
+    LastSeen:{type:String},
     createdAt:{type:String}
  
 	

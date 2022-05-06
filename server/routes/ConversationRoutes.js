@@ -6,7 +6,7 @@ MiddleWare=require('../middleware/CheckAuth');
 
 
 
-//new conversation  ///CONTACT MANTIGINI BIRAK TIKLANINCA OLUSAN ID ILE CONVERSATION AC DENE
+
 router.post('/',MiddleWare.isAuth, async(req,res)=>{
    
     if(req.body.senderId!==req.body.receiverId){
@@ -65,6 +65,8 @@ router.get('/:userId',MiddleWare.isAuth,async(req,res)=>{
         console.log(err);
     }
 })
+
+
 
 
 module.exports=router;

@@ -2,6 +2,7 @@
 const express=require('express'),
 router=express.Router(),
 User=require('../models/User'),
+Conversation=require('../models/Conversation'),
 MiddleWare=require('../middleware/CheckAuth');
 
 
@@ -99,46 +100,13 @@ router.get('/getAllUsers',MiddleWare.isAuth,async(req,res)=>{
     }).clone().catch(function(err){ console.log(err)})
 
 })
-router.post('/login',async(req,res)=>{
-    console.log('--------------------------');
-     console.log('girdik loginnnn');
-    console.log('--------------------------');
-    if(req.body.user_email){
-        await User.findOneAndUpdate({user_email:req.body.user_email},{isOnline:'Online'},(err,okey)=>{
-        if(err){
-            console.log(err);
-        }
-        else{
-            
-            res.json('done')
-            
-        }
-    }).clone().catch(function(err){ console.log(err)})
-    }
-    else if (req.body.userId){
-        await User.findByIdAndUpdate({_id:req.body.userId},{isOnline:'Online'},(err,okey)=>{
-        if(err){
-            console.log(err);
-        }
-        else{
-            console.log(okey);
-            res.json('done')
-            
-        }
-    }).clone().catch(function(err){ console.log(err)})
 
-    }
-  
-    
-    
-
-})
 router.post('/logout',async(req,res)=>{
     console.log('--------------------------');
      console.log('girdik logout');
     console.log('--------------------------');
     if(req.body.user_email){
-    await User.findOneAndUpdate({user_email:req.body.user_email},{isOnline:req.body.isOnline},(err,okey)=>{
+     await User.findOneAndUpdate({user_email:req.body.user_email},{LastSeen:req.body.LastSeen},(err,okey)=>{
         if(err){
             console.log(err);
         }
@@ -147,11 +115,14 @@ router.post('/logout',async(req,res)=>{
             res.json('done')
             
         }
+    
     }).clone().catch(function(err){ console.log(err)})
 }
 else if(req.body.userId){
+    console.log('id id id id id logout');
+    console.log('clock that comes in',req.body.LastSeen);
     
-     await User.findByIdAndUpdate({_id:req.body.userId},{isOnline:req.body.isOnline},(err,okey)=>{
+    await User.findByIdAndUpdate({_id:req.body.userId},{LastSeen:req.body.LastSeen},(err,okey)=>{
         if(err){
             console.log(err);
         }
@@ -162,6 +133,7 @@ else if(req.body.userId){
             res.json('done')
             
         }
+     
     }).clone().catch(function(err){ console.log(err)})
 
 }

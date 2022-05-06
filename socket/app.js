@@ -1,6 +1,6 @@
 const date = require('date-and-time');
 const axios=require('axios');
-const now = new Date();
+
 const io = require("socket.io")(8900, {
   cors: {
     origin: "http://localhost:3000",
@@ -11,7 +11,7 @@ const logoutServer=async(userID)=>{
       const response=await axios.post('http://localhost:5000/api/logout',{
                          
         userId:userID,
-        isOnline:date.format(now, 'YYYY/MM/DD HH:mm')
+        LastSeen:date.format(new Date(), 'YYYY/MM/DD HH:mm')
        
       }
       
@@ -20,18 +20,12 @@ const logoutServer=async(userID)=>{
       
     }
 
-    const loginServer=async(userID)=>{
-      const loginResponse=await axios.post('http://localhost:5000/api/login',{
-           userId:userID
-           })
-          console.log('login',loginResponse.data);
-        
-    }
+   
 let users = [];
 let userIds=[];
 const addUser = (userId, socketId) => {
   console.log('dsdsd');
-  !users.some((user) => user.userId === userId) &&users.push({ userId, socketId }) && loginServer(userId);
+  !users.some((user) => user.userId === userId) &&users.push({ userId, socketId }) ;
    
   !userIds.some((user) => user === userId)&&userIds.push(userId)  
 };
@@ -43,8 +37,9 @@ const removeUser = (socketId) => {
   
   
 };
-const removeId=(id)=>{
+const removeId=async(id)=>{
   userIds=userIds.filter((user)=>user!==id)
+   await logoutServer(id)
 }
 
 const getUser = (userId) => {
@@ -82,11 +77,12 @@ io.on("connection", (socket) => {
   //when disconnect
   socket.on("disconnect", async() => {
     console.log("a user disconnected!");
-    users?.map(async(userInfo)=>{
+    users.map(async(userInfo)=>{
       console.log(userInfo);
       if(userInfo.socketId==socket.id){
+          console.log('id bu',userInfo.userId);
            removeId(userInfo.userId)
-           await logoutServer(userInfo.userId)
+           
       }
     })
      removeUser(socket.id);

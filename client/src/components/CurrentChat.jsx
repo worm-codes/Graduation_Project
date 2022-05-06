@@ -17,7 +17,7 @@ export default function Conversation({ conversation, currentUser,onlineUsers }) 
     
         setUser(res.data);
         console.log(res.data);
-        setLastSeen(res.data.isOnline)
+        setLastSeen(res.data.LastSeen)
         
       } catch (err) {
         console.log(err);
