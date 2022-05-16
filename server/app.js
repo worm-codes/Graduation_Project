@@ -25,7 +25,7 @@ app.use('/api',UserRoutes);
 app.use('/api/conversation',ConversationRoutes);
 app.use('/api/message',MessageRoutes)
 
-
+//add socket connection to update dom after db update
 
 app.listen(5000,()=>{
     console.log('server has started')

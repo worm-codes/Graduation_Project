@@ -6,33 +6,35 @@ import "../public/currentchat.css";
 export default function Conversation({ conversation, currentUser,onlineUsers }) {
   const [user, setUser] = useState(null);
   let useAuth=useContext(AuthContext)
-  const friendId = conversation.members.find((m) => m !== currentUser._id);
+  const friendId = conversation?.members?.find((m) => m !== currentUser._id);
   const [lastSeen,setLastSeen]=useState('')
  
   const getUser = async () => {
+        if(friendId){
       try {
+      
+        
         const res = await axios.get("http://localhost:5000/api/getUser/" + friendId,{
           headers:{Authorization: 'Bearer ' + await useAuth?.currentUser?.getIdToken(true)}
         });
     
         setUser(res.data);
-        console.log(res.data);
+      
         setLastSeen(res.data.LastSeen)
         
       } catch (err) {
         console.log(err);
       }
+    }
+
     };
 
   
 
- console.log(onlineUsers);
- console.log(onlineUsers.includes(user?._id));
   useEffect(() => {
     
     
-   console.log(friendId);
-   
+
     getUser();
   }, [currentUser, conversation]);
 
@@ -49,7 +51,7 @@ export default function Conversation({ conversation, currentUser,onlineUsers }) 
 
   
   
- //user mesajlar (gorulmemis mesajlar) ve anlik last  seen buguna bak ************************************************
+
 
   return user?(
     <div className="Currentconversation" >

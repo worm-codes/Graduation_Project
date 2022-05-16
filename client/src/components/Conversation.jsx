@@ -5,8 +5,9 @@ import "../public/conversation.css";
 
 export default function Conversation({ conversation, currentUser }) {
   const [user, setUser] = useState(null);
-  const[messages,setMessages]=useState([])
-  let useAuth=useContext(AuthContext)
+  const[messages,setMessages]=useState([]);
+  const [unreadMessageCounter,setUnreadMessageCounter]=useState(null)
+  let useAuth=useContext(AuthContext);
  const friendId = conversation.members.find((m) => m !== currentUser._id);
 
   useEffect(() => {
@@ -14,6 +15,7 @@ export default function Conversation({ conversation, currentUser }) {
     
 
     const getUser = async () => {
+      if(friendId){
       try {
         const res = await axios.get("http://localhost:5000/api/getUser/" + friendId,{
           headers:{Authorization: 'Bearer ' + await useAuth?.currentUser?.getIdToken(true)}
@@ -23,6 +25,7 @@ export default function Conversation({ conversation, currentUser }) {
       } catch (err) {
         console.log(err);
       }
+    }
     };
     getUser();
   }, [currentUser, conversation]);
@@ -33,7 +36,7 @@ export default function Conversation({ conversation, currentUser }) {
         const res = await axios.get("http://localhost:5000/api/message/" + conversation?._id,{
           headers:{Authorization: 'Bearer ' + await useAuth?.currentUser?.getIdToken(true)}
         });
-        
+     
         setMessages(res.data);
        
       } catch (err) {
@@ -43,7 +46,19 @@ export default function Conversation({ conversation, currentUser }) {
     }
     getMessages()
 
-  },[conversation])
+  },[conversation.UsersInChat])
+
+  useEffect(() => {
+    let counter=0;
+    messages?.map((message)=>{
+      if(message.unread===true && message.receiver===currentUser?._id){
+      counter++;
+      }
+    })
+    setUnreadMessageCounter(counter)
+    
+  }, [messages])
+  
 
 
 
@@ -51,13 +66,13 @@ export default function Conversation({ conversation, currentUser }) {
  
 
   return ((conversation.members[0]===currentUser._id && messages.length==0)||(messages.length!=0))? (
-    <div className="conversation">
+    <div  className="conversation" onClick={()=>setUnreadMessageCounter(null)}>
       <img
         className="conversationImg"
         src='https://cdn-icons-png.flaticon.com/512/1077/1077114.png'
         alt=""  
       />
-      <span className="conversationName">{user?.user_name}  </span>
+      <span className="conversationName">{user?.user_name} {unreadMessageCounter? '- ' +unreadMessageCounter?.toString():''}  </span>
       
     </div>
   ) :''

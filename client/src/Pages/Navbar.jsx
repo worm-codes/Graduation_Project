@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link,useLocation } from 'react-router-dom'
 import {AuthContext} from '../context/AuthContext'
 import '../public/Nav.css'
@@ -6,10 +6,11 @@ import axios from 'axios'
 
 
 const Navbar = () => {
-  let useAuth=useContext(AuthContext)
-  let user=useAuth.currentUser
-  
-  
+  let useAuth=useContext(AuthContext);
+  let user=useAuth.currentUser;
+  const [unreadMessages,setUnreadMessages]=useState(0);
+  const location=useLocation();
+  const currentPath=location.pathname;
  
 
   async function handleLogout() {
@@ -43,8 +44,28 @@ const Navbar = () => {
     }
   }
 
-  const location=useLocation()
-  const currentPath=location.pathname
+  useEffect(()=>{
+    if(user){
+     
+    const getNumberOfUnreadMessages=async()=>{
+    
+      const resp=await axios.post('http://localhost:5000/api/message/AllUnreadMessages/'+useAuth.currentUser?.email,
+      {
+        headers:{Authorization: 'Bearer ' + await useAuth.currentUser?.getIdToken(true)}
+      })
+     console.log(resp);
+      if(!resp.data.message){
+      setUnreadMessages(resp.data)
+      }
+    }
+    getNumberOfUnreadMessages()
+  }
+  },[user,useAuth.currentUser])
+
+
+
+
+ 
   return (
     <div style={{backgroundColor:'white'}}> 
     <nav style={{height:'3.5rem'}} className="navbar navbar-expand-lg navbar-light ">
@@ -68,7 +89,10 @@ const Navbar = () => {
         <li className="hidden-profile d-none nav-item">
           <a className="nav-link" href="#">Profile</a>
         </li>
-    
+ <li className="nav-item">
+        {unreadMessages!==0 ? <span className="badge badge-pill badge-danger" style={{float:"right" ,marginBottom:"-7px"}}>{unreadMessages}</span>:''}
+						<a className="nav-link" href="/messenger"><i className="fa fa-envelope fa-lg" aria-hidden="true"></i> <span className="sr-only">(current)</span></a>
+    </li>
         <li className="hidden-profile d-none nav-item">
          <a className="nav-link" onClick={handleLogout} href="/">Logout</a>
         </li>
@@ -86,7 +110,8 @@ const Navbar = () => {
           <div className="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
             <a className="dropdown-item" href="#">Hello</a>
           <a className="dropdown-item" href="#">Profile</a>
-            <a className="dropdown-item" href="#">Messages</a>
+         
+           
             <a className="dropdown-item" onClick={handleLogout} href="/">Logout</a>
           </div>
         </li>

@@ -22,6 +22,7 @@
     background-color: rgb(255,205,79);
     color: black;
     max-width: 300px;
+    word-break: break-word;
 }
 
 .messageBottom{

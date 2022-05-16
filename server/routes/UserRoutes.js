@@ -8,9 +8,7 @@ MiddleWare=require('../middleware/CheckAuth');
 
 
 router.post('/getUser',MiddleWare.isAuth,async (req,res)=>{   
-    console.log('--------------------------');
-     console.log('girdik ana user');
-    console.log('--------------------------');
+ 
     
      let foundedUser=null
      
@@ -28,7 +26,8 @@ router.post('/getUser',MiddleWare.isAuth,async (req,res)=>{
         }
          
         await User.findByIdAndUpdate({_id:foundedUser._id},{lastSignIn:timeSignIn})
-        console.log(foundedUser);
+     
+        
         return res.json(foundedUser)
             }
             else{
@@ -39,9 +38,7 @@ router.post('/getUser',MiddleWare.isAuth,async (req,res)=>{
 
  })
  router.get('/getUser/:id',MiddleWare.isAuth,async (req,res)=>{  
-     console.log('--------------------------');
-     console.log('girdik id li user al');
-    console.log('--------------------------');
+   
      let foundedUser=null
      
      if(MiddleWare.decodeValue && req.params.id){
@@ -64,9 +61,9 @@ router.post('/register',async (req,res)=>{
     if(checkForId){
         return res.json('duplicate')
     }
-         console.log('yaratmadan once')
+      
         try{
-            console.log('yaratiyor')
+       
         await User.create({
             user_ID:req.body.user_ID,
             user_name:req.body.user_name,
@@ -84,9 +81,7 @@ router.post('/register',async (req,res)=>{
 })
 
 router.get('/getAllUsers',MiddleWare.isAuth,async(req,res)=>{
-    console.log('--------------------------');
-     console.log('girdik alluser');
-    console.log('--------------------------');
+   
     await User.find({},(err,Users)=>{
         if(err){
             throw err
@@ -102,9 +97,7 @@ router.get('/getAllUsers',MiddleWare.isAuth,async(req,res)=>{
 })
 
 router.post('/logout',async(req,res)=>{
-    console.log('--------------------------');
-     console.log('girdik logout');
-    console.log('--------------------------');
+  
     if(req.body.user_email){
      await User.findOneAndUpdate({user_email:req.body.user_email},{LastSeen:req.body.LastSeen},(err,okey)=>{
         if(err){
@@ -119,17 +112,16 @@ router.post('/logout',async(req,res)=>{
     }).clone().catch(function(err){ console.log(err)})
 }
 else if(req.body.userId){
-    console.log('id id id id id logout');
-    console.log('clock that comes in',req.body.LastSeen);
+ 
     
     await User.findByIdAndUpdate({_id:req.body.userId},{LastSeen:req.body.LastSeen},(err,okey)=>{
         if(err){
             console.log(err);
         }
         else{
-            console.log(okey);
+            
            
-                console.log('donneeeeeeee');
+         
             res.json('done')
             
         }

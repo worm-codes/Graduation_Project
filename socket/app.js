@@ -30,12 +30,15 @@ const addUser = (userId, socketId) => {
   !userIds.some((user) => user === userId)&&userIds.push(userId)  
 };
 
+ const leaveChats=async(leavingUser)=>{
+                 const resp=await axios.post(`http://localhost:5000/api/conversation/quitFromChats/`,{
+                   leavingId:leavingUser
+                  }) }
+
 const removeUser = (socketId) => {
   
   users = users.filter((user) =>user.socketId !== socketId);
 
-  
-  
 };
 const removeId=async(id)=>{
   userIds=userIds.filter((user)=>user!==id)
@@ -80,8 +83,10 @@ io.on("connection", (socket) => {
     users.map(async(userInfo)=>{
       console.log(userInfo);
       if(userInfo.socketId==socket.id){
+         leaveChats(userInfo.userId)
           console.log('id bu',userInfo.userId);
            removeId(userInfo.userId)
+          
            
       }
     })

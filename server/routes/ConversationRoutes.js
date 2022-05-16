@@ -57,11 +57,71 @@ router.get('/:userId',MiddleWare.isAuth,async(req,res)=>{
        const currentConversation=await Conversation.find({
            members:{$in:[req.params.userId]}
        })
-       console.log(currentConversation);
+       console.log('current conv',currentConversation);
        res.json(currentConversation)
     }
     catch(err){
         res.json(err)
+        console.log(err);
+    }
+})
+
+router.get('/getUsersInChat/:convid',async(req,res)=>{
+     try{
+         console.log('entereddddd users in chattt');
+        const currentConversation=await Conversation.findById({_id:req.params.convid}).clone().catch(function(err){ console.log(err)})
+        console.log(currentConversation.UsersInChat);
+        res.json(currentConversation.UsersInChat)
+        
+    }
+    catch(err){
+        console.log(err);
+    }
+
+})
+
+router.post('/userEntersChat/:convid/:enteredUserId',async(req,res)=>{
+    const targetConv=await Conversation.findById({_id:req.params.convid})
+        if(!targetConv.UsersInChat.includes(req.params.enteredUserId)){
+    try{
+    
+        
+         await Conversation.updateOne(
+   { _id:req.params.convid}, 
+    { "$push": { "UsersInChat": req.params.enteredUserId } } )
+     const conv=await Conversation.findById({_id:req.params.convid})
+     res.json(conv.UsersInChat)
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+})
+
+router.post('/userLeavesChat/:convid/:leavingId',async(req,res)=>{
+    try{
+      
+        await Conversation.updateOne(
+   { _id:req.params.convid}, 
+    { "$pull": { "UsersInChat": req.params.leavingId } } )
+      res.sendStatus(200)  
+    }
+
+    catch(err){
+        console.log(err);
+    }
+})
+
+router.post('/quitFromChats/',async(req,res)=>{
+    try{
+        
+   await Conversation.updateMany(
+   { UsersInChat:{$in:[req.body.leavingId]}}, 
+    { "$pull": { "UsersInChat": req.body.leavingId } } )
+    res.sendStatus(200) 
+        
+   }
+    catch(err){
         console.log(err);
     }
 })

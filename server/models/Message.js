@@ -4,7 +4,8 @@ const MessageSchema=new mongoose.Schema({
     sender:{type:String},
     receiver:{type:String},
     text:{type:String},
-    createdAt:{type :String}
+    createdAt:{type :String},
+    unread:{type:Boolean}
 
 })
 
