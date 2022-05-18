@@ -6,12 +6,39 @@ import axios from "axios";
 import Navbar from "./Navbar";
 import { Country, State, City }  from 'country-state-city';
 import "../public/SearchResult.css";
+import  Slider  from '@mui/material/Slider';
+import Box from '@mui/material/Box';
 
+//Age Slider Stuff
+
+function valuetext(value) {
+	return `${value}`;
+  }
+  const minDistance = 0;
+
+  //Age Slider Stuff
 
 const SearchResult = () => {
 
     let useAuth=useContext(AuthContext)
-  
+
+	// Age Slider Logic Stuff
+	const [value1, setValue1] = useState([18,80])
+
+	const handleChange1 = (event, newValue, activeThumb) => {
+		if (!Array.isArray(newValue)) {
+		  return;
+		}
+	  
+		if (activeThumb === 0) {
+		  setValue1([Math.min(newValue[0], value1[1] - minDistance), value1[1]]);
+		} else {
+		  setValue1([value1[0], Math.max(newValue[1], value1[0] + minDistance)]);
+		}
+	  };
+	  
+	  // Age Slider Logic Stuff
+
     const [filteredAdState, setFilteredAdState] = useState([])
     const {
 		handleSubmit,
@@ -19,9 +46,15 @@ const SearchResult = () => {
 		formState: { errors },
 	} = useForm();
 
-    let countryInput = watch().country ? watch().country : '';
-    let stateInput = watch().state ? watch().state : '';
-    let cityInput = watch().city ? watch().city : "";
+	let countryInput = watch().country ? watch().country : '';
+	let stateInput = watch().state ? watch().state : '';
+	let cityInput = watch().city ? watch().city : '';
+	let arrivalDate = watch().arriving ? watch().arriving : '';
+	let leavingDate = watch().leaving ? watch().leaving : '';
+	let host = watch().host ? watch().host : "";
+	let minTime = watch().minTime ? watch().minTime : '';
+	let maxTime = watch().maxTime ? watch().maxTime : '';
+	let maxPeople = watch().maxPeople ? watch().maxPeople : '';
 
     useLayoutEffect(() => {
         const getFilteredAds = async () => {
@@ -104,6 +137,50 @@ const SearchResult = () => {
    let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter((city) =>
 		city.name.startsWith(cityInput)
 	);
+
+	//DATE LOGIC
+
+	let dateToCheck = new Date();
+	let year = dateToCheck.getFullYear();
+	let month = dateToCheck.getMonth();
+	let day = dateToCheck.getDate().toString();
+	let hour = dateToCheck.getHours();
+	let minutes = dateToCheck.getMinutes();
+	let minimumTime = `${hour}:${minutes}`;
+	let todayDate = new Date().toISOString().slice(0, 10);
+    let isLargerThanNineMonth = '';
+    let isLessThanNineMonth = '';
+    let finalMonthToUse = '';
+    if(month >= 9){
+        isLargerThanNineMonth = (month + 1).toString()
+        finalMonthToUse = isLargerThanNineMonth;
+    }
+    else {
+        isLessThanNineMonth = '0'+(month + 1).toString()
+        finalMonthToUse = isLessThanNineMonth;
+    }
+    if(parseInt(day) < 10) {
+      day = '0'+day
+    }
+
+    let boolVarForMinTime = false;
+   
+    if(finalMonthToUse === arrivalDate.substring(5,7) && day === arrivalDate.substring(8,10)){
+        boolVarForMinTime = true;
+    }
+
+	let isLeavingSelected = false;
+	  let isDatesSelected = false;
+	  if(arrivalDate && leavingDate) {
+		  isDatesSelected = true
+	  }
+	
+	  if(leavingDate){
+		  isLeavingSelected = true;
+	  }
+
+	//DATE LOGIC
+
     
 // ASIDE VE SECTION, MAIN'DEN GELEN ROW CLASS'INA SAHİP OLDUKLARI İÇİN FLEX-ITEM OLUCAKLAR
 //SECTION'UN KENDİ İÇİNDEKİ BAZI ELEMENTLERİ DE FLEX'E BAGLAMAYI DÜŞÜNÜYORUM, BAZI FİELDLARI
@@ -146,7 +223,6 @@ const SearchResult = () => {
 										id="state"
 										list="states"
 									/>
-									{/* {(errors.state && !errors.country && isFoundCountry) ? <p style={{color:'red'}}>{errors.state.message}</p>  : ''} */}
 									{(!errors.state && !errors.country && isFoundCountry && stateVar.name && !isStateValidForCountry) ? <p style={{color:'red'}}>State does not belong to country</p> : ''}
 									<datalist name="states" id="states">
 										{
@@ -157,7 +233,113 @@ const SearchResult = () => {
 											))
 										 }
 									</datalist>
-								</div>  
+								</div>
+
+						<div className="col">
+                    		<label htmlFor="city">City</label>
+                    		<input
+                     			 autoComplete="off"
+                      			placeholder="Type in City"
+                      			type="text"
+                     			 name="city"
+                      			id="city"
+                      			list="cities"
+                    			/>
+                    {(!errors.city && !errors.country && !errors.state && isFoundCountry && isFoundState && cityVar.name && !isCityValidForState) ? <p style={{color:'red'}}>City does not belong to state</p> : ''}
+                    <datalist name="cities" id="cities">
+                      <option selected disabled value="">
+                        Choose a City
+                      </option>
+                      {filteredCities.map((city, key) => (
+                        <option key={key} value={city.name}>
+                          {city.name}
+                        </option>
+                      ))}
+                    </datalist>
+                  </div>
+
+				  <div className="col">
+                  <label htmlFor='ageRange'>Age Range:</label>
+                    <Box id='slider'>
+                      <Slider 
+                        value={value1}
+                        onChange={handleChange1}
+                        getAriaValueText={valuetext}
+                        getAriaLabel={() => 'Age value min range'}
+                        valueLabelDisplay="auto"
+                        min={18}
+                        max={80}
+                        disableSwap
+                      />
+                    </Box>
+                  </div>
+
+				  <div className="col">
+                    <label htmlFor="arriving">Arriving in:</label>
+                    <input
+                      min={todayDate}
+                      max={isLeavingSelected === false ? `${new Date().getFullYear() + 1}-${finalMonthToUse}-${day}` : leavingDate}
+                      name="arriving"
+                      id="arriving"
+                      type="date"
+                    />
+                  </div>
+
+				  <div className="col">
+                    <label htmlFor="leaving">Leaving in:</label>
+                    <input min={`${arrivalDate}`} id="leaving" name="leaving" type="date" />
+                  </div>
+
+				  <div className="col">
+                    <label id="people" htmlFor="maxPeople">
+                      People Count:
+                    </label>
+                    <select name="maxPeople" id="maxPeople">
+                      <option selected value={1}>
+                        One People
+                      </option>
+                      <option value={2}>Two People</option>
+                      <option value={3}>Three People</option>
+                      <option value={4}>Four People</option>
+                    </select>
+                  </div>
+
+				  <div className="col" id="minTime">
+                    <label htmlFor="minTime">From:</label>
+                    <input
+                      min={boolVarForMinTime ? minimumTime : ''}
+                      name="minTime"
+                      id="minTime"
+                      type="time"
+                    />
+                  </div>
+
+				  <div className="col" id="maxTime">
+                    <label htmlFor="maxTime">To:</label>
+                    <input
+                      name="maxTime"
+                       id="maxTime"
+                        type="time"
+                         />
+                  </div>
+
+				  <div className='col' id='gender'>
+                    <label htmlFor="gender">Gender</label>
+                    <select name="gender" id="gender">
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Doesn't matter">Doesn't Matter</option>
+                    </select>
+                  </div>
+
+				  <div className='col' id='host'>
+                    <label htmlFor="host">Looking for a host?</label>
+                    <select name="host" id="host">
+                      <option value={true}>Yes</option>
+                      <option value={false}>No</option> 
+                    </select>
+                  </div>
+
             </form>
         </aside>
 
@@ -166,8 +348,12 @@ const SearchResult = () => {
         {filteredAdState.map((ad,key) => (
             <div className='query-content'>
                 <h2>{`${ad.state} - ${ad.country}`}</h2>
+				<div className='query-text'>
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp6wPN6-0GRdNKIvLrdx4aVJP-X_QcPy5tjQ&usqp=CAU" alt="" />
-                <p>{ad.description}</p>
+                {/* <p>{ad.description} - dsadasfkmasfk</p> */}
+				<p>selamlar dsapdsajpfasjopfaofsafafsafsafsafafafsafasfasfsasffafsdasdasdasdadsadasdasddsadasdasdsadsad
+					dsadasdadasdasdasdasdasdasdasdsadsadsadsadasdasasdsadadasd</p>
+				</div>
             </div>
         ))}
             

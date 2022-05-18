@@ -56,17 +56,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
   }
 };
 
-
-
-
   const { register, handleSubmit, watch, formState: {errors} } = useForm();
-  const ageArr = [];
-  for(let i = 18; i <= 80; i++){
-    ageArr[i-18] = i;
-  }
-  
-  
-
    
 
   let countryInput = watch().country ? watch().country : '';
@@ -155,7 +145,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
 
     // console.log("Outside countryVar, stateVar", countryVar, stateVar);
 
-    let dateToCheck = new Date();
+  let dateToCheck = new Date();
 	let year = dateToCheck.getFullYear();
 	let month = dateToCheck.getMonth();
 	let day = dateToCheck.getDate().toString();

@@ -19,7 +19,7 @@ const Navbar = () => {
 	const currentPath = location.pathname;
 	return (
 		/* important */
-		<div className="nav-bar" style={{ backgroundColor: "white", width: "100%" }}>
+		<div className="nav-bar" style={{ backgroundColor: "bisque", width: "100%" }}>
 			<nav className="navbar navbar-expand-lg navbar-light">
 				<Link className="navbar-brand" to="/">
 					<b className="h3">L🤝G</b>

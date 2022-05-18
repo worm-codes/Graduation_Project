@@ -1,14 +1,63 @@
 *, *::before, *::after {
     box-sizing:border-box;
 }
+
+#root {
+    margin-right: 0;
+    padding-right: 0;
+}
 img {
     max-width: 100%
 }
 
 .col {
-    width: fit-content;
+    width: 90%;
+    margin-bottom: .5em;
 }
 
 .query-results {
-    border: 5px solid red;
+    border: 1px solid red;
+    margin: .75em 0;
+    height: fit-content; 
+    width: fit-content;
+   
+}
+
+.query-text {
+    display: flex;
+    border: 2px solid green;
+    white-space: normal;
+    width: fit-content;
+    /* this width is optional, can be deleted */
+    /* width: 100%; */
+}
+
+.query-text p {
+    
+    /* this width is optional, can be deleted */
+    /* width: 100%; */
+}
+
+/* .query-text p {
+    /* width: 100%; */
+    
+/* } */ 
+
+/* .container {
+    width: 100%;
+} */
+
+
+
+/* .query-text p {
+    margin: auto 0;
+} */
+
+.row {
+    display: flex;
+    flex-wrap:nowrap;
+}
+
+#slider {
+    margin-left: .30em;
 }
