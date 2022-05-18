@@ -2,41 +2,74 @@
     box-sizing:border-box;
 }
 
-#root {
+/* #root {
     margin-right: 0;
     padding-right: 0;
-}
+} */
 img {
     max-width: 100%
 }
 
+/* .btn:hover {
+    opacity: 0.9;
+} */
+
 .col {
+    margin-top:1em;
     width: 90%;
     margin-bottom: .5em;
 }
 
 .query-results {
-    border: 1px solid red;
+    /* border: 1px solid red; */
+    /* background-color: wheat; */
+    
     margin: .75em 0;
+    margin-left: 5em;
     height: fit-content; 
     width: fit-content;
+    /* max-width: 1200px; */
+    
    
+}
+
+.query-content {
+    margin-top: 1.5em;
+    border: 1px solid purple;
+    max-width: 1350px;
+    
+}
+
+.query-content:nth-child(1){
+    margin-top: 0;
 }
 
 .query-text {
     display: flex;
     border: 2px solid green;
     white-space: normal;
-    width: fit-content;
+    word-wrap: break-word;   
+    overflow-wrap: break-word;
+    word-break: break-word;
+    /* margin-top: 3em; */
+    /* max-width: 1100px; */
     /* this width is optional, can be deleted */
     /* width: 100%; */
+    /* width: fit-content; */
 }
 
-.query-text p {
-    
-    /* this width is optional, can be deleted */
-    /* width: 100%; */
+
+
+#smallscreenemptytext {
+    display: none;
 }
+
+#mediumscreentext {
+    display:none
+}
+/* .query-text p { 
+  width: 100%;
+} */
 
 /* .query-text p {
     /* width: 100%; */
@@ -53,6 +86,8 @@ img {
     margin: auto 0;
 } */
 
+
+
 .row {
     display: flex;
     flex-wrap:nowrap;
@@ -61,3 +96,114 @@ img {
 #slider {
     margin-left: .30em;
 }
+
+@media(max-width:1200px){
+    #mediumscreentext {
+        display:block;
+    }
+    #smallscreenemptytext {
+        display:none;
+    }
+    #bigscreentext {
+        display:none;
+    }
+}
+
+@media(max-width: 992px){
+    /* img {
+        width: 240px;
+        height: 240px;
+    } */
+    .query-results {
+        margin-left: 1em;
+    }
+    .query-content {
+        min-width: 650px;
+    }
+
+    #mediumscreentext {
+        display:block;
+    }
+    #smallscreenemptytext {
+        display:none;
+    }
+    #bigscreentext {
+        display:none;
+    }
+    
+}
+
+@media(max-width:900px){
+    .query-content {
+        min-width: 575px;
+    }
+}
+
+@media(max-width: 840px){
+    img {
+        max-width: 240px;
+        max-height: 240px;
+    }
+    /* kıs bunu */
+    .query-content {
+        min-width: 480px;
+    }
+
+    #smallscreenemptytext {
+        display:none;
+    }
+    #bigscreentext {
+        display:none;
+    }
+    #mediumscreentext {
+        display:block;
+    }
+    
+}
+
+@media(max-width: 748px){
+    img {
+        max-width: 240px;
+        max-height: 240px;
+        /* margin-left:8em; */
+    }
+
+    /* .query-content {
+        min-width: 480px;
+        
+    } */
+
+    .query-content {
+        min-width: 100px;
+       
+    }
+
+    #smallscreenemptytext {
+        display:none;
+    }
+    #bigscreentext {
+        display:none;
+    }
+    #mediumscreentext {
+        display:none;
+    }
+    
+}
+
+@media(max-width: 570px){
+    .row {
+        display:flex;
+        flex-wrap: wrap;
+    }
+    .query-content {
+        margin-left: 1em;
+    }
+    
+    .query-results {
+        margin-left:0;
+
+    }
+   
+}
+
+

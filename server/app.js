@@ -148,14 +148,17 @@ app.post('/api/searchresult', async(req,res) => {
              // HAS PROVIDED UNDER THE REQ.BODY, E.G. IF(REQ.BODY.GENDER === DOESN'T MATTER) THEN RUN THE QUERY WITHOUT
              // THE GENDER PROPERTY SO THAT IT RETURNS THE DOCUMENTS WITH BOTH MALE AND FEMALE VALUES OF GENDER.
              // ELSE, THAT MEANS USER HAS SELECTED EITHER FEMALE OR MALE, THEN RUN THE QUERY AS OWNER_GENDER: GENDER
+
+
+             
         let theAds = await Ad.find({
             $and: [
-                { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge} }     
+                { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge},  arriving_date_day: {$gte:arrivingDateDay}, 
+                minTimeHour: {$gte: minTimeHour}, maxTimeHour: {$lte: maxTimeHour},
+                minTimeMinute: {$gte: minTimeMinute}, maxTimeMinute: {$lte: maxTimeMinute}, leaving_date_day: {$lte: leavingDateDay} }
             ],
-            arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth, arriving_date_day: arrivingDateDay,
-            leaving_date_year: leavingDateYear, leaving_date_month: leavingDateMonth, leaving_date_day: leavingDateDay,
-            city: city, state: state, country: country, host: host, maxPeople: maxPeople, minTimeHour: minTimeHour,
-            maxTimeHour: maxTimeHour, minTimeMinute: minTimeMinute, maxTimeMinute: maxTimeMinute, owner_gender: gender
+            arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,leaving_date_year: leavingDateYear,
+             leaving_date_month: leavingDateMonth,city: city, state: state, country: country, host: host, maxPeople: maxPeople, owner_gender: gender
         })
 
         // localStorage.setItem('advertisements', JSON.stringify(theAds));

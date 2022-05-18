@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useContext, useLayoutEffect } from 'react'
 import { AuthContext } from "../context/AuthContext";
 // import { Link, useParams } from "react-router-dom";
 import { useForm } from 'react-hook-form'
@@ -8,6 +8,8 @@ import { Country, State, City }  from 'country-state-city';
 import "../public/SearchResult.css";
 import  Slider  from '@mui/material/Slider';
 import Box from '@mui/material/Box';
+
+
 
 //Age Slider Stuff
 
@@ -66,7 +68,7 @@ const SearchResult = () => {
         } 
         getFilteredAds();
     }, [])
-    console.log(filteredAdState.length)
+    
 
     //COUNTRY --- STATE --- CITY FINDING CODES
     let states = [];
@@ -178,9 +180,43 @@ const SearchResult = () => {
 	  if(leavingDate){
 		  isLeavingSelected = true;
 	  }
+   
 
-	//DATE LOGIC
+  const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
+    // FONKSIYONUNU YAZ
+
+  //   let finalMinTimeHour = '';
+  //   let finalMinTimeMinute = '';
+  //   let finalMaxTimeHour = '';
+  //   let finalMaxTimeMinute = '';
+ 
+  // for(let i = 0; i < filteredAdState.length; i++){
+  //   if(filteredAdState[i].minTimeHour < 10) {
+  //     finalMinTimeHour = '0'+filteredAdState[i].minTimeHour;
+  //   }
+  //   else {
+  //     finalMinTimeHour = filteredAdState[i].minTimeHour
+  //   }
+  //   if(filteredAdState[i].minTimeMinute < 10) {
+  //     finalMinTimeMinute = '0'+filteredAdState[i].minTimeMinute;
+  //   }
+  //   else {
+  //     finalMinTimeMinute = filteredAdState[i].minTimeMinute
+  //   }
+  //   if(filteredAdState[i].maxTimeHour < 10) {
+  //     finalMaxTimeHour = '0'+filteredAdState[i].maxTimeHour;
+  //   }
+  //   else {
+  //     finalMaxTimeHour = filteredAdState[i].maxTimeHour
+  //   }
+  //   if(filteredAdState[i].maxTimeMinute < 10) {
+  //     finalMaxTimeMinute = '0'+filteredAdState[i].maxTimeMinute;
+  //   }
+  //   else {
+  //     finalMaxTimeMinute = filteredAdState[i].maxTimeMinute
+  //   }
+  // }
     
 // ASIDE VE SECTION, MAIN'DEN GELEN ROW CLASS'INA SAHİP OLDUKLARI İÇİN FLEX-ITEM OLUCAKLAR
 //SECTION'UN KENDİ İÇİNDEKİ BAZI ELEMENTLERİ DE FLEX'E BAGLAMAYI DÜŞÜNÜYORUM, BAZI FİELDLARI
@@ -193,9 +229,11 @@ const SearchResult = () => {
         <aside className='sidebar'>
             <form onSubmit={handleSubmit(async (data) => {
 
-            })}>
+            })}>        
+                        
                         <div className="col">
                             <label htmlFor="country">Country</label>
+                            {/* <button className='btn btn-primary' data-toggle="collapse" data-target="#country">Select Country</button> */}
                             <input
                                 autoComplete="off"
                                 placeholder="Type in Country"
@@ -350,10 +388,14 @@ const SearchResult = () => {
                 <h2>{`${ad.state} - ${ad.country}`}</h2>
 				<div className='query-text'>
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp6wPN6-0GRdNKIvLrdx4aVJP-X_QcPy5tjQ&usqp=CAU" alt="" />
-                {/* <p>{ad.description} - dsadasfkmasfk</p> */}
-				<p>selamlar dsapdsajpfasjopfaofsafafsafsafsafafafsafasfasfsasffafsdasdasdasdadsadasdasddsadasdasdsadsad
-					dsadasdadasdasdasdasdasdasdasdsadsadsadsadasdasasdsadadasd</p>
+				<p id='bigscreentext'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quaerat impedit ad accusamus provident libero animi neque labore, iusto maiores odit. Veniam dolor non reprehenderit necessitatibus debitis architecto repellat ratione ullam.
+        Repellendus quisquam voluptatum accusantium, debitis molestias accusamus libero sunt expedita minus aliquam pariatur molestiae voluptatem aperiam doloribus ullam ducimus consectetur! Quod laudantium inventore modi molestiae nesciunt, cupiditate numquam quasi. Odio?</p>
+        
+        <p id='mediumscreentext'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi autem reiciendis, reprehenderit quae fugit sed excepturi cumque sequi odio voluptate omnis hic accusantium natus minus magni, doloremque, ipsa ab cum?</p>
+        <p id='smallscreenemptytext'></p>
 				</div>
+        <p>{`${ad.city}  ${ad.arriving_date_day.toString()} ${months[ad.arriving_date_month-1]} - ${ad.leaving_date_day.toString()} ${months[ad.leaving_date_month-1]}`}</p>
+        <p>{`From:  ${ad.minTimeHour.toString()}:${ad.minTimeMinute.toString()} - To: ${ad.maxTimeHour.toString()}:${ad.maxTimeMinute.toString()}`}</p>
             </div>
         ))}
             
