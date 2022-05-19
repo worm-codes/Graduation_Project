@@ -184,39 +184,16 @@ const SearchResult = () => {
 
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-    // FONKSIYONUNU YAZ
+  // Function for adding 0 in front of hours & minutes that are 0 - 9.
+  let decideToPutZero = (num) => {
+    if(num < 10){
+      return '0'+num.toString();
+    } else {
+      return num.toString();
+    }
+  }
 
-  //   let finalMinTimeHour = '';
-  //   let finalMinTimeMinute = '';
-  //   let finalMaxTimeHour = '';
-  //   let finalMaxTimeMinute = '';
- 
-  // for(let i = 0; i < filteredAdState.length; i++){
-  //   if(filteredAdState[i].minTimeHour < 10) {
-  //     finalMinTimeHour = '0'+filteredAdState[i].minTimeHour;
-  //   }
-  //   else {
-  //     finalMinTimeHour = filteredAdState[i].minTimeHour
-  //   }
-  //   if(filteredAdState[i].minTimeMinute < 10) {
-  //     finalMinTimeMinute = '0'+filteredAdState[i].minTimeMinute;
-  //   }
-  //   else {
-  //     finalMinTimeMinute = filteredAdState[i].minTimeMinute
-  //   }
-  //   if(filteredAdState[i].maxTimeHour < 10) {
-  //     finalMaxTimeHour = '0'+filteredAdState[i].maxTimeHour;
-  //   }
-  //   else {
-  //     finalMaxTimeHour = filteredAdState[i].maxTimeHour
-  //   }
-  //   if(filteredAdState[i].maxTimeMinute < 10) {
-  //     finalMaxTimeMinute = '0'+filteredAdState[i].maxTimeMinute;
-  //   }
-  //   else {
-  //     finalMaxTimeMinute = filteredAdState[i].maxTimeMinute
-  //   }
-  // }
+  
     
 // ASIDE VE SECTION, MAIN'DEN GELEN ROW CLASS'INA SAHİP OLDUKLARI İÇİN FLEX-ITEM OLUCAKLAR
 //SECTION'UN KENDİ İÇİNDEKİ BAZI ELEMENTLERİ DE FLEX'E BAGLAMAYI DÜŞÜNÜYORUM, BAZI FİELDLARI
@@ -395,7 +372,7 @@ const SearchResult = () => {
         <p id='smallscreenemptytext'></p>
 				</div>
         <p>{`${ad.city}  ${ad.arriving_date_day.toString()} ${months[ad.arriving_date_month-1]} - ${ad.leaving_date_day.toString()} ${months[ad.leaving_date_month-1]}`}</p>
-        <p>{`From:  ${ad.minTimeHour.toString()}:${ad.minTimeMinute.toString()} - To: ${ad.maxTimeHour.toString()}:${ad.maxTimeMinute.toString()}`}</p>
+        <p>{`From:  ${decideToPutZero(ad.minTimeHour)}:${decideToPutZero(ad.minTimeMinute)} - To: ${decideToPutZero(ad.maxTimeHour)}:${decideToPutZero(ad.maxTimeMinute)}`}</p>
             </div>
         ))}
             
