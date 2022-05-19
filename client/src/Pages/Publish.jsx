@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext} from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
 import "../public/Publish.css";
 import { Country, State, City } from "country-state-city";
 import axios from "axios";
@@ -310,8 +309,6 @@ const Publish = () => {
 							
 							 if(State.getStatesOfCountry(countryVar.isoCode).includes(stateVar) === true
 								&& City.getCitiesOfState(countryVar.isoCode, stateVar.isoCode).includes(cityVar) === true ){
-							// errors.state.message = ''
-							// errors.city.message = ''
 
 							const response = await axios.post("http://localhost:5000/api/publish", {
 								arrivingDateYear: parseInt(data.arriving.substring(0,4)),
@@ -333,20 +330,11 @@ const Publish = () => {
 								state: stateVar.name,
 								userToProcess: currentUser
 								
-			
 							})
 							if(response.data === 'success'){
 								window.location.assign('/myads')
 							}
 						} 
-
-							// else if (State.getStatesOfCountry(countryVar.isoCode).includes(stateVar) === false) {
-							// 	//  errors.state.message = 'State does not belong to country'
-								
-							// }
-							// else {
-							// 	errors.city.message = 'City does not belong to state'
-							// }
 
 						})}
 					>

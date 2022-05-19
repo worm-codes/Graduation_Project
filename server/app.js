@@ -27,7 +27,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
-mongoose.connect('mongodb://localhost:27017/LocalGuide', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/LocalGuide', { useNewUrlParser: true, useUnifiedTopology: true, ignoreUndefined: true });
 
 
 
@@ -126,50 +126,57 @@ app.post('/api/publish', async(req,res) =>{
 
 app.post('/api/searchresult', async(req,res) => {
     try {
-        // let theEmail = req.body.userToProcess.email;
         
-        // let allTheAds = await Ad.find({});
-
-       
-        
-        // for(let adv of allTheAds){
-        //    if(parseInt(adv.owner_age) >= minAge && parseInt(adv.owner_age) <= maxAge && parseInt(adv.maxTime.substring(0,2)) >= parseInt(maxTime.substring(0,2)) && parseInt(adv.maxTime.substring(3,5)) >= parseInt(adv.maxTime.substring(3,5))
-        //      && adv.country === countryy && adv.state === statee && adv.city === cityy && adv.owner_gender === gender && adv.host === host
-        //      && adv.leaving_date === leaving && adv.arriving_date === arriving && adv.maxPeople === maxPeople) {
-                 
-        //     filteredAds.push(adv);
-            
-        //    } 
-        // }
         const { arrivingDateYear, arrivingDateMonth, arrivingDateDay, leavingDateYear, leavingDateMonth, leavingDateDay,
              city, country, host, maxPeople, minTimeHour, maxTimeHour, minTimeMinute, maxTimeMinute, state, gender, minAge, maxAge } = req.body;
-       
-             // I WILL IMPLEMENT THE LOGIC OF BEING ABLE TO QUERY THE DATABASE ACCORDING TO THE INPUTS THAT THE USER
-             // HAS PROVIDED UNDER THE REQ.BODY, E.G. IF(REQ.BODY.GENDER === DOESN'T MATTER) THEN RUN THE QUERY WITHOUT
-             // THE GENDER PROPERTY SO THAT IT RETURNS THE DOCUMENTS WITH BOTH MALE AND FEMALE VALUES OF GENDER.
-             // ELSE, THAT MEANS USER HAS SELECTED EITHER FEMALE OR MALE, THEN RUN THE QUERY AS OWNER_GENDER: GENDER
 
+             let providedData = {
+                 arrivingDateYear: arrivingDateYear,
+                 arrivingDateMonth: arrivingDateMonth,
+                 arrivingDateDay: arrivingDateDay,
+                 leavingDateYear: leavingDateYear,
+                 leavingDateMonth: leavingDateMonth,
+                 leavingDateDay: leavingDateDay,
+                 city: city,
+                 country: country,
+                 state: state,
+                 host: host,
+                 maxPeople: maxPeople,
+                 minTimeHour: minTimeHour,
+                 minTimeMinute: minTimeMinute,
+                 maxTimeHour: maxTimeHour,
+                 maxTimeMinute: maxTimeMinute,
+                 gender: gender,
+                 minAge: minAge,
+                 maxAge: maxAge
+             }
+            
+             //This code get's rid of all the undefined values that come from the req.body which iscoming from /searchresult sidebar form
+            //  Object.keys(providedData).forEach(key => providedData[key] === undefined && delete providedData[key]);
 
-             
-        let theAds = await Ad.find({
-            $and: [
-                { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge},  arriving_date_day: {$gte:arrivingDateDay}, 
-                minTimeHour: {$gte: minTimeHour}, maxTimeHour: {$lte: maxTimeHour},
-                minTimeMinute: {$gte: minTimeMinute}, maxTimeMinute: {$lte: maxTimeMinute}, leaving_date_day: {$lte: leavingDateDay} }
-            ],
-            arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,leaving_date_year: leavingDateYear,
-             leaving_date_month: leavingDateMonth,city: city, state: state, country: country, host: host, maxPeople: maxPeople, owner_gender: gender
-        })
+                // let query = {};
+                // if(color) {
+                //     query.color = color;
+                // }
+                // if(type) {
+                //     query.type = type;
+                // }
 
-        // localStorage.setItem('advertisements', JSON.stringify(theAds));
-        //THIS STORE.SET WORKS, BUT I WANNA TRY SESSION STORAGE SINCE IT IS A BETTER OPTION FOR MY USECASE
-         store.set('advertisements', JSON.stringify(theAds))
-        // req.session.advertisements = theAds;
-        // req.session.save()
-        // console.log("req.session.advertisements var inside post request:", req.session.advertisements)
-        console.log("theAds variable:", theAds)
-         res.json('success')
-        
+                let theAds = await Ad.find({
+                    $and: [
+                        { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge},  arriving_date_day: {$gte:arrivingDateDay}, 
+                        minTimeHour: {$gte: minTimeHour}, maxTimeHour: {$lte: maxTimeHour},
+                        minTimeMinute: {$gte: minTimeMinute}, maxTimeMinute: {$lte: maxTimeMinute}, leaving_date_day: {$lte: leavingDateDay} }
+                    ],
+                    arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,leaving_date_year: leavingDateYear,
+                     leaving_date_month: leavingDateMonth,city: city, state: state, country: country, host: host, maxPeople: maxPeople, owner_gender: gender
+                })
+            
+                 store.set('advertisements', JSON.stringify(theAds))
+                 console.log("providedData:",providedData);
+                console.log("theAds variable:", theAds)
+                
+                 res.json('success')           
 
      }
     catch(e) {
@@ -177,7 +184,7 @@ app.post('/api/searchresult', async(req,res) => {
     }
 })
 
-7
+
 
 app.get('/api/searchresult', async(req,res) => {
     let searchedAds = JSON.parse(store.get('advertisements'));
@@ -185,6 +192,7 @@ app.get('/api/searchresult', async(req,res) => {
     //   res.send(req.session.advertisements)
     res.send(searchedAds)
 })
+
 
 app.get('/api/myads', MiddleWare.isAuth, async(req,res) => {
     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})

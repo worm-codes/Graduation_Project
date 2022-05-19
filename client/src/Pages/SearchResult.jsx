@@ -1,6 +1,5 @@
-import React, { useState, useContext, useLayoutEffect } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { AuthContext } from "../context/AuthContext";
-// import { Link, useParams } from "react-router-dom";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
 import Navbar from "./Navbar";
@@ -26,6 +25,9 @@ const SearchResult = () => {
 
 	// Age Slider Logic Stuff
 	const [value1, setValue1] = useState([18,80])
+  const [countryVar, setCountryVar] = useState([])
+	const [cityVar, setCityVar] = useState([])
+	const [stateVar, setStateVar] = useState([])
 
 	const handleChange1 = (event, newValue, activeThumb) => {
 		if (!Array.isArray(newValue)) {
@@ -43,6 +45,7 @@ const SearchResult = () => {
 
     const [filteredAdState, setFilteredAdState] = useState([])
     const {
+    register,
 		handleSubmit,
 		watch,
 		formState: { errors },
@@ -58,7 +61,7 @@ const SearchResult = () => {
 	let maxTime = watch().maxTime ? watch().maxTime : '';
 	let maxPeople = watch().maxPeople ? watch().maxPeople : '';
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const getFilteredAds = async () => {
             const response = await axios.get(`http://localhost:5000/api/searchresult`,{
                 headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
@@ -67,11 +70,13 @@ const SearchResult = () => {
               setFilteredAdState(response.data)
         } 
         getFilteredAds();
+        //BURASI BOŞ ARRAY DEĞİL, [filteredAdState] olacak muhtemelen
+        //BURAYA [filteredAdState] yazınca, sürekli re-render oluyor defalarca ve en sonunda firebase error auth quota exceeded hatası alıyorum
     }, [])
     
 
     //COUNTRY --- STATE --- CITY FINDING CODES
-    let states = [];
+  let states = [];
 	let isFoundCountry = false;
 	let isFoundState = false;
 	let countryToSetStateObj = {}
@@ -98,6 +103,9 @@ const SearchResult = () => {
     let stateNameSelected = "";
 	let chosenState = {};
 	let chosenStateArr = [];
+
+  let isCountryVarEmpty = Object.keys(countryVar).length === 0;
+  let isStateVarEmpty = Object.keys(stateVar).length === 0;
 
 	states.forEach((state) => {
 		if(countryVar.name === countryInput && !isCountryVarEmpty){
@@ -137,8 +145,39 @@ const SearchResult = () => {
    let filteredCountries = Country.getAllCountries().filter(country => country.name.startsWith(countryInput));
    let filteredStates = states.filter((state) => state.name.startsWith(stateInput));
    let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter((city) =>
-		city.name.startsWith(cityInput)
-	);
+   city.name.startsWith(cityInput));
+  //  let statesArrToUse = [];
+  //  if(isCountryVarEmpty){
+  //    statesArrToUse = State.getAllStates();
+  //  }
+  //  else {
+  //    statesArrToUse = filteredStates;
+  //  }
+
+  // let funcToDecideStates = (condition) => {
+  //   if(condition) {
+  //     return State.getAllStates().filter((state) => state.name.startsWith(stateInput));;
+  //   } else {
+  //     return filteredStates;
+  //   }
+  // }
+
+  // let funcToDecideCities = (condition) => {
+  //   if(condition) {
+  //     return City.getAllCities().filter((city) =>city.name.startsWith(cityInput));;
+  //   } else {
+  //     return filteredCities
+  //   }
+  // }
+
+
+
+  // let citiesArrToUse = [];
+  // if(isStateVarEmpty){
+  //   citiesArrToUse = City.getAllCities();
+  // } else {
+  //   citiesArrToUse = filteredCities;
+  // }
 
 	//DATE LOGIC
 
@@ -181,8 +220,25 @@ const SearchResult = () => {
 		  isLeavingSelected = true;
 	  }
    
+    useEffect(() => {	
+      setCountryVar(countryToSetStateObj)	
+      console.log("countryVar state inside useEffect:",countryVar);
+    }, [countryInput])
+  
+  
+    useEffect(() => {
+      setStateVar(chosenState)
+      isStateValidForCountry = true;	
+    }, [stateInput])
+  
+    useEffect(() => {
+      setCityVar(cityObj)
+      isCityValidForState = true;
+    }, [cityInput])
 
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  console.log("countryInput var:", countryInput);
+  console.log("countryVar state:",countryVar);
 
   // Function for adding 0 in front of hours & minutes that are 0 - 9.
   let decideToPutZero = (num) => {
@@ -194,7 +250,6 @@ const SearchResult = () => {
   }
 
   
-    
 // ASIDE VE SECTION, MAIN'DEN GELEN ROW CLASS'INA SAHİP OLDUKLARI İÇİN FLEX-ITEM OLUCAKLAR
 //SECTION'UN KENDİ İÇİNDEKİ BAZI ELEMENTLERİ DE FLEX'E BAGLAMAYI DÜŞÜNÜYORUM, BAZI FİELDLARI
 // YANYANA KONUMLANDIRABİLMEK İÇİN. ÖRNEĞİN İMG SOLDA, AYNI HİZADA YANINDA DESCRİPTİON VESAİRE
@@ -204,8 +259,28 @@ const SearchResult = () => {
         <Navbar/>
         <main className='main container row'>
         <aside className='sidebar'>
-            <form onSubmit={handleSubmit(async (data) => {
-
+            <form onSubmit={handleSubmit(async (data,event) => {
+              event.preventDefault();
+              const response = await axios.post("http://localhost:5000/api/searchresult", {
+                  arrivingDateYear: undefined,
+								  arrivingDateMonth: undefined,
+								  arrivingDateDay: parseInt(data.arriving.substring(8,10)),
+								  leavingDateYear: parseInt(data.leaving.substring(0,4)),
+								  leavingDateMonth: parseInt(data.leaving.substring(5,7)),
+								  leavingDateDay: parseInt(data.leaving.substring(8,10)),
+                  city: cityVar.name,
+                  country: countryVar.name,
+                  host: data.host,
+                  maxPeople: data.maxPeople,
+                  minTimeHour: parseInt(data.minTime.substring(0,2)),
+								  minTimeMinute: parseInt(data.minTime.substring(3,5)),
+								  maxTimeHour: parseInt(data.maxTime.substring(0,2)),
+								  maxTimeMinute: parseInt(data.maxTime.substring(3,5)),
+                  state: stateVar.name,
+                  gender: data.gender,
+                  minAge: value1[0],
+                  maxAge: value1[1]
+                });
             })}>        
                         
                         <div className="col">
@@ -214,6 +289,7 @@ const SearchResult = () => {
                             <input
                                 autoComplete="off"
                                 placeholder="Type in Country"
+                                {...register("country", {required:'Please select a country'})}
                                 list="countries"
                                 name="country"
                                 id="country"
@@ -228,11 +304,12 @@ const SearchResult = () => {
                     </datalist>
                         </div>
 
-                        <div className="col">
+                <div className="col">
 									<label htmlFor="state">State</label>
 									<input 
 										autoComplete="off"
 										placeholder="Type in State"
+                    {...register("state", {required:'Please select a state'})}
 										type="text"
 										name="state"
 										id="state"
@@ -240,7 +317,7 @@ const SearchResult = () => {
 									/>
 									{(!errors.state && !errors.country && isFoundCountry && stateVar.name && !isStateValidForCountry) ? <p style={{color:'red'}}>State does not belong to country</p> : ''}
 									<datalist name="states" id="states">
-										{
+										{ 
 											filteredStates.map((state, key) => (
 												<option key={key} value={state.name}>
 													{state.name}
@@ -255,6 +332,7 @@ const SearchResult = () => {
                     		<input
                      			 autoComplete="off"
                       			placeholder="Type in City"
+                            {...register("city", {required:'Please select a city'})}
                       			type="text"
                      			 name="city"
                       			id="city"
@@ -294,22 +372,27 @@ const SearchResult = () => {
                     <input
                       min={todayDate}
                       max={isLeavingSelected === false ? `${new Date().getFullYear() + 1}-${finalMonthToUse}-${day}` : leavingDate}
+                      {...register("arriving", { required: "You have to select an arrival date" })}
                       name="arriving"
                       id="arriving"
                       type="date"
                     />
                   </div>
 
-				  <div className="col">
+				          <div className="col">
                     <label htmlFor="leaving">Leaving in:</label>
-                    <input min={`${arrivalDate}`} id="leaving" name="leaving" type="date" />
+                    <input min={`${arrivalDate}`}
+                    {...register("leaving", { required: "You have to select a leaving date" })}
+                     id="leaving"
+                     name="leaving"
+                     type="date" />
                   </div>
 
 				  <div className="col">
                     <label id="people" htmlFor="maxPeople">
                       People Count:
                     </label>
-                    <select name="maxPeople" id="maxPeople">
+                    <select {...register("maxPeople", { required: true })} name="maxPeople" id="maxPeople">
                       <option selected value={1}>
                         One People
                       </option>
@@ -323,6 +406,7 @@ const SearchResult = () => {
                     <label htmlFor="minTime">From:</label>
                     <input
                       min={boolVarForMinTime ? minimumTime : ''}
+                      {...register("minTime", { required: 'Please choose your lower time range' })}
                       name="minTime"
                       id="minTime"
                       type="time"
@@ -333,6 +417,7 @@ const SearchResult = () => {
                     <label htmlFor="maxTime">To:</label>
                     <input
                       name="maxTime"
+                      {...register("maxTime", { required: 'Please choose your upper time range' })}
                        id="maxTime"
                         type="time"
                          />
@@ -340,7 +425,7 @@ const SearchResult = () => {
 
 				  <div className='col' id='gender'>
                     <label htmlFor="gender">Gender</label>
-                    <select name="gender" id="gender">
+                    <select {...register("gender", { required: true })} name="gender" id="gender">
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                       <option value="Doesn't matter">Doesn't Matter</option>
@@ -349,12 +434,15 @@ const SearchResult = () => {
 
 				  <div className='col' id='host'>
                     <label htmlFor="host">Looking for a host?</label>
-                    <select name="host" id="host">
+                    <select {...register("host", { required: true })} name="host" id="host">
                       <option value={true}>Yes</option>
                       <option value={false}>No</option> 
                     </select>
                   </div>
 
+                  <div id='searchResultButtonDiv' className='col searchResultButton'>
+                    <button className='btn btn-primary'>Search Ads</button>
+                    </div>
             </form>
         </aside>
 
