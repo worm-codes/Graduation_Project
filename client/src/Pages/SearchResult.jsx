@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, useCallback } from 'react'
 import { AuthContext } from "../context/AuthContext";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
@@ -28,6 +28,7 @@ const SearchResult = () => {
   const [countryVar, setCountryVar] = useState([])
 	const [cityVar, setCityVar] = useState([])
 	const [stateVar, setStateVar] = useState([])
+  const [refresh, setRefresh] = useState()
 
 	const handleChange1 = (event, newValue, activeThumb) => {
 		if (!Array.isArray(newValue)) {
@@ -61,18 +62,32 @@ const SearchResult = () => {
 	let maxTime = watch().maxTime ? watch().maxTime : '';
 	let maxPeople = watch().maxPeople ? watch().maxPeople : '';
 
-    useEffect(() => {
-        const getFilteredAds = async () => {
-            const response = await axios.get(`http://localhost:5000/api/searchresult`,{
-                headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
-              }) 
-              console.log("response coming from the backend:", response.data)
-              setFilteredAdState(response.data)
-        } 
-        getFilteredAds();
-        //BURASI BOŞ ARRAY DEĞİL, [filteredAdState] olacak muhtemelen
+
+
+
+  const getFilteredAds = useCallback(async () => {
+    const response = await axios.get(`http://localhost:5000/api/searchresult`,{
+        headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
+      }) 
+      console.log("response coming from the backend:", response.data)
+      setFilteredAdState(response.data)
+      
+      
+      
+    }, []);
+
+    useEffect(() => { 
+        getFilteredAds(); 
+        setRefresh(!refresh)
         //BURAYA [filteredAdState] yazınca, sürekli re-render oluyor defalarca ve en sonunda firebase error auth quota exceeded hatası alıyorum
-    }, [])
+        //BURAYA BOŞ ARRAY ATARSAM, INFINITE LOOP'A GİRMİYOR FAKAT DEĞİŞİMİ GÖRMEM İÇİN SAYFAYI REFRESHLEMEM GEREKIYOR
+        //setFilteredAdState yollamak ile boş array yollamak aynı sonuca ulaştırdı.
+    }, [getFilteredAds])
+
+    // useEffect(() => {
+    //   getFilteredAds();
+    //   setRefresh(refresh)
+    // }, [refresh])
     
 
     //COUNTRY --- STATE --- CITY FINDING CODES

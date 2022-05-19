@@ -171,8 +171,8 @@ app.post('/api/searchresult', async(req,res) => {
                     arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,leaving_date_year: leavingDateYear,
                      leaving_date_month: leavingDateMonth,city: city, state: state, country: country, host: host, maxPeople: maxPeople, owner_gender: gender
                 })
-            
-                 store.set('advertisements', JSON.stringify(theAds))
+                  store.clearAll();
+                  store.set('advertisements', JSON.stringify(theAds))
                  console.log("providedData:",providedData);
                 console.log("theAds variable:", theAds)
                 
