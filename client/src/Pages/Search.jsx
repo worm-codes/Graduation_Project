@@ -176,9 +176,9 @@ const handleChange1 = (event, newValue, activeThumb) => {
 
     let selectedStatesIsoCode = chosenStateArr[1];
     let selectedStatesCountryCode = chosenStateArr[2];
-    let filteredStates = states.filter(state => state.name.startsWith(stateInput));
-    let filteredCountries = Country.getAllCountries().filter(country => country.name.startsWith(countryInput));
-    let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter(city => city.name.startsWith(cityInput));
+    let filteredStates = states.filter(state => state.name.toLowerCase().startsWith(stateInput.toLowerCase()));
+    let filteredCountries = Country.getAllCountries().filter(country => country.name.toLowerCase().startsWith(countryInput.toLowerCase()));
+    let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter(city => city.name.toLowerCase().startsWith(cityInput.toLowerCase()));
 
 
     let isLeavingSelected = false;
@@ -205,7 +205,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
       >
         {/*  important */}
         <Navbar />
-        <div className="general">
+        <div className="generall">
           <div className="containerr">
             <h1>SEARCH FOR AN AD</h1>
             <p>Let's make new connections along the way!</p>

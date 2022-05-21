@@ -8,10 +8,10 @@
 	font-weight: 500;
 }
 
-.general {
+.generall {
 	height: 100%;
 	width: 100%;
-	background: linear-gradient(135deg, #6f6df4, #4c46f5);
+	background: linear-gradient(135deg, #71b7e6, #9b59b6); 
 	background-repeat: repeat;
 	background-size: 100% 100%;
 	
@@ -37,15 +37,15 @@
 	box-shadow: 20px 30px 25px rgba(0, 0, 0, 0.15);
 	/* margin-top: 2%; */
 }
-.general .columnn {
+.generall .columnn {
 	width: 80%;
 }
-.general h1 {
+.generall h1 {
 	font-size: 30px;
 	text-align: center;
 	color: #1c093c;
 }
-.general p {
+.generall p {
 	position: relative;
 	margin: auto;
 	width: 100%;
@@ -54,12 +54,12 @@
 	font-size: 14px;
 	font-weight: 400;
 }
-.general form {
+.generall form {
 	width: 100%;
 
 	margin: 30px auto 0 auto;
 }
-.general .roww {
+.generall .roww {
 	width: 100%;
 	display: flex;
 	grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -68,11 +68,11 @@
 	justify-content: space-between;
 	align-items: flex-start;
 }
-.general label {
+.generall label {
 	color: #1c093c;
 	font-size: 14px;
 }
-.general textarea,
+.generall textarea,
 input,
 select,
 option {
@@ -83,10 +83,10 @@ option {
 	border: 1.2px solid #c4cae0;
 	margin-top: 5px;
 }
-.general textarea {
+.generall textarea {
 	resize: none;
 }
-.general textarea:focus,
+.generall textarea:focus,
 input:focus {
 	outline: none;
 	border-color: #6f6df4;
@@ -94,7 +94,7 @@ input:focus {
 #people {
 	width: 7rem !important;
 }
-.general button {
+.generall button {
 	border: none;
 	padding: 10px 20px;
 	background: linear-gradient(130deg, #6f6df4, #4c46f5);

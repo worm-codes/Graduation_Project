@@ -122,46 +122,33 @@ app.post('/api/publish', async(req,res) =>{
 }
 })
 
-
+// let providedData = {
+//     arrivingDateYear: arrivingDateYear,
+//     arrivingDateMonth: arrivingDateMonth,
+//     arrivingDateDay: arrivingDateDay,
+//     leavingDateYear: leavingDateYear,
+//     leavingDateMonth: leavingDateMonth,
+//     leavingDateDay: leavingDateDay,
+//     city: city,
+//     country: country,
+//     state: state,
+//     host: host,
+//     maxPeople: maxPeople,
+//     minTimeHour: minTimeHour,
+//     minTimeMinute: minTimeMinute,
+//     maxTimeHour: maxTimeHour,
+//     maxTimeMinute: maxTimeMinute,
+//     gender: gender,
+//     minAge: minAge,
+//     maxAge: maxAge
+// }
 
 app.post('/api/searchresult', async(req,res) => {
     try {
         
         const { arrivingDateYear, arrivingDateMonth, arrivingDateDay, leavingDateYear, leavingDateMonth, leavingDateDay,
              city, country, host, maxPeople, minTimeHour, maxTimeHour, minTimeMinute, maxTimeMinute, state, gender, minAge, maxAge } = req.body;
-
-             let providedData = {
-                 arrivingDateYear: arrivingDateYear,
-                 arrivingDateMonth: arrivingDateMonth,
-                 arrivingDateDay: arrivingDateDay,
-                 leavingDateYear: leavingDateYear,
-                 leavingDateMonth: leavingDateMonth,
-                 leavingDateDay: leavingDateDay,
-                 city: city,
-                 country: country,
-                 state: state,
-                 host: host,
-                 maxPeople: maxPeople,
-                 minTimeHour: minTimeHour,
-                 minTimeMinute: minTimeMinute,
-                 maxTimeHour: maxTimeHour,
-                 maxTimeMinute: maxTimeMinute,
-                 gender: gender,
-                 minAge: minAge,
-                 maxAge: maxAge
-             }
-            
-             //This code get's rid of all the undefined values that come from the req.body which iscoming from /searchresult sidebar form
-            //  Object.keys(providedData).forEach(key => providedData[key] === undefined && delete providedData[key]);
-
-                // let query = {};
-                // if(color) {
-                //     query.color = color;
-                // }
-                // if(type) {
-                //     query.type = type;
-                // }
-
+          
                 let theAds = await Ad.find({
                     $and: [
                         { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge},  arriving_date_day: {$gte:arrivingDateDay}, 
@@ -173,11 +160,9 @@ app.post('/api/searchresult', async(req,res) => {
                 })
                   store.clearAll();
                   store.set('advertisements', JSON.stringify(theAds))
-                 console.log("providedData:",providedData);
-                console.log("theAds variable:", theAds)
-                
-                 res.json('success')           
-
+                //  console.log("providedData:",providedData);
+                console.log("theAds variable:", theAds)     
+                res.json('success')          
      }
     catch(e) {
         console.log("error occured!", e)
@@ -188,8 +173,6 @@ app.post('/api/searchresult', async(req,res) => {
 
 app.get('/api/searchresult', async(req,res) => {
     let searchedAds = JSON.parse(store.get('advertisements'));
-    // console.log("req.session.advertisements var inside get request:", req.session.advertisements)
-    //   res.send(req.session.advertisements)
     res.send(searchedAds)
 })
 

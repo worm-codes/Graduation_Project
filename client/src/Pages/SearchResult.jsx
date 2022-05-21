@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useCallback } from 'react'
+import React, { useState, useContext, useEffect, useCallback, useMemo } from 'react'
 import { AuthContext } from "../context/AuthContext";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
@@ -45,6 +45,8 @@ const SearchResult = () => {
 	  // Age Slider Logic Stuff
 
     const [filteredAdState, setFilteredAdState] = useState([])
+    const [prevAdState, setprevAdState] = useState(null)
+    const myQueryResults = useMemo(() => ({ filteredAdState }), [filteredAdState])
     const {
     register,
 		handleSubmit,
@@ -65,24 +67,40 @@ const SearchResult = () => {
 
 
 
-  const getFilteredAds = useCallback(async () => {
-    const response = await axios.get(`http://localhost:5000/api/searchresult`,{
-        headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
-      }) 
-      console.log("response coming from the backend:", response.data)
-      setFilteredAdState(response.data)
-      
-      
-      
-    }, []);
+  
 
-    useEffect(() => { 
+    useEffect(() => {    
+      const getFilteredAds = async () => {
+          
+          //(prev) => [...response.data] yazınca da aynı çalışıyor.
+          let response = [];
+            if(prevAdState === null){
+              response = await axios.get(`http://localhost:5000/api/searchresult`,{
+            headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
+          }) 
+          console.log("response coming from the backend:", response.data)
+              setFilteredAdState(response.data)
+              setprevAdState(response.data)  
+            }
+            else if(prevAdState !== null && JSON.stringify(response.data) !== JSON.stringify(filteredAdState)){
+              response = await axios.get(`http://localhost:5000/api/searchresult`,{
+            headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
+          }) 
+          console.log("response coming from the backend:", response.data)
+              setprevAdState(filteredAdState);
+              setFilteredAdState(response.data);
+            }                            
+        };
+
         getFilteredAds(); 
-        setRefresh(!refresh)
         //BURAYA [filteredAdState] yazınca, sürekli re-render oluyor defalarca ve en sonunda firebase error auth quota exceeded hatası alıyorum
         //BURAYA BOŞ ARRAY ATARSAM, INFINITE LOOP'A GİRMİYOR FAKAT DEĞİŞİMİ GÖRMEM İÇİN SAYFAYI REFRESHLEMEM GEREKIYOR
         //setFilteredAdState yollamak ile boş array yollamak aynı sonuca ulaştırdı.
-    }, [getFilteredAds])
+        //LATEST: BURAYA filteredAdState yollayınca, refreshe gerek kalmadan content yenilendi ama
+        // infinite request atıyor hala backend'e, useMemo'dan sonra bile
+    }, [])
+
+   
 
     // useEffect(() => {
     //   getFilteredAds();
@@ -157,10 +175,10 @@ const SearchResult = () => {
     
    let selectedStatesIsoCode = chosenStateArr[1];
    let selectedStatesCountryCode = chosenStateArr[2];
-   let filteredCountries = Country.getAllCountries().filter(country => country.name.startsWith(countryInput));
-   let filteredStates = states.filter((state) => state.name.startsWith(stateInput));
+   let filteredCountries = Country.getAllCountries().filter(country => country.name.toLowerCase().startsWith(countryInput.toLowerCase()));
+   let filteredStates = states.filter((state) => state.name.toLowerCase().startsWith(stateInput.toLowerCase()));
    let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter((city) =>
-   city.name.startsWith(cityInput));
+   city.name.toLowerCase().startsWith(cityInput.toLowerCase()));
   //  let statesArrToUse = [];
   //  if(isCountryVarEmpty){
   //    statesArrToUse = State.getAllStates();
@@ -237,7 +255,7 @@ const SearchResult = () => {
    
     useEffect(() => {	
       setCountryVar(countryToSetStateObj)	
-      console.log("countryVar state inside useEffect:",countryVar);
+      // console.log("countryVar state inside useEffect:",countryVar);
     }, [countryInput])
   
   
@@ -252,8 +270,8 @@ const SearchResult = () => {
     }, [cityInput])
 
   const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  console.log("countryInput var:", countryInput);
-  console.log("countryVar state:",countryVar);
+  // console.log("countryInput var:", countryInput);
+  // console.log("countryVar state:",countryVar);
 
   // Function for adding 0 in front of hours & minutes that are 0 - 9.
   let decideToPutZero = (num) => {

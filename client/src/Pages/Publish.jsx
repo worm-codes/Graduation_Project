@@ -212,10 +212,10 @@ const Publish = () => {
 
 	let selectedStatesIsoCode = chosenStateArr[1];
 	let selectedStatesCountryCode = chosenStateArr[2];
-	let filteredStates = states.filter((state) => state.name.startsWith(stateInput));
-	let filteredCountries = Country.getAllCountries().filter((country) => country.name.startsWith(countryInput));
+	let filteredStates = states.filter((state) => state.name.toLowerCase().startsWith(stateInput.toLowerCase()));
+	let filteredCountries = Country.getAllCountries().filter((country) => country.name.toLowerCase().startsWith(countryInput.toLowerCase()));
 	let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter((city) =>
-		city.name.startsWith(cityInput)
+		city.name.toLowerCase().startsWith(cityInput.toLowerCase())
 	);
 
 	
