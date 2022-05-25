@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, NavLink } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "../public/Nav.css";
 
@@ -40,19 +40,19 @@ const Navbar = () => {
 						<>
 							<ul className="navbar-nav ml-auto mr-2 text-right">
 							<li className="nav-item ">
-									<Link className="nav-link" to="/myads">
+									<NavLink className="nav-link" to="/myads">
 										My Ads
-									</Link>
+									</NavLink>
 								</li>
 								<li className="nav-item ">
-									<Link className="nav-link" to="/search">
+									<NavLink className="nav-link" to="/search">
 										Search for an Ad
-									</Link>
+									</NavLink>
 								</li>
 								<li className="nav-item ">
-									<Link className="nav-link" to="/publish">
+									<NavLink className="nav-link" to="/publish">
 										Create an Ad
-									</Link>
+									</NavLink>
 								</li>
 								<li className="nav-item">
 									<a className="nav-link" href="#">

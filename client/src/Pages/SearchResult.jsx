@@ -69,38 +69,34 @@ const SearchResult = () => {
 
   
 
-    useEffect(() => {    
+    useEffect(() => {      
       const getFilteredAds = async () => {
-          
-          //(prev) => [...response.data] yazınca da aynı çalışıyor.
-          let response = [];
-            if(prevAdState === null){
-              response = await axios.get(`http://localhost:5000/api/searchresult`,{
+              const response = await axios.get(`http://localhost:5000/api/searchresult`,{
             headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
-          }) 
-          console.log("response coming from the backend:", response.data)
+            }) 
+              console.log("response coming from the backend inside if:", response.data)
               setFilteredAdState(response.data)
               setprevAdState(response.data)  
+            
+             if(prevAdState === null && JSON.stringify(response.data) === JSON.stringify(filteredAdState)){
+              setprevAdState(filteredAdState)
+              
             }
-            else if(prevAdState !== null && JSON.stringify(response.data) !== JSON.stringify(filteredAdState)){
-              response = await axios.get(`http://localhost:5000/api/searchresult`,{
-            headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
-          }) 
-          console.log("response coming from the backend:", response.data)
-              setprevAdState(filteredAdState);
-              setFilteredAdState(response.data);
-            }                            
+            else if(prevAdState !== null && JSON.stringify(response.data) !== JSON.stringify(prevAdState)) {
+                setprevAdState(response.data)
+            }                          
         };
 
         getFilteredAds(); 
-        //BURAYA [filteredAdState] yazınca, sürekli re-render oluyor defalarca ve en sonunda firebase error auth quota exceeded hatası alıyorum
+    }, [])
+
+   
+
+         //BURAYA [filteredAdState] yazınca, sürekli re-render oluyor defalarca ve en sonunda firebase error auth quota exceeded hatası alıyorum
         //BURAYA BOŞ ARRAY ATARSAM, INFINITE LOOP'A GİRMİYOR FAKAT DEĞİŞİMİ GÖRMEM İÇİN SAYFAYI REFRESHLEMEM GEREKIYOR
         //setFilteredAdState yollamak ile boş array yollamak aynı sonuca ulaştırdı.
         //LATEST: BURAYA filteredAdState yollayınca, refreshe gerek kalmadan content yenilendi ama
         // infinite request atıyor hala backend'e, useMemo'dan sonra bile
-    }, [])
-
-   
 
     // useEffect(() => {
     //   getFilteredAds();
@@ -243,15 +239,31 @@ const SearchResult = () => {
         boolVarForMinTime = true;
     }
 
-	let isLeavingSelected = false;
+	  let isLeavingSelected = false;
 	  let isDatesSelected = false;
+    let isArrivingDateSelected = false;
+    let isMinTimeSelected = false;
+    let isTimeSelected = false;
+
 	  if(arrivalDate && leavingDate) {
 		  isDatesSelected = true
 	  }
+    
+    if(arrivalDate){
+      isArrivingDateSelected = true;
+    }
 	
 	  if(leavingDate){
 		  isLeavingSelected = true;
 	  }
+
+    if(minTime){
+      isMinTimeSelected = true;
+    }
+
+    if(minTime && maxTime){
+      isTimeSelected = true;
+    }
    
     useEffect(() => {	
       setCountryVar(countryToSetStateObj)	
@@ -286,6 +298,8 @@ const SearchResult = () => {
 // ASIDE VE SECTION, MAIN'DEN GELEN ROW CLASS'INA SAHİP OLDUKLARI İÇİN FLEX-ITEM OLUCAKLAR
 //SECTION'UN KENDİ İÇİNDEKİ BAZI ELEMENTLERİ DE FLEX'E BAGLAMAYI DÜŞÜNÜYORUM, BAZI FİELDLARI
 // YANYANA KONUMLANDIRABİLMEK İÇİN. ÖRNEĞİN İMG SOLDA, AYNI HİZADA YANINDA DESCRİPTİON VESAİRE
+  
+ 
 
   return (
     <>
@@ -294,26 +308,46 @@ const SearchResult = () => {
         <aside className='sidebar'>
             <form onSubmit={handleSubmit(async (data,event) => {
               event.preventDefault();
+              console.log(  parseInt(data.arriving.substring(0,4)),
+               parseInt(data.arriving?.substring(5,7)),
+               parseInt(data.arriving?.substring(8,10)),
+               parseInt(data.leaving?.substring(0,4)),
+               parseInt(data.leaving?.substring(5,7)),
+               parseInt(data.leaving?.substring(8,10)),
+             cityVar.name,
+               countryVar.name,
+              data.host,
+               data.maxPeople,
+               parseInt(data.minTime?.substring(0,2)),
+              parseInt(data.minTime?.substring(3,5)),
+              parseInt(data.maxTime?.substring(0,2)),
+            parseInt(data.maxTime?.substring(3,5)),
+               stateVar.name,
+              data.gender,
+             value1[0],
+              value1[1])
               const response = await axios.post("http://localhost:5000/api/searchresult", {
-                  arrivingDateYear: undefined,
-								  arrivingDateMonth: undefined,
-								  arrivingDateDay: parseInt(data.arriving.substring(8,10)),
-								  leavingDateYear: parseInt(data.leaving.substring(0,4)),
-								  leavingDateMonth: parseInt(data.leaving.substring(5,7)),
-								  leavingDateDay: parseInt(data.leaving.substring(8,10)),
-                  city: cityVar.name,
-                  country: countryVar.name,
+                  arrivingDateYear: parseInt(data.arriving?.substring(0,4)),
+								  arrivingDateMonth: parseInt(data.arriving?.substring(5,7)),
+								  arrivingDateDay: parseInt(data.arriving?.substring(8,10)),
+								  leavingDateYear: parseInt(data.leaving?.substring(0,4)),
+								  leavingDateMonth: parseInt(data.leaving?.substring(5,7)),
+								  leavingDateDay: parseInt(data.leaving?.substring(8,10)),
+                  city: cityVar?.name,
+                  country: countryVar?.name,
                   host: data.host,
-                  maxPeople: data.maxPeople,
-                  minTimeHour: parseInt(data.minTime.substring(0,2)),
-								  minTimeMinute: parseInt(data.minTime.substring(3,5)),
-								  maxTimeHour: parseInt(data.maxTime.substring(0,2)),
-								  maxTimeMinute: parseInt(data.maxTime.substring(3,5)),
-                  state: stateVar.name,
+                  maxPeopleToPass: data.maxPeople,
+                  minTimeHourToPass: parseInt(data.minTime?.substring(0,2)),
+								  minTimeMinuteToPass: parseInt(data.minTime?.substring(3,5)),
+								  maxTimeHourToPass: parseInt(data.maxTime?.substring(0,2)),
+								  maxTimeMinuteToPass: parseInt(data.maxTime?.substring(3,5)),
+                  state: stateVar?.name,
                   gender: data.gender,
                   minAge: value1[0],
                   maxAge: value1[1]
                 });
+
+                 setFilteredAdState(response.data);
             })}>        
                         
                         <div className="col">
@@ -342,12 +376,14 @@ const SearchResult = () => {
 									<input 
 										autoComplete="off"
 										placeholder="Type in State"
+                    disabled={!isFoundCountry}
                     {...register("state", {required:'Please select a state'})}
 										type="text"
 										name="state"
 										id="state"
 										list="states"
 									/>
+                  {(errors.state && !errors.country && isFoundCountry) ? <p style={{color:'red'}}>{errors.state.message}</p>  : ''}
 									{(!errors.state && !errors.country && isFoundCountry && stateVar.name && !isStateValidForCountry) ? <p style={{color:'red'}}>State does not belong to country</p> : ''}
 									<datalist name="states" id="states">
 										{ 
@@ -365,12 +401,14 @@ const SearchResult = () => {
                     		<input
                      			 autoComplete="off"
                       			placeholder="Type in City"
-                            {...register("city", {required:'Please select a city'})}
+                            {...register("city")}
+                            disabled={!isFoundState}
                       			type="text"
                      			 name="city"
                       			id="city"
                       			list="cities"
                     			/>
+                    {(errors.city && !errors.country && !errors.state && isFoundCountry && isFoundState) ? <p style={{color:'red'}}>{errors.city.message}</p> : ''}
                     {(!errors.city && !errors.country && !errors.state && isFoundCountry && isFoundState && cityVar.name && !isCityValidForState) ? <p style={{color:'red'}}>City does not belong to state</p> : ''}
                     <datalist name="cities" id="cities">
                       <option selected disabled value="">
@@ -405,7 +443,7 @@ const SearchResult = () => {
                     <input
                       min={todayDate}
                       max={isLeavingSelected === false ? `${new Date().getFullYear() + 1}-${finalMonthToUse}-${day}` : leavingDate}
-                      {...register("arriving", { required: "You have to select an arrival date" })}
+                      {...register("arriving")}
                       name="arriving"
                       id="arriving"
                       type="date"
@@ -414,8 +452,11 @@ const SearchResult = () => {
 
 				          <div className="col">
                     <label htmlFor="leaving">Leaving in:</label>
-                    <input min={`${arrivalDate}`}
-                    {...register("leaving", { required: "You have to select a leaving date" })}
+                    <input
+                     min={`${arrivalDate}`}
+                    {...register("leaving")}
+                    disabled={!isArrivingDateSelected}
+                    required={isArrivingDateSelected}
                      id="leaving"
                      name="leaving"
                      type="date" />
@@ -425,7 +466,7 @@ const SearchResult = () => {
                     <label id="people" htmlFor="maxPeople">
                       People Count:
                     </label>
-                    <select {...register("maxPeople", { required: true })} name="maxPeople" id="maxPeople">
+                    <select {...register("maxPeople")} name="maxPeople" id="maxPeople">
                       <option selected value={1}>
                         One People
                       </option>
@@ -439,7 +480,7 @@ const SearchResult = () => {
                     <label htmlFor="minTime">From:</label>
                     <input
                       min={boolVarForMinTime ? minimumTime : ''}
-                      {...register("minTime", { required: 'Please choose your lower time range' })}
+                      {...register("minTime")}
                       name="minTime"
                       id="minTime"
                       type="time"
@@ -450,7 +491,9 @@ const SearchResult = () => {
                     <label htmlFor="maxTime">To:</label>
                     <input
                       name="maxTime"
-                      {...register("maxTime", { required: 'Please choose your upper time range' })}
+                      {...register("maxTime")}
+                      disabled={!isMinTimeSelected}
+                      required={isMinTimeSelected}
                        id="maxTime"
                         type="time"
                          />
@@ -458,16 +501,16 @@ const SearchResult = () => {
 
 				  <div className='col' id='gender'>
                     <label htmlFor="gender">Gender</label>
-                    <select {...register("gender", { required: true })} name="gender" id="gender">
+                    <select {...register("gender")} name="gender" id="gender">
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
-                      <option value="Doesn't matter">Doesn't Matter</option>
+                      <option value={undefined}>Doesn't Matter</option>
                     </select>
                   </div>
 
 				  <div className='col' id='host'>
                     <label htmlFor="host">Looking for a host?</label>
-                    <select {...register("host", { required: true })} name="host" id="host">
+                    <select {...register("host")} name="host" id="host">
                       <option value={true}>Yes</option>
                       <option value={false}>No</option> 
                     </select>

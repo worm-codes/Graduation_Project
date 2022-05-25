@@ -223,11 +223,11 @@ const handleChange1 = (event, newValue, activeThumb) => {
                   city: cityVar,
                   country: countryVar.name,
                   host: data.host,
-                  maxPeople: data.maxPeople,
-                  minTimeHour: parseInt(data.minTime.substring(0,2)),
-								  minTimeMinute: parseInt(data.minTime.substring(3,5)),
-								  maxTimeHour: parseInt(data.maxTime.substring(0,2)),
-								  maxTimeMinute: parseInt(data.maxTime.substring(3,5)),
+                  maxPeopleToPass: data.maxPeople,
+                  minTimeHourToPass: parseInt(data.minTime.substring(0,2)),
+								  minTimeMinuteToPass: parseInt(data.minTime.substring(3,5)),
+								  maxTimeHourToPass: parseInt(data.maxTime.substring(0,2)),
+								  maxTimeMinuteToPass: parseInt(data.maxTime.substring(3,5)),
                   state: stateVar.name,
                   gender: data.gender,
                   minAge: value1[0],
@@ -393,7 +393,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
                     <select {...register("gender", { required: true })} name="gender" id="gender">
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
-                      <option value="Doesn't matter">Doesn't Matter</option>
+                      <option value={undefined}>Doesn't Matter</option>
                       
                     </select>
                   </div>

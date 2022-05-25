@@ -145,24 +145,75 @@ app.post('/api/publish', async(req,res) =>{
 
 app.post('/api/searchresult', async(req,res) => {
     try {
+
+        console.log(req.body);
+
+        // let theAds = await Ad.find({
+                //     $or: [{ $and : [ {owner_age: {$gte : minAge}}, {owner_age: {$lte: maxAge}}] ,
+                //             $and : [ {arrivingDateDay: { $ne: null }}, {arriving_date_day: {$gte:arrivingDateDay}}],
+                //             arrivingDateMonth: {$ne:null},
+                //             arrivingDateYear: {$ne:null},
+                //             $and : [ {leavingDateDay: { $ne: null }}, {leaving_date_day: {$lte: leavingDateDay}}],
+                //             leavingDateMonth:{$ne:null},
+                //             leavingDateYear: {$ne:null},
+                //             $and : [ {minTimeHourToPass: { $ne: null }}, {minTimeHour: {$gte: minTimeHourToPass}}],
+                //             $and : [ {minTimeMinuteToPass: { $ne: null }}, {minTimeMinute: {$gte: minTimeMinuteToPass}}],
+                //             $and : [ {maxTimeHourToPass: { $ne: null }}, {maxTimeHour: {$lte: maxTimeHourToPass}}],
+                //             $and : [ {maxTimeMinuteToPass: { $ne: null }}, {maxTimeMinute: {$lte: maxTimeMinuteToPass}}],
+                //             maxPeople: {$gte: maxPeopleToPass},
+                //             city: city, state: state, country: country, host: host, owner_gender: gender                                    
+                //     }],                 
+                // })
         
         const { arrivingDateYear, arrivingDateMonth, arrivingDateDay, leavingDateYear, leavingDateMonth, leavingDateDay,
-             city, country, host, maxPeople, minTimeHour, maxTimeHour, minTimeMinute, maxTimeMinute, state, gender, minAge, maxAge } = req.body;
-          
-                let theAds = await Ad.find({
-                    $and: [
-                        { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge},  arriving_date_day: {$gte:arrivingDateDay}, 
-                        minTimeHour: {$gte: minTimeHour}, maxTimeHour: {$lte: maxTimeHour},
-                        minTimeMinute: {$gte: minTimeMinute}, maxTimeMinute: {$lte: maxTimeMinute}, leaving_date_day: {$lte: leavingDateDay} }
-                    ],
-                    arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,leaving_date_year: leavingDateYear,
-                     leaving_date_month: leavingDateMonth,city: city, state: state, country: country, host: host, maxPeople: maxPeople, owner_gender: gender
-                })
+             city, country, host, maxPeopleToPass, minTimeHourToPass, minTimeMinuteToPass, maxTimeHourToPass, maxTimeMinuteToPass,
+              state, gender, minAge, maxAge } = req.body;
+              let theAds = [];
+
+                if(minTimeHourToPass !== null && arrivingDateDay !== null){
+                    theAds = await Ad.find({
+                        $and: [
+                            { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge},  arriving_date_day: {$gte:arrivingDateDay}, 
+                            minTimeHour: {$gte: minTimeHourToPass}, maxTimeHour: {$lte: maxTimeHourToPass},
+                            minTimeMinute: {$gte: minTimeMinuteToPass}, maxTimeMinute: {$lte: maxTimeMinuteToPass}, leaving_date_day: {$lte: leavingDateDay} }
+                        ],
+                        arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,leaving_date_year: leavingDateYear,
+                         leaving_date_month: leavingDateMonth,city: city, state: state, country: country, host: host, maxPeople: maxPeopleToPass, owner_gender: gender
+                    })
+                }
+                if(minTimeHourToPass === null && arrivingDateDay !== null){
+                    theAds = await Ad.find({
+                        $and: [
+                            { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge}, arriving_date_day: {$gte:arrivingDateDay},leaving_date_day: {$lte: leavingDateDay} }
+                        ],
+                        arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,leaving_date_year: leavingDateYear,
+                         leaving_date_month: leavingDateMonth,city: city, state: state, country: country, host: host, maxPeople: maxPeopleToPass, owner_gender: gender
+                    })
+                }
+                if(arrivingDateDay === null && minTimeHourToPass !== null){
+                    theAds = await Ad.find({
+                        $and: [
+                            { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge},
+                            minTimeHour: {$gte: minTimeHourToPass}, maxTimeHour: {$lte: maxTimeHourToPass},
+                            minTimeMinute: {$gte: minTimeMinuteToPass}, maxTimeMinute: {$lte: maxTimeMinuteToPass} }
+                        ],
+                       city: city, state: state, country: country, host: host, maxPeople: maxPeopleToPass, owner_gender: gender
+                    })
+                }
+                if(arrivingDateDay === null && minTimeHourToPass === null){
+                    theAds = await Ad.find({
+                        $and: [
+                            { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge} }
+                        ],
+                        city: city, state: state, country: country, host: host, maxPeople: maxPeopleToPass, owner_gender: gender
+                    })
+                }
+ 
                   store.clearAll();
                   store.set('advertisements', JSON.stringify(theAds))
                 //  console.log("providedData:",providedData);
                 console.log("theAds variable:", theAds)     
-                res.json('success')          
+                res.json(theAds);    
      }
     catch(e) {
         console.log("error occured!", e)
