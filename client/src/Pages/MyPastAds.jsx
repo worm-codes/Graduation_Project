@@ -5,14 +5,14 @@ import { useForm } from 'react-hook-form'
 import axios from "axios";
 import Navbar from "./Navbar";
 
-const MyAds = () => {
+const MyPastAds = () => {
 
     const { currentUser } = useContext(AuthContext);
     let useAuth=useContext(AuthContext)
     //const [adsArrState, setAdsArrState] = useState([])
     const [adArrState, setAdArrState] = useState([])
     const { handleSubmit } = useForm();
-    const [activeAdsArr, setActiveAdsArr] = useState([])
+    // const [activeAdsArr, setActiveAdsArr] = useState([])
     const [inActiveAdsArr, setInActiveAdsArr] = useState([])
     // const { id } = useParams();
     let generalData = []
@@ -25,14 +25,15 @@ const MyAds = () => {
             const response = await axios.get(`http://localhost:5000/api/myads`,{
                 headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
               }) 
-              setAdArrState(response.data[0])
-              setActiveAdsArr(response.data[0].filter((ad) => ad.isActive === true));
-              setInActiveAdsArr(response.data[0].filter((ads) => ads.isActive === false));      
+              setAdArrState(response.data[0].filter((ads) => ads.isActive === false))
+            //   setInActiveAdsArr(response.data[0].filter((ads) => ads.isActive === false));
+            //   setActiveAdsArr(response.data[0].filter((ad) => ad.isActive === true));
+            //   setInActiveAdsArr(response.data[0].filter((ads) => ads.isActive === false));      
         } 
         getAds();
     }, [])
     console.log(adArrState)
-    
+    //setAdArrState([])
     // let allAds = [];
     // for(let i = 0; i < adArrState.length; i++){
     //     allAds.push(adArrState[i]);
@@ -40,8 +41,8 @@ const MyAds = () => {
     // console.log("allAds var:", allAds);
     // let acTiveAdsArr = adArrState.filter((ads) => ads.isActive === true);
     // let inActiveAdsArr = adArrState.filter((ad) => ad.isActive === false);
-    console.log("active ads:", activeAdsArr);
-    console.log("inactive ads:", inActiveAdsArr);
+    // console.log("active ads:", activeAdsArr);
+    // console.log("inactive ads:", inActiveAdsArr);
   return (
     <>
         <div>
@@ -61,7 +62,7 @@ const MyAds = () => {
   </thead>
  
   <tbody>
-      {activeAdsArr.map((ad,key) => (
+      {adArrState.map((ad,key) => (
           <tr key={key}>
               <th scope='row'>{key+1}</th>
               <td>{ad.owner_email}</td>
@@ -70,13 +71,16 @@ const MyAds = () => {
               <td>{ad.city}</td>
               <td>
                   <form onSubmit={handleSubmit(async (data) => {
-                      const changedAd = await axios.put(`http://localhost:5000/api/myads`,  {adID: ad._id})
-                      setActiveAdsArr(changedAd.data.user_ads.filter((ad) => ad.isActive === true));
-                      setInActiveAdsArr(adArrState.filter((ads) => ads.isActive === false));
-                    //   console.log(adID)
-                    console.log("changedAd var:", changedAd)
+                      const deletedAd = await axios.delete(`http://localhost:5000/api/mypastads/${ad._id}`, {
+                        headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
+                      })
+                    //   setActiveAdsArr(changedAd.data.user_ads.filter((ad) => ad.isActive === true));
+                    //   setInActiveAdsArr(adArrState.filter((ads) => ads.isActive === false));
+                    // console.log(adID)
+                    setAdArrState(adArrState.filter((ads) => ads._id !== deletedAd.data._id))
+                    console.log("deletedAd var:", deletedAd)
                   })}>
-                      <button className='btn btn-warning'>Cancel</button>
+                      <button className='btn btn-danger'>Delete</button>
                   </form>
               </td>
           </tr>        
@@ -91,4 +95,4 @@ const MyAds = () => {
   )
 }
 
-export default MyAds
+export default MyPastAds

@@ -13,6 +13,7 @@ import Sign_In from './Pages/Sign_In';
 import Search from './Pages/Search';
 import Publish from './Pages/Publish';
 import MyAds from './Pages/MyAds';
+import MyPastAds from './Pages/MyPastAds';
 import SearchResult from './Pages/SearchResult';
 
 
@@ -39,6 +40,7 @@ const App = () => {
        <Route path='/search' element={<PrivateIndex><Search /></PrivateIndex>}></Route>
        <Route path='/publish' element={<PrivateIndex><Publish /></PrivateIndex>}></Route>
        <Route path='/myads' element={<PrivateIndex><MyAds /></PrivateIndex>}></Route>
+       <Route path='/mypastads' element={<PrivateIndex><MyPastAds /></PrivateIndex>}></Route>
        <Route path='/searchresult' element={<PrivateIndex><SearchResult /></PrivateIndex>}></Route>
        <Route path='/resetPassword' element={<PrivateIndex><PasswordReset /></PrivateIndex>}></Route>
        {/* <Route path='*' element={ <Errorpage/>}></Route> */}

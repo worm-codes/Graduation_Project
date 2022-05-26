@@ -308,24 +308,6 @@ const SearchResult = () => {
         <aside className='sidebar'>
             <form onSubmit={handleSubmit(async (data,event) => {
               event.preventDefault();
-              console.log(  parseInt(data.arriving.substring(0,4)),
-               parseInt(data.arriving?.substring(5,7)),
-               parseInt(data.arriving?.substring(8,10)),
-               parseInt(data.leaving?.substring(0,4)),
-               parseInt(data.leaving?.substring(5,7)),
-               parseInt(data.leaving?.substring(8,10)),
-             cityVar.name,
-               countryVar.name,
-              data.host,
-               data.maxPeople,
-               parseInt(data.minTime?.substring(0,2)),
-              parseInt(data.minTime?.substring(3,5)),
-              parseInt(data.maxTime?.substring(0,2)),
-            parseInt(data.maxTime?.substring(3,5)),
-               stateVar.name,
-              data.gender,
-             value1[0],
-              value1[1])
               const response = await axios.post("http://localhost:5000/api/searchresult", {
                   arrivingDateYear: parseInt(data.arriving?.substring(0,4)),
 								  arrivingDateMonth: parseInt(data.arriving?.substring(5,7)),
@@ -346,7 +328,6 @@ const SearchResult = () => {
                   minAge: value1[0],
                   maxAge: value1[1]
                 });
-
                  setFilteredAdState(response.data);
             })}>        
                         

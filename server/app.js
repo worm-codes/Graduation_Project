@@ -89,7 +89,7 @@ app.post('/api/register',async (req,res)=>{
 
 app.post('/api/publish', async(req,res) =>{
     try{
-        console.log('inside the try block')
+        // console.log('inside the try block')
         let theEmail = req.body.userToProcess.email;
         const { arrivingDateYear, arrivingDateMonth, arrivingDateDay,
                 leavingDateYear, leavingDateMonth, leavingDateDay,
@@ -97,8 +97,8 @@ app.post('/api/publish', async(req,res) =>{
               minTimeHour, minTimeMinute, maxTimeHour, maxTimeMinute, state, userToProcess } = req.body;
         let theUser = await User.findOne({user_email:theEmail})
         theUserAge = new Date().getFullYear() - parseInt(theUser.user_date_of_birth.substring(0,4).toString());
-        console.log("theEmail variable",theEmail)
-        console.log("theUser variable",theUser)
+        // console.log("theEmail variable",theEmail)
+        // console.log("theUser variable",theUser)
     
     const theAd = await new Ad({ arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,
             arriving_date_day: arrivingDateDay, city: city, country, description, host, leaving_date_year:leavingDateYear,
@@ -106,7 +106,7 @@ app.post('/api/publish', async(req,res) =>{
             maxTimeHour: maxTimeHour, minTimeMinute: minTimeMinute, maxTimeMinute: maxTimeMinute,state,
             owner_gender:theUser.user_gender,owner_email: theUser.user_email, owner_age: theUserAge, owner_id: theUser._id})
 
-    theUser.populate('user_ads');
+    await theUser.populate('user_ads');
 
 
     theUser.user_ads.push(theAd);
@@ -122,31 +122,10 @@ app.post('/api/publish', async(req,res) =>{
 }
 })
 
-// let providedData = {
-//     arrivingDateYear: arrivingDateYear,
-//     arrivingDateMonth: arrivingDateMonth,
-//     arrivingDateDay: arrivingDateDay,
-//     leavingDateYear: leavingDateYear,
-//     leavingDateMonth: leavingDateMonth,
-//     leavingDateDay: leavingDateDay,
-//     city: city,
-//     country: country,
-//     state: state,
-//     host: host,
-//     maxPeople: maxPeople,
-//     minTimeHour: minTimeHour,
-//     minTimeMinute: minTimeMinute,
-//     maxTimeHour: maxTimeHour,
-//     maxTimeMinute: maxTimeMinute,
-//     gender: gender,
-//     minAge: minAge,
-//     maxAge: maxAge
-// }
-
 app.post('/api/searchresult', async(req,res) => {
     try {
 
-        console.log(req.body);
+        // console.log(req.body);
 
         // let theAds = await Ad.find({
                 //     $or: [{ $and : [ {owner_age: {$gte : minAge}}, {owner_age: {$lte: maxAge}}] ,
@@ -237,17 +216,48 @@ app.get('/api/myads', MiddleWare.isAuth, async(req,res) => {
             userAdArr.push(temp)
          }      
     }
-
     res.send([userAdArr])
 })
 
 app.put('/api/myads', async(req,res) => {
     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
-    console.log("user variable",user)
+    // console.log("user variable",user)
     const { adID } = req.body;
     let theAdToChange = await Ad.findByIdAndUpdate({_id: adID}, { isActive : false});
-    console.log("the clicked ads id:", adID)
+    // console.log("the clicked ads id:", adID)
+    let adsToReturn = await user.populate('user_ads');
+    // console.log("user ads",adsToReturn)
+     res.json(adsToReturn)
 
+})
+
+app.get('/api/mypastads', MiddleWare.isAuth, async(req,res) => {
+    let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
+    let userAdArr = []
+    for(let ad of user.user_ads){
+         let temp = await Ad.findById(ad._id)
+         if(temp !== null && temp.isActive === false){
+            userAdArr.push(temp)
+         }      
+    }
+    res.send([userAdArr])
+})
+
+app.delete('/api/mypastads/:adid', MiddleWare.isAuth, async(req,res) => {
+    const { adid } = req.params;
+    let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
+    console.log("adID to be deleted:", adid)
+
+    await User.findByIdAndUpdate({_id : user._id}, {$pull: { user_ads: adid}})
+    
+    let deletedOne = await Ad.findByIdAndDelete(adid);
+
+    console.log("deletedOne var:", deletedOne)
+        // NOT: BAŞVURANLAR, KABUL ALANLAR ARRAY'I YARATILDIKTAN SONRA BURASI DEĞİŞECEK.
+    // AD'I SİLMEDEN ÖNCE, USERLARIN "BAŞVURDUKLARIM" ARRAY'INDAN PULL İLE ÇIKARTILACAK
+    // AD'I SILMEDEN ONCE, USERLARIN "KABUL ALDIKLARIM" ARRAY'INDAN PULL İLE ÇIKARTILACAK
+    //let theAdToChange = await Ad.findByIdAndUpdate({_id: adID}, { isActive : false});
+    res.json(deletedOne)
 })
 
 app.listen(5000,()=>{
