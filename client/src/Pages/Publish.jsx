@@ -215,8 +215,9 @@ const Publish = () => {
 	let filteredStates = states.filter((state) => state.name.toLowerCase().startsWith(stateInput.toLowerCase()));
 	let filteredCountries = Country.getAllCountries().filter((country) => country.name.toLowerCase().startsWith(countryInput.toLowerCase()));
 	let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter((city) =>
-		city.name.toLowerCase().startsWith(cityInput.toLowerCase())
+		 city.name.toLowerCase().startsWith(cityInput.toLowerCase())
 	);
+	let finalFilteredCities = filteredCities.filter((cityy) => cityy.stateCode === selectedStatesIsoCode && cityy.countryCode === selectedStatesCountryCode)
 
 	
 
@@ -403,7 +404,7 @@ const Publish = () => {
 										<option selected disabled value="">
 											Choose a City
 										</option>
-										{filteredCities.map((city, key) => (
+										{finalFilteredCities.map((city, key) => (
 											<option key={key} value={city.name}>
 												{city.name}
 											</option>

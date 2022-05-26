@@ -25,4 +25,37 @@ var adSchema=new mongoose.Schema({
     	
 },{collection:'adData'});
 
+adSchema.methods.isDateActive = function(){
+    let currentDate = new Date().toISOString().slice(0, 10);
+    let currentYear = parseInt(currentDate.substring(0,4))
+    let currentMonth = parseInt(currentDate.substring(5,7))
+    let currentDay = parseInt(currentDate.substring(8,10))
+    let currentHour = new Date().getHours();
+    let currentMinute = new Date().getMinutes();
+
+    if(this.leaving_date_year > currentYear){
+        return true;
+    }
+
+    if(this.leaving_date_year === currentYear && this.leaving_date_month > currentMonth){
+        return true;
+    }
+
+    if(this.leaving_date_year === currentYear && this.leaving_date_month === currentMonth && this.leaving_date_day > currentDay){
+        return true;
+    }
+    
+    if(this.leaving_date_year === currentYear && this.leaving_date_month === currentMonth && this.leaving_date_day === currentDay && 
+        this.maxTimeHour > currentHour) {
+            return true;
+        }
+
+    if(this.leaving_date_year === currentYear && this.leaving_date_month === currentMonth && this.leaving_date_day === currentDay && 
+        this.maxTimeHour === currentHour && this.maxTimeMinute > currentMinute) {
+            return true;
+        }
+
+    return false;
+}
+
 module.exports=mongoose.model("AdData",adSchema);

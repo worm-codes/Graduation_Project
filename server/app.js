@@ -199,7 +199,12 @@ app.post('/api/searchresult', async(req,res) => {
     }
 })
 
+// const findAd = async() => {
+//     const foundAd = await Ad.findOne({country:'United States'});
+//     console.log(foundAd.isDateActive())
+// }
 
+// findAd();
 
 app.get('/api/searchresult', async(req,res) => {
     let searchedAds = JSON.parse(store.get('advertisements'));
@@ -212,7 +217,7 @@ app.get('/api/myads', MiddleWare.isAuth, async(req,res) => {
     let userAdArr = []
     for(let ad of user.user_ads){
          let temp = await Ad.findById(ad._id)
-         if(temp !== null){
+         if(temp !== null && temp.isDateActive() === true){
             userAdArr.push(temp)
          }      
     }
@@ -223,24 +228,36 @@ app.put('/api/myads', async(req,res) => {
     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
     // console.log("user variable",user)
     const { adID } = req.body;
+    console.log("adID to update isActive status",adID)
     let theAdToChange = await Ad.findByIdAndUpdate({_id: adID}, { isActive : false});
     // console.log("the clicked ads id:", adID)
     let adsToReturn = await user.populate('user_ads');
-    // console.log("user ads",adsToReturn)
-     res.json(adsToReturn)
+    let arrayToReturn = []
+    
+    for(let ads of adsToReturn.user_ads) {
+        if(ads.isActive === true && ads.isDateActive() === true){
+            arrayToReturn.push(ads)
+         }    
+    }
+    console.log("arrayToReturn var in myads put:",arrayToReturn)
+     res.json(arrayToReturn)
 
 })
 
 app.get('/api/mypastads', MiddleWare.isAuth, async(req,res) => {
     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
     let userAdArr = []
-    for(let ad of user.user_ads){
+    let arrayToPass = []
+    userAdArr = await user.populate('user_ads');
+    for(let ad of userAdArr.user_ads){
          let temp = await Ad.findById(ad._id)
-         if(temp !== null && temp.isActive === false){
-            userAdArr.push(temp)
-         }      
+         if(temp.isActive === false || temp.isDateActive() === false){
+            arrayToPass.push(temp)
+         }          
     }
-    res.send([userAdArr])
+    //console.log(userAdArr.user_ads)
+    // console.log("userAdArr var in mypastads",userAdArr)
+    res.send([arrayToPass])
 })
 
 app.delete('/api/mypastads/:adid', MiddleWare.isAuth, async(req,res) => {

@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { AuthContext } from "../context/AuthContext";
-import { Link, useParams } from "react-router-dom";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
 import Navbar from "./Navbar";
@@ -13,7 +12,7 @@ const MyAds = () => {
     const [adArrState, setAdArrState] = useState([])
     const { handleSubmit } = useForm();
     const [activeAdsArr, setActiveAdsArr] = useState([])
-    const [inActiveAdsArr, setInActiveAdsArr] = useState([])
+    // const [inActiveAdsArr, setInActiveAdsArr] = useState([])
     // const { id } = useParams();
     let generalData = []
     //setAdArrState([])
@@ -27,7 +26,7 @@ const MyAds = () => {
               }) 
               setAdArrState(response.data[0])
               setActiveAdsArr(response.data[0].filter((ad) => ad.isActive === true));
-              setInActiveAdsArr(response.data[0].filter((ads) => ads.isActive === false));      
+            //   setInActiveAdsArr(response.data[0].filter((ads) => ads.isActive === false));      
         } 
         getAds();
     }, [])
@@ -41,7 +40,8 @@ const MyAds = () => {
     // let acTiveAdsArr = adArrState.filter((ads) => ads.isActive === true);
     // let inActiveAdsArr = adArrState.filter((ad) => ad.isActive === false);
     console.log("active ads:", activeAdsArr);
-    console.log("inactive ads:", inActiveAdsArr);
+    
+    // console.log(activeAdsArr[1].isDateActive)
   return (
     <>
         <div>
@@ -61,7 +61,7 @@ const MyAds = () => {
   </thead>
  
   <tbody>
-      {activeAdsArr.map((ad,key) => (
+      {activeAdsArr?.map((ad,key) => (
           <tr key={key}>
               <th scope='row'>{key+1}</th>
               <td>{ad.owner_email}</td>
@@ -70,11 +70,11 @@ const MyAds = () => {
               <td>{ad.city}</td>
               <td>
                   <form onSubmit={handleSubmit(async (data) => {
-                      const changedAd = await axios.put(`http://localhost:5000/api/myads`,  {adID: ad._id})
-                      setActiveAdsArr(changedAd.data.user_ads.filter((ad) => ad.isActive === true));
-                      setInActiveAdsArr(adArrState.filter((ads) => ads.isActive === false));
-                    //   console.log(adID)
-                    console.log("changedAd var:", changedAd)
+                   
+                      const changedAd = await axios.put(`http://localhost:5000/api/myads`, {adID: ad._id})
+                    //   console.log("changedAd.data.user_ads var inside form",changedAd.data)
+                      setActiveAdsArr(changedAd.data);
+                    // console.log("changedAd var:", changedAd)
                   })}>
                       <button className='btn btn-warning'>Cancel</button>
                   </form>
