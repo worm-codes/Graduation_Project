@@ -22,7 +22,7 @@ const Search = () => {
 
 const [value1, setValue1] = useState([18,80])
 const [countryVar, setCountryVar] = useState([])
-const [cityVar, setCityVar] = useState('')
+const [cityVar, setCityVar] = useState([])
 const [stateVar, setStateVar] = useState([])
 
 
@@ -72,37 +72,19 @@ const handleChange1 = (event, newValue, activeThumb) => {
   let isCountryVarEmpty = Object.keys(countryVar).length === 0;
 	let isStateVarEmpty = Object.keys(stateVar).length === 0;
   
+  let cities = [];
 
   states.forEach((state) => {
 		if(countryVar.name === countryInput && !isCountryVarEmpty){
 			if (state.name === stateInput) {
 				isFoundState = true;
 				//setStateVar(state.name)
+        cities = City.getCitiesOfState(countryVar.isoCode, state.isoCode);
 				stateNameSelected = state.name;
 				chosenState = state;
 				chosenStateArr = Object.values(chosenState);
 			}
-		// } else {
-		// 	isFoundState = false;
-		// 	stateNameSelected = '';
-		// 	chosenState = {};
-		// 	chosenStateArr.length = 0;
-		// 	states.length = 0;
-		// }
   }});
-
-    useEffect(() => {	
-      setCountryVar(countryToSetStateObj)
-      setStateVar([])
-    }, [countryInput])
-  
-    useEffect(() => {
-      setStateVar(chosenState)
-    }, [stateInput])
-  
-    useEffect(() => {
-      setCityVar(cityInput)
-    }, [cityInput])
 
 
   let dateToCheck = new Date();
@@ -178,8 +160,8 @@ const handleChange1 = (event, newValue, activeThumb) => {
     let selectedStatesCountryCode = chosenStateArr[2];
     let filteredStates = states.filter(state => state.name.toLowerCase().startsWith(stateInput.toLowerCase()));
     let filteredCountries = Country.getAllCountries().filter(country => country.name.toLowerCase().startsWith(countryInput.toLowerCase()));
-    let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter(city => city.name.toLowerCase().startsWith(cityInput.toLowerCase()));
-
+    let finalFilteredCities = cities.filter((city) => city.countryCode === countryVar.isoCode && city.stateCode === stateVar.isoCode &&
+      city.name.toLowerCase().startsWith(cityInput.toLowerCase()))
 
     let isLeavingSelected = false;
 	  let isDatesSelected = false;
@@ -190,6 +172,29 @@ const handleChange1 = (event, newValue, activeThumb) => {
 	  if(leavingDate){
 		  isLeavingSelected = true;
 	  }
+    let cityObject = {}
+    finalFilteredCities.forEach((city)=> {
+      if(city.name === cityInput) {
+        cityObject = city;
+      }
+    })
+  
+      useEffect(() => {	
+        setCountryVar(countryToSetStateObj)
+        setStateVar([])
+      }, [countryInput])
+    
+      useEffect(() => {
+        setStateVar(chosenState)
+      }, [stateInput])
+    
+      useEffect(() => {
+        setCityVar(cityObject)
+      }, [cityInput])
+
+    console.log("countryVar",countryVar);
+    console.log("stateVar", stateVar);
+    console.log("cityVar", cityVar);
     
     return (
       <div
@@ -212,7 +217,6 @@ const handleChange1 = (event, newValue, activeThumb) => {
             <form
               onSubmit={handleSubmit(async (data,event) => {
                 event.preventDefault();
-                //  let readyData = Object.assign(data,ageData)
                 const response = await axios.post("http://localhost:5000/api/searchresult", {
                   arrivingDateYear: parseInt(data.arriving.substring(0,4)),
 								  arrivingDateMonth: parseInt(data.arriving.substring(5,7)),
@@ -306,7 +310,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
                       <option selected disabled value="">
                         Choose a City
                       </option>
-                      {filteredCities.map((city, key) => (
+                      {finalFilteredCities.map((city, key) => (
                         <option key={key} value={city.name}>
                           {city.name}
                         </option>

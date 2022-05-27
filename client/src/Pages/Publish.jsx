@@ -82,6 +82,8 @@ const Publish = () => {
 
 	let isCityValidForState;
 
+	let cities = [];
+
 	states.forEach((state) => {
 		if(countryVar.name === countryInput && !isCountryVarEmpty){
 			if (state.name === stateInput) {
@@ -89,6 +91,7 @@ const Publish = () => {
 				//setStateVar(state.name)
 				stateNameSelected = state.name;
 				chosenState = state;
+				cities = City.getCitiesOfState(countryVar.isoCode, state.isoCode);
 				chosenStateArr = Object.values(chosenState);
 				if(City.getCitiesOfState(countryVar.isoCode, chosenState.isoCode).includes(cityVar)){
 					isCityValidForState = true;
@@ -106,18 +109,6 @@ const Publish = () => {
 		}
 	});
 
-	let cityObj = {}
-
-	City.getAllCities().forEach((city) => {
-		if (city.name === cityInput) {
-			cityObj = city	
-		}	
-	});
-
-	// if(allCountries.includes(countryInput) === false) {
-
-	// }
-	
 
 	useEffect(()=> {
 		isStateValidForCountry = true;
@@ -127,49 +118,6 @@ const Publish = () => {
 		isStateValidForCountry = true;
 	}, [])
 
-	//setCityVar(cityInput)
-
-	const objectsEqual = (o1, o2) => {
-    Object.keys(o1).length === Object.keys(o2).length 
-        && Object.keys(o1).every(p => o1[p] === o2[p])
-	};
-
-	useEffect(() => {	
-		setCountryVar(countryToSetStateObj)	
-	}, [countryInput])
-
-
-	useEffect(() => {
-		setStateVar(chosenState)
-		isStateValidForCountry = true;	
-	}, [stateInput])
-
-	useEffect(() => {
-		setCityVar(cityObj)
-		isCityValidForState = true;
-	}, [cityInput])
-
-	// console.log(isFoundCountry)
-	// console.log("countryVar",countryVar)
-	// console.log("countryInput", countryInput);
-	
-	// console.log("stateInput var",stateInput)
-	// console.log("stateVar", stateVar);
-	// console.log("textInputState var",textInputState);
-	//console.log("countryToSetTheState arr variable:", countryToSetTheStateArr);
-	// console.log("stateRef.current after:",stateRef.current)
-	//console.log("stateRef var:", stateRef.current.value);
-
-	//console.log("states arr:", states);
-
-	// useEffect(() => {
-	// 	if(states.length > 0){
-	// 		if(objectsEqual(states, State.getStatesOfCountry(countryVar.isoCode)) === false){
-	// 			setStateVar('');
-	// 			cityInput = '';
-	// 		}
-	// 		}		
-	// }, [countryVar])
 
 	console.log("countryVar variable:", countryVar)
 	console.log("countryInput variable:", countryInput)
@@ -209,17 +157,35 @@ const Publish = () => {
     }
 
 
-
 	let selectedStatesIsoCode = chosenStateArr[1];
 	let selectedStatesCountryCode = chosenStateArr[2];
 	let filteredStates = states.filter((state) => state.name.toLowerCase().startsWith(stateInput.toLowerCase()));
 	let filteredCountries = Country.getAllCountries().filter((country) => country.name.toLowerCase().startsWith(countryInput.toLowerCase()));
-	let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter((city) =>
-		 city.name.toLowerCase().startsWith(cityInput.toLowerCase())
-	);
-	let finalFilteredCities = filteredCities.filter((cityy) => cityy.stateCode === selectedStatesIsoCode && cityy.countryCode === selectedStatesCountryCode)
+    let finalFilteredCities = cities.filter((city) => city.countryCode === countryVar.isoCode && city.stateCode === stateVar.isoCode &&
+      city.name.toLowerCase().startsWith(cityInput.toLowerCase()))
+
+	let cityObject = {}
+    finalFilteredCities.forEach((city)=> {
+      if(city.name === cityInput) {
+        cityObject = city;
+      }
+    })
 
 	
+	useEffect(() => {	
+		setCountryVar(countryToSetStateObj)	
+	}, [countryInput])
+
+
+	useEffect(() => {
+		setStateVar(chosenState)
+		isStateValidForCountry = true;	
+	}, [stateInput])
+
+	useEffect(() => {
+		setCityVar(cityObject)
+		isCityValidForState = true;
+	}, [cityInput])
 
 	
 	if(errors.country){
