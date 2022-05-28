@@ -65,6 +65,7 @@ router.post('/AllUnreadMessages/:mail',async(req,res)=>{
 //get
 router.get('/:conversationId',MiddleWare.isAuth,async(req,res)=>{
     try{
+        console.log('called !!!!!!!!!!!!!');
         const messages=await Message.find({
             conversationId:req.params.conversationId
         })

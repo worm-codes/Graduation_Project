@@ -16,7 +16,7 @@ export default function Message({ message, own,bothInChat }) {
           alt=""
         />
        
-        {message.text.split('\n').length!=0? <p className="messageText">{message.text.split('\n').map((item, i) => <span  key={i}>{item} {own?(message.unread   ? <img src="https://img.icons8.com/emoji/27/000000/see-no-evil-monkey.png"/>:<img src="https://img.icons8.com/emoji/27/000000/eyes-emoji.png"/> ):""} <br /></span>)} 
+        {message.text.split('\n').length!=0? <p className="messageText">{message.text.split('\n').map((item, i) => <span  key={i}>{item} {own?(message.unread && !bothInChat   ? <img src="https://img.icons8.com/emoji/27/000000/see-no-evil-monkey.png"/>:<img src="https://img.icons8.com/emoji/27/000000/eyes-emoji.png"/> ):""} <br /></span>)} 
          <b style={{color:'black',fontSize:'0.9rem'}}>   {message.createdAt} </b>  </p>:<p className="messageText">{message.text}  <i className="fa fa-envelope fa-lg" aria-hidden="true"></i> 
          <b style={{color:'black',fontSize:'0.9rem'}}>  {message.createdAt} </b>  </p>}
          

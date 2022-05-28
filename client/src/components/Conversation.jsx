@@ -1,14 +1,33 @@
 import axios from "axios";
-import { useEffect, useState,useContext } from "react";
+import { useEffect, useState,useContext,useRef } from "react";
 import {AuthContext} from '../context/AuthContext'
 import "../public/conversation.css";
 
-export default function Conversation({ conversation, currentUser }) {
+
+export default function Conversation({ conversation, currentUser,currentChat,socketCur }) {
   const [user, setUser] = useState(null);
   const[messages,setMessages]=useState([]);
-  const [unreadMessageCounter,setUnreadMessageCounter]=useState(null)
+  const [unreadMessageCounter,setUnreadMessageCounter]=useState(0)
+  const [arrivalMessage,setArrivalMessage]=useState(null)
+  
+
+  
   let useAuth=useContext(AuthContext);
  const friendId = conversation.members.find((m) => m !== currentUser._id);
+
+ const getMessages=async()=>{
+      try {
+        const res = await axios.get("http://localhost:5000/api/message/" + conversation?._id,{
+          headers:{Authorization: 'Bearer ' + await useAuth?.currentUser?.getIdToken(true)}
+        });
+     
+        setMessages(res.data);
+       
+      } catch (err) {
+        console.log(err);
+      }
+
+    }
 
   useEffect(() => {
    
@@ -31,19 +50,7 @@ export default function Conversation({ conversation, currentUser }) {
   }, [currentUser, conversation]);
 
   useEffect(()=>{
-    const getMessages=async()=>{
-      try {
-        const res = await axios.get("http://localhost:5000/api/message/" + conversation?._id,{
-          headers:{Authorization: 'Bearer ' + await useAuth?.currentUser?.getIdToken(true)}
-        });
-     
-        setMessages(res.data);
-       
-      } catch (err) {
-        console.log(err);
-      }
-
-    }
+    
     getMessages()
 
   },[conversation.UsersInChat])
@@ -58,6 +65,37 @@ export default function Conversation({ conversation, currentUser }) {
     setUnreadMessageCounter(counter)
     
   }, [messages])
+
+  useEffect(() => {
+  
+    socketCur.on("getMessage", (data) => {
+    
+      if(data?.senderId===friendId){
+      
+      setArrivalMessage({
+        sender: data.senderId,
+        receiver:data.receiverId,
+        text: data.text,
+        createdAt: new Date().toLocaleDateString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
+      });
+    }
+    });
+  
+    
+  }, [])
+
+  useEffect(() => {
+    if(conversation._id!==currentChat?._id){
+    setUnreadMessageCounter(unreadMessageCounter+1)
+    }
+  
+    
+  }, [arrivalMessage])
+  
+  
+
+ 
+ 
   
 
 
@@ -65,14 +103,14 @@ export default function Conversation({ conversation, currentUser }) {
  
  
 
-  return ((conversation.members[0]===currentUser._id && messages.length==0)||(messages.length!=0))? (
-    <div  className="conversation" onClick={()=>setUnreadMessageCounter(null)}>
+  return ((conversation.members[0]===currentUser._id && messages.length===0 )||(messages.length!==0))? (
+    <div  className="conversation" onClick={()=>setUnreadMessageCounter(0)}>
       <img
         className="conversationImg"
         src='https://cdn-icons-png.flaticon.com/512/1077/1077114.png'
         alt=""  
       />
-      <span className="conversationName">{user?.user_name} {unreadMessageCounter? '- ' +unreadMessageCounter?.toString():''}  </span>
+      <span className="conversationName">{user?.user_name} {unreadMessageCounter!==0?  <span className="badge badge-pill badge-danger" style={{float:"right" ,marginBottom:"-7px"}}>{unreadMessageCounter?.toString()}</span>:''}  </span>
       
     </div>
   ) :''

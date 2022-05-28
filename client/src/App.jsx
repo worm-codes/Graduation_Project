@@ -4,7 +4,7 @@ import Sign_in from './Pages/Sign_in'
 import Sign_up from './Pages/Sign_up'
 import PasswordReset from './Pages/PassswordReset'
 import Dashboard from './Pages/Dashboard';
-import Navbar from './Pages/Navbar';
+import Navbar from './components/Navbar';
 import Errorpage from './ERRORpage'
 import { AuthProvider,AuthContext } from './context/AuthContext';
 import PrivateIndex from './ProtectedRoutes/PrivateIndex';

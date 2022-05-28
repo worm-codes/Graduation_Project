@@ -3,9 +3,11 @@ const express=require('express'),
 router=express.Router(),
 Conversation=require('../models/Conversation'),
 MiddleWare=require('../middleware/CheckAuth');
+const User=require('../models/User');
 
 
-
+/*{   headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
+                          }*/
 
 router.post('/',MiddleWare.isAuth, async(req,res)=>{
    
@@ -68,9 +70,9 @@ router.get('/:userId',MiddleWare.isAuth,async(req,res)=>{
 
 router.get('/getUsersInChat/:convid',async(req,res)=>{
      try{
-         console.log('entereddddd users in chattt');
+        
         const currentConversation=await Conversation.findById({_id:req.params.convid}).clone().catch(function(err){ console.log(err)})
-        console.log(currentConversation.UsersInChat);
+        
         res.json(currentConversation.UsersInChat)
         
     }
@@ -82,20 +84,25 @@ router.get('/getUsersInChat/:convid',async(req,res)=>{
 
 router.post('/userEntersChat/:convid/:enteredUserId',async(req,res)=>{
     const targetConv=await Conversation.findById({_id:req.params.convid})
-        if(!targetConv.UsersInChat.includes(req.params.enteredUserId)){
+        if(!(targetConv.UsersInChat.includes(req.params.enteredUserId))){
     try{
     
         
          await Conversation.updateOne(
    { _id:req.params.convid}, 
     { "$push": { "UsersInChat": req.params.enteredUserId } } )
-     const conv=await Conversation.findById({_id:req.params.convid})
-     res.json(conv.UsersInChat)
+    await User.findByIdAndUpdate({_id:req.params.enteredUserId},{lastCurrentChat:req.params.convid})
+     res.sendStatus(200)
+   
     }
     catch(err){
         console.log(err);
     }
 }
+else{
+ res.sendStatus(200)
+}
+
 })
 
 router.post('/userLeavesChat/:convid/:leavingId',async(req,res)=>{
@@ -103,18 +110,19 @@ router.post('/userLeavesChat/:convid/:leavingId',async(req,res)=>{
       
         await Conversation.updateOne(
    { _id:req.params.convid}, 
-    { "$pull": { "UsersInChat": req.params.leavingId } } )
-      res.sendStatus(200)  
+    { "$pull": { "UsersInChat": req.params.leavingId } } ).clone().catch(function(err){ console.log(err)})
+       res.sendStatus(200)  
     }
 
     catch(err){
         console.log(err);
     }
+  
 })
 
 router.post('/quitFromChats/',async(req,res)=>{
     try{
-        
+        console.log('tring to quit');
    await Conversation.updateMany(
    { UsersInChat:{$in:[req.body.leavingId]}}, 
     { "$pull": { "UsersInChat": req.body.leavingId } } )
@@ -124,6 +132,7 @@ router.post('/quitFromChats/',async(req,res)=>{
     catch(err){
         console.log(err);
     }
+   
 })
 
 

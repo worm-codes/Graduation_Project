@@ -7,7 +7,7 @@ export default function Conversation({ conversation, currentUser,onlineUsers }) 
   const [user, setUser] = useState(null);
   let useAuth=useContext(AuthContext)
   const friendId = conversation?.members?.find((m) => m !== currentUser._id);
-  const [lastSeen,setLastSeen]=useState('')
+
  
   const getUser = async () => {
         if(friendId){
@@ -20,7 +20,7 @@ export default function Conversation({ conversation, currentUser,onlineUsers }) 
     
         setUser(res.data);
       
-        setLastSeen(res.data.LastSeen)
+      
         
       } catch (err) {
         console.log(err);
@@ -36,7 +36,7 @@ export default function Conversation({ conversation, currentUser,onlineUsers }) 
     
 
     getUser();
-  }, [currentUser, conversation]);
+  }, [currentUser, conversation,onlineUsers]);
 
   useEffect(()=>{
     getUser()
@@ -61,7 +61,7 @@ export default function Conversation({ conversation, currentUser,onlineUsers }) 
         alt=""  
       />
       <span style={{fontWeight:'900',fontSize:'1.3rem'}}>{user?.user_name}  
-      <span style={{display:'flex',fontWeight:'900',fontSize:'0.8rem'}}> {onlineUsers.includes(user._id)?'Online':'Last Seen: '+lastSeen+''} </span> </span>
+      <span style={{display:'flex',fontWeight:'900',fontSize:'0.8rem'}}> {onlineUsers.includes(user._id)?'Online':'Last Seen: '+user.LastSeen+''} </span> </span>
       
     </div>
   ):''

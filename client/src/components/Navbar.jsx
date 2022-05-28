@@ -1,16 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState,useRef } from 'react'
 import { Link,useLocation } from 'react-router-dom'
 import {AuthContext} from '../context/AuthContext'
 import '../public/Nav.css'
 import axios from 'axios'
+import { io } from "socket.io-client";
 
 
 const Navbar = () => {
   let useAuth=useContext(AuthContext);
-  let user=useAuth.currentUser;
   const [unreadMessages,setUnreadMessages]=useState(0);
+  const [user,setUser]=useState(null)
+  const [arrivalMessage,setArrivalMessage]=useState(null)
   const location=useLocation();
   const currentPath=location.pathname;
+   const socket = useRef();
  
 
   async function handleLogout() {
@@ -44,8 +47,57 @@ const Navbar = () => {
     }
   }
 
+   const getCurrentUserInfo=async()=>{
+    
+    const response=await useAuth.getCurrentUserInfo()
+    setUser(response)
+            
+  }
+  useEffect(() => {
+    if(!user ){
+      getCurrentUserInfo()
+    }
+    if(currentPath!=='/messenger'){
+     socket.current = io("ws://localhost:8900");
+
+      socket.current?.on("getMessage", (data) => {
+     console.log(data);
+      setArrivalMessage({
+        sender: data.senderId,
+        receiver:data.receiverId,
+        text: data.text,
+        createdAt: new Date().toLocaleDateString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
+      });
+
+       
+    })
+    }
+  
+    
+  }, [])
+
+  useEffect(() => {
+   if(arrivalMessage &&currentPath!=='/messenger'){
+    setUnreadMessages(unreadMessages+1)
+   }
+    
+  }, [arrivalMessage])
+  
+
   useEffect(()=>{
-    if(user){
+    if(user && currentPath!=='/messenger'){
+        
+      
+       const addUserBySocket=async()=>{
+         
+         let userToSend=user;
+         userToSend.boolean='ok'
+       socket.current?.emit("addUser", userToSend);
+       }
+       addUserBySocket()
+    
+
+     
      
     const getNumberOfUnreadMessages=async()=>{
     
@@ -59,8 +111,33 @@ const Navbar = () => {
       }
     }
     getNumberOfUnreadMessages()
+
+   
   }
-  },[user,useAuth.currentUser])
+  },[user])
+
+  /* okunmamis mesajlari saymak icin anlik gostermek icin burayi ayarlayabilirim
+  useEffect(() => {
+   
+  
+    
+
+    
+    
+  }, []);
+
+   useEffect(() => {
+     if(user){
+       const addUserBySocket=async()=>{
+         let user={_id:'624cafea3e5ee7aee8cdb1d932323'}
+       socket.current.emit("addUser", user);
+       }
+       addUserBySocket()
+    
+
+     }
+    
+  }, [user]);*/
 
 
 
@@ -90,8 +167,8 @@ const Navbar = () => {
           <a className="nav-link" href="#">Profile</a>
         </li>
  <li className="nav-item">
-        {unreadMessages!==0 ? <span className="badge badge-pill badge-danger" style={{float:"right" ,marginBottom:"-7px"}}>{unreadMessages}</span>:''}
-						<a className="nav-link" href="/messenger"><i className="fa fa-envelope fa-lg" aria-hidden="true"></i> <span className="sr-only">(current)</span></a>
+        {unreadMessages!==0 &&currentPath!='/messenger'? <span className="badge badge-pill badge-danger" style={{float:"right" ,marginBottom:"-6px"}}>{unreadMessages}</span>:''}
+						<a className="nav-link" href="/messenger"><i className="fa fa-envelope fa-lg" style={{fontSize:'1.40rem'}} aria-hidden="true"></i> <span className="sr-only">(current)</span></a>
     </li>
         <li className="hidden-profile d-none nav-item">
          <a className="nav-link" onClick={handleLogout} href="/">Logout</a>

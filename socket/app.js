@@ -23,17 +23,33 @@ const logoutServer=async(userID)=>{
    
 let users = [];
 let userIds=[];
-const addUser = (userId, socketId) => {
-  console.log('dsdsd');
-  !users.some((user) => user.userId === userId) &&users.push({ userId, socketId }) ;
-   
-  !userIds.some((user) => user === userId)&&userIds.push(userId)  
+let outsideOfTheChat=[]
+
+const addUser = (user, socketId) => {
+  
+  
+  !users.some((listUser) => listUser._id === user._id) &&users.push({ user, socketId }) ;
+  
+   if(!(user.boolean)){
+     console.log('hello');
+  !userIds.some((onlineuserId) => onlineuserId === user?._id)&&userIds.push(user._id)
+   }
+  console.log('userids array',userIds);  
 };
 
  const leaveChats=async(leavingUser)=>{
                  const resp=await axios.post(`http://localhost:5000/api/conversation/quitFromChats/`,{
                    leavingId:leavingUser
                   }) }
+ 
+const getCurrentUsersInChat=async(convId)=>{
+  
+  const resp=await axios.get('http://localhost:5000/api/conversation/getUsersInChat/'+convId)
+      
+        return await resp.data        
+}   
+
+
 
 const removeUser = (socketId) => {
   
@@ -41,13 +57,16 @@ const removeUser = (socketId) => {
 
 };
 const removeId=async(id)=>{
-  userIds=userIds.filter((user)=>user!==id)
+
+  userIds=userIds.filter((onlineUserId)=>onlineUserId!==id)
+
    await logoutServer(id)
+    io.emit("getUsers", userIds);
 }
 
 const getUser = (userId) => {
-  console.log(users);
-  return users.find((user) => user.userId === userId);
+
+  return users.find((listUser) => listUser.user._id === userId);
 };
 
 io.on("connection", (socket) => {
@@ -55,43 +74,130 @@ io.on("connection", (socket) => {
   console.log("a user connected.");
  
   //take userId and socketId from user
-  socket.on("addUser", (userId) => {
-    console.log(userId);
-    if(userId!=null){
-    addUser(userId, socket.id);
+  socket.on("addUser", (user) => {
+    console.log(user);
+    if(user._id!=null){
+    addUser(user, socket.id);
     }
     io.emit("getUsers", userIds);
   });
 
   //send and get message
-  socket.on("sendMessage", ({ senderId, receiverId, text }) => {
+  socket.on("sendMessage", ({ senderId, receiverId,currentConversation, text }) => {
     const user = getUser(receiverId);
-    console.log(user);
-    if(user){
+ 
+    if(user?.user){
     io.to(user.socketId).emit("getMessage", {
       senderId,
+      receiverId,
+      currentConversation,
       text,
     });
   }
     
   
   });
+  socket.on("connect_error", (err) => {
+  console.log(`connect_error due to ${err.message}`);
+});
+
+  //opensChat
+
+  socket.on("openChat", async({convId, senderId, receiverId }) => {
+    console.log('entered open chat');
+    console.log('receiverId',receiverId)
+   
+    const receiverUser = getUser(receiverId);
+    
+    const senderUser=getUser(senderId);
+    console.log('sender',senderUser);
+     
+    
+
+    let usersInChat=await getCurrentUsersInChat(convId)
+     console.log('receiver',receiverUser);
+    console.log('usersinchat from func',usersInChat)
+    if(receiverUser?.user && userIds.includes(receiverId)&&usersInChat?.includes(receiverId)){
+    console.log('first if');
+     io.to(receiverUser.socketId).to(senderUser.socketId).emit("getCurrentUsersInChat", {
+      usersInChat
+    });
+     
+  }
+   if(receiverUser?.user &&userIds.includes(receiverId)&& !(usersInChat?.includes(receiverId) )){
+     console.log('second if');
+     
+     await io.to(senderUser.socketId).emit("getCurrentUsersInChat", {
+      usersInChat
+    });
+ 
+  }
+  if(!receiverUser &&!(userIds.includes(receiverId))){
+    console.log('not online');
+    console.log('currentChat',convId);
+    await io.to(senderUser.socketId).emit("getCurrentUsersInChat", {
+      usersInChat
+    });
+
+  }
+    
+  
+  });
+
+
+  //close chat
+  socket.on("closeChat", async({convId, receiverId }) => {
+    console.log('entered close chat');
+    const receiverUser = getUser(receiverId);
+
+    
+    let usersInChat=await getCurrentUsersInChat(convId)
+     console.log('receiver',receiverUser);
+    console.log('usersinchat from func leavechat',usersInChat)
+    if(receiverUser?.user &&userIds.includes(receiverId)&& usersInChat?.includes(receiverId)){
+    console.log('sending that i am leaving');
+    io.to(receiverUser.socketId).emit("getCurrentUsersInChat", {
+      usersInChat
+    });
+     
+  }
+ 
+
+    
+  
+  });
+
+
+
+
 
   //when disconnect
   socket.on("disconnect", async() => {
     console.log("a user disconnected!");
     users.map(async(userInfo)=>{
-      console.log(userInfo);
+    //ENTERCHAT VE USERSINCHAT CALISIYOR LEAVECHAT TE KALDIN IKI KISILI DENEMEDIN DENE
       if(userInfo.socketId==socket.id){
-         leaveChats(userInfo.userId)
-          console.log('id bu',userInfo.userId);
-           removeId(userInfo.userId)
-          
-           
+    
+         await leaveChats(userInfo.user._id)
+         removeId(userInfo.user._id)
+   
+         let usersInChat =await getCurrentUsersInChat(userInfo.user?.lastCurrentChat);
+         console.log(usersInChat);
+        if(usersInChat!==[] && getUser(usersInChat[0])){
+          console.log('entered array check');
+          console.log('usersinchat 0',getUser(usersInChat[0]));
+        io.to(getUser(usersInChat[0]).socketId).emit("getCurrentUsersInChat", {
+        usersInChat
+    });}
+      
+      removeUser(socket.id);
+      console.log('socketli user array',users)
+   
       }
     })
-     removeUser(socket.id);
-    await io.emit("getUsers", userIds);
+   
+      
+    
     
  
   });

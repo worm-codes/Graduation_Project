@@ -20,6 +20,8 @@ const Messenger = () => {
   const [borderStyle,setBorderStyle]=useState({})
   const [onlineUsers,setOnlineUsers]=useState([])
   const [usersInChat,setUsersInChat]=useState([])
+  const [inComingMessageFromAnotherChat,setInComingMessageFromAnotherChat]=useState(null)
+
 
 
 
@@ -33,7 +35,7 @@ const Messenger = () => {
             
   }
   const getConversations=async()=>{
-    const response=await axios.get('http://localhost:5000/api/conversation/'+user._id,
+    const response=await axios.get('http://localhost:5000/api/conversation/'+user?._id,
         {
           headers:{Authorization: 'Bearer ' + await useAuth?.currentUser?.getIdToken(true)}
         }
@@ -47,6 +49,26 @@ const Messenger = () => {
       }
 
   }
+   useLayoutEffect(() => {
+    socket.current = io("ws://localhost:8900");
+   console.log('workingggg');
+    socket.current?.on("getMessage", (data) => {
+     console.log(data);
+      setArrivalMessage({
+        sender: data.senderId,
+        receiver:data.receiverId,
+        text: data.text,
+        createdAt: new Date().toLocaleDateString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
+      });
+
+       
+    });
+
+    
+
+    
+    
+  }, []);
   
   useEffect(()=>{
      if(useAuth?.currentUser && !user)
@@ -58,12 +80,17 @@ const Messenger = () => {
      }
   },[useAuth?.currentUser,user])
 
+  
+
  
   
 
   useEffect(()=>{
-    const getMessages=async()=>{
+   
+
+     const getMessages=async()=>{
       if(user &&currentChat){
+        
       try {
      
       
@@ -72,6 +99,48 @@ const Messenger = () => {
         });
         
         setMessages(res.data);
+
+
+        
+      } catch (err) {
+        console.log(err);
+      }
+
+      
+    }
+
+   
+      
+
+    }
+
+    getMessages()
+
+
+    
+       try{
+         console.log('entered chat current',currentChat);
+         console.log(socket.current);
+         if(socket.current){
+       socket?.current?.on("getCurrentUsersInChat", async(data) => {
+    
+       if(data!==undefined){
+       setUsersInChat(data?.usersInChat);
+      console.log('boolean',data?.usersInChat.length===2);
+      if(data?.usersInChat.length===2){
+        const getMessages=async()=>{
+    
+      if(user &&currentChat && messages){
+      try {
+     
+      
+        const res = await axios.get('http://localhost:5000/api/message/'+currentChat?._id+'/'+user?._id,{
+          headers:{Authorization: 'Bearer ' + await useAuth?.currentUser?.getIdToken(true)}
+        });
+        if(JSON.stringify(messages)!=JSON.stringify(res.data)){
+        setMessages(res.data);
+        console.log('messages updated!');
+        }
         
       } catch (err) {
         console.log(err);
@@ -81,7 +150,15 @@ const Messenger = () => {
 
     }
 
-    getMessages()
+    await getMessages()
+      }
+    }
+    })};
+
+    }
+    catch(err){
+      console.log(err);
+    }
     if(currentChat){
      setBorderStyle({border: '1px solid',marginRight:'0.7rem'})
     }
@@ -127,7 +204,8 @@ const Messenger = () => {
  
 
     socket.current.emit("sendMessage", {
-      senderId: user._id,
+      senderId: user?._id,
+      currentConversation:currentChat?._id,
       receiverId,
       text: newMessage,
     });
@@ -149,26 +227,23 @@ const Messenger = () => {
 }
 
 //socket io
-  useEffect(() => {
-    socket.current = io("ws://localhost:8900");
-  
-    socket.current.on("getMessage", (data) => {
-      console.log(data);
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: new Date().toLocaleDateString(navigator.language, {hour: '2-digit', minute:'2-digit'}),
-      });
-    });
-  }, []);
+ 
    useEffect(() => {
     arrivalMessage &&
       currentChat?.members.includes(arrivalMessage.sender) &&setMessages((prev) => [...prev, arrivalMessage]);
   }, [arrivalMessage, currentChat]);
 
+  
+
+  
+
    useEffect(() => {
      if(user){
-    socket.current.emit("addUser", user?._id);
+       const addUserBySocket=async()=>{
+       socket.current?.emit("addUser", user);
+       }
+       addUserBySocket()
+    
 
      }
     socket.current?.on("getUsers", (users) => {
@@ -178,29 +253,11 @@ const Messenger = () => {
     });
   }, [user]);
 
+ 
+
   console.log(onlineUsers);
+  console.log('usersinchat',usersInChat);
 
-  useEffect(()=>{
-    if(currentChat && user){
-    const getCurrentUserInChat=async()=>{
-       const resp=await axios.get('http://localhost:5000/api/conversation/getUsersInChat/'+currentChat?._id,{
-                            headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
-                          })
-       setUsersInChat(resp.data)
-       console.log('updatedusers',resp.data);
-    }
-    getCurrentUserInChat()
-  }
-
-  },[onlineUsers,currentChat])
-
-  
-
-  
-
-
-
- /////////////////////////
 
 
 
@@ -211,12 +268,12 @@ return (
       <div className="messenger">
         <div className="chatMenu">
           <div  className="chatMenuWrapper">
-            <input placeholder="Search for friends" className="chatMenuInput" /> 
+            {/*<input placeholder="Search for friends" className="chatMenuInput" /> */}
           
             
              { 
                conversations?.map((c)=>{
-              return  <div  key={c?._id+'dsdsds'} style={currentChat?._id===c?._id?{pointerEvents: 'none'}:{}} onClick={()=> {
+              return  <div  key={c?._id+'dsdsds'} style={currentChat?._id===c?._id?{pointerEvents: 'none'}:{}} onClick={async()=> {
                 if(user){
                 if(currentChat===null){
                
@@ -224,14 +281,21 @@ return (
                    const resp=await axios.post(`http://localhost:5000/api/conversation/userEntersChat/${c._id}/`+user?._id,{
                             headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
                           })
-                setUsersInChat(resp.data)
-               
-               
+                          
+                         setCurrentChat(c);
+                       let receiver=await c.members.find((dbuser) => dbuser!== user?._id)
+                        console.log('receiver socket',receiver);
+                        socket.current?.emit("openChat", {
+                        senderId: user._id,
+                        receiverId:receiver,
+                        convId: c._id,
+                      });
                   
                }
-               
-                enterChat()
-                  setCurrentChat(c);
+               setCurrentChat(c);
+                await enterChat()
+                 
+                  
 
                 }
             
@@ -241,9 +305,17 @@ return (
                     
                  let resp=await axios.post('http://localhost:5000/api/conversation/userLeavesChat/'+currentChat._id+'/'+user?._id,{
                             headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
-                          }) 
+                          })
+                     
+
+                          let receiver=currentChat.members.find((dbuser) => dbuser!== user?._id)
+                          socket.current?.emit("closeChat", {
+                       
+                        receiverId:receiver,
+                        convId: currentChat._id,
+                      }); 
                 
-                 setCurrentChat(c) 
+                 
                 }
                   
                   let enterChat=async()=>{
@@ -251,23 +323,34 @@ return (
                    let resp=await axios.post(`http://localhost:5000/api/conversation/userEntersChat/${c._id}/`+user?._id,{
                             headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
                           })
-            
+                         
+
+                         let receiver=c.members.find((dbuser) => dbuser!== user?._id)
+                        console.log('receiver socket',receiver);
+                        socket.current?.emit("openChat", {
+                        senderId: user._id,
+                        receiverId:receiver,
+                        convId: c._id,
+                      });
+                          
+                       
              
-                   setUsersInChat(resp.data)
+                  
                    
                 
                }
-                  leaveChat()
+                  await leaveChat()
       
-                  enterChat()
+                 await  enterChat()
                   setCurrentChat(c) 
+                  
                  
                   
                   
                 }
             
                }} }>
-                <Conversation key={c?._id+'dsdsds'}   conversation={c} currentUser={user} />
+                <Conversation key={c?._id+'dsdsds'}  socketCur={socket.current} currentChat={currentChat} conversation={c} currentUser={user} />
                 </div>
             })}
           
@@ -282,8 +365,8 @@ return (
               
                 <div  className="chatBoxTop">
                  {messages.map((m)=>{
-                 
-                   return <div  key={m?._id+'sdsd'} ref={scrollRef}> 
+                   
+                   return <div  key={m?._id+Math.floor(Math.random() * 1000).toString()} ref={scrollRef}> 
                   <Message key={m?._id+'sdsd'}  message={m} bothInChat={usersInChat==2}  own={m.sender===user._id} />
                  </div>
                  })}
@@ -335,49 +418,6 @@ return (
 
 
 
-
-
-
-
-
-
-
-
-/********************************************************** */
-/*
-    const [profileUser,setProfileUser]=useState(null)
-    
-    
-    const {userID}=useParams()
-
-  useEffect(()=>{
-       const getProfile=async()=>{
-    const response=await axios.get(`http://localhost:5000/api/getContact/${userID}`,{
-                            headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
-                          }
-                          
-                          )
-                          console.log(response.data)
-                          if(response.data.message!='UnAuth'){
-                           setProfileUser(response.data)
-                          }
-                       
-  }  
-      getProfile()
-  },[userID,useAuth.currentUser])
-    */
-    /****************************************************************************** */
-  
-  
-  
-  
-  
-   /* return  (
-    <div>hello {userID}
-    <div> {profileUser?.user_name} {profileUser?.user_surname}</div>
-    </div>
-    
-  )*/
 }
 
 export default Messenger

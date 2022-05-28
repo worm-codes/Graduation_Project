@@ -10,7 +10,8 @@ var userSchema=new mongoose.Schema({
     quote:{type:String},
     lastSignIn:{type:String},
     LastSeen:{type:String},
-    createdAt:{type:String}
+    createdAt:{type:String},
+    lastCurrentChat:{type:String}
  
 	
 },{collection:'user-data'});
