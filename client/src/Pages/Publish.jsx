@@ -88,7 +88,6 @@ const Publish = () => {
 		if(countryVar.name === countryInput && !isCountryVarEmpty){
 			if (state.name === stateInput) {
 				isFoundState = true;
-				//setStateVar(state.name)
 				stateNameSelected = state.name;
 				chosenState = state;
 				cities = City.getCitiesOfState(countryVar.isoCode, state.isoCode);
@@ -110,13 +109,13 @@ const Publish = () => {
 	});
 
 
-	useEffect(()=> {
-		isStateValidForCountry = true;
-	}, [])
+	// useEffect(()=> {
+	// 	isStateValidForCountry = true;
+	// }, [])
 
-	useEffect(()=> {
-		isStateValidForCountry = true;
-	}, [])
+	// useEffect(()=> {
+	// 	isStateValidForCountry = true;
+	// }, [])
 
 
 	console.log("countryVar variable:", countryVar)

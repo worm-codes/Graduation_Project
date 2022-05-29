@@ -56,12 +56,20 @@ const handleChange1 = (event, newValue, activeThumb) => {
   let isFoundCountry = false;
   let isFoundState = false;
   let countryToSetStateObj = {}
+  let isStateValidForCountry;
   
   Country.getAllCountries().forEach((country) => {
 		if (country.name === countryInput) {
 			isFoundCountry = true;
 			countryToSetStateObj = country
 			states = State.getStatesOfCountry(country.isoCode);
+
+      if(State.getStatesOfCountry(country.isoCode).includes(stateVar)){
+				isStateValidForCountry = true;
+			}
+			else {
+				isStateValidForCountry = false;
+			}
 		}	
 	});
 
@@ -71,20 +79,41 @@ const handleChange1 = (event, newValue, activeThumb) => {
   
   let isCountryVarEmpty = Object.keys(countryVar).length === 0;
 	let isStateVarEmpty = Object.keys(stateVar).length === 0;
-  
+  let isCityValidForState;
   let cities = [];
 
   states.forEach((state) => {
 		if(countryVar.name === countryInput && !isCountryVarEmpty){
 			if (state.name === stateInput) {
 				isFoundState = true;
-				//setStateVar(state.name)
         cities = City.getCitiesOfState(countryVar.isoCode, state.isoCode);
 				stateNameSelected = state.name;
 				chosenState = state;
 				chosenStateArr = Object.values(chosenState);
+
+        if(City.getCitiesOfState(countryVar.isoCode, chosenState.isoCode).includes(cityVar)){
+					isCityValidForState = true;
+				}
+				else {
+					isCityValidForState = false;
+				}
 			}
-  }});
+  } else {
+    isFoundState = false;
+    stateNameSelected = '';
+    chosenState = {};
+    chosenStateArr.length = 0;
+    states.length = 0;
+  }
+});
+
+console.log("countryVar variable:", countryVar)
+	console.log("countryInput variable:", countryInput)
+	console.log("stateVar variable:", stateVar);
+	console.log("stateInput variable", stateInput);
+	console.log("Country state'i içeriyor:",State.getStatesOfCountry(countryVar.isoCode).includes(stateVar))
+	console.log("State city'i içeriyor:",City.getCitiesOfState(countryVar.isoCode, stateVar.isoCode).includes(cityVar))
+	console.log("cityVar variable:", cityVar);
 
 
   let dateToCheck = new Date();
@@ -181,15 +210,16 @@ const handleChange1 = (event, newValue, activeThumb) => {
   
       useEffect(() => {	
         setCountryVar(countryToSetStateObj)
-        setStateVar([])
       }, [countryInput])
     
       useEffect(() => {
         setStateVar(chosenState)
+        isStateValidForCountry = true;
       }, [stateInput])
     
       useEffect(() => {
         setCityVar(cityObject)
+        isCityValidForState = true;
       }, [cityInput])
 
     console.log("countryVar",countryVar);
@@ -282,6 +312,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
                       list="states"
                     />
                     {(errors.state && !errors.country && isFoundCountry) ? <p style={{color:'red'}}>{errors.state.message}</p> : ''}
+                    {(!errors.state && !errors.country && isFoundCountry && stateVar.name && !isStateValidForCountry) ? <p style={{color:'red'}}>State does not belong to country</p> : ''}
                     <datalist name="states" id="states">
                       <option selected disabled value="">
                         Choose a State
@@ -306,6 +337,7 @@ const handleChange1 = (event, newValue, activeThumb) => {
                       list="cities"
                     />
                     {(errors.city && !errors.country && !errors.state && isFoundCountry && isFoundState) ? <p style={{color:'red'}}>{errors.city.message}</p> : ''}
+                    {(!errors.city && !errors.country && !errors.state && isFoundCountry && isFoundState && cityVar.name && !isCityValidForState) ? <p style={{color:'red'}}>City does not belong to state</p> : ''}
                     <datalist name="cities" id="cities">
                       <option selected disabled value="">
                         Choose a City

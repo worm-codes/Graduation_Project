@@ -125,29 +125,11 @@ app.post('/api/publish', async(req,res) =>{
 app.post('/api/searchresult', async(req,res) => {
     try {
 
-        // console.log(req.body);
-
-        // let theAds = await Ad.find({
-                //     $or: [{ $and : [ {owner_age: {$gte : minAge}}, {owner_age: {$lte: maxAge}}] ,
-                //             $and : [ {arrivingDateDay: { $ne: null }}, {arriving_date_day: {$gte:arrivingDateDay}}],
-                //             arrivingDateMonth: {$ne:null},
-                //             arrivingDateYear: {$ne:null},
-                //             $and : [ {leavingDateDay: { $ne: null }}, {leaving_date_day: {$lte: leavingDateDay}}],
-                //             leavingDateMonth:{$ne:null},
-                //             leavingDateYear: {$ne:null},
-                //             $and : [ {minTimeHourToPass: { $ne: null }}, {minTimeHour: {$gte: minTimeHourToPass}}],
-                //             $and : [ {minTimeMinuteToPass: { $ne: null }}, {minTimeMinute: {$gte: minTimeMinuteToPass}}],
-                //             $and : [ {maxTimeHourToPass: { $ne: null }}, {maxTimeHour: {$lte: maxTimeHourToPass}}],
-                //             $and : [ {maxTimeMinuteToPass: { $ne: null }}, {maxTimeMinute: {$lte: maxTimeMinuteToPass}}],
-                //             maxPeople: {$gte: maxPeopleToPass},
-                //             city: city, state: state, country: country, host: host, owner_gender: gender                                    
-                //     }],                 
-                // })
-        
         const { arrivingDateYear, arrivingDateMonth, arrivingDateDay, leavingDateYear, leavingDateMonth, leavingDateDay,
              city, country, host, maxPeopleToPass, minTimeHourToPass, minTimeMinuteToPass, maxTimeHourToPass, maxTimeMinuteToPass,
               state, gender, minAge, maxAge } = req.body;
               let theAds = [];
+              let finalAds = [];
 
                 if(minTimeHourToPass !== null && arrivingDateDay !== null){
                     theAds = await Ad.find({
@@ -187,12 +169,15 @@ app.post('/api/searchresult', async(req,res) => {
                         city: city, state: state, country: country, host: host, maxPeople: maxPeopleToPass, owner_gender: gender
                     })
                 }
- 
+                  for(let ad of theAds){
+                    if(ad.isActive === true && ad.isDateActive() === true){
+                        finalAds.push(ad);
+                    }
+                  }
                   store.clearAll();
-                  store.set('advertisements', JSON.stringify(theAds))
-                //  console.log("providedData:",providedData);
-                console.log("theAds variable:", theAds)     
-                res.json(theAds);    
+                  store.set('advertisements', JSON.stringify(finalAds))
+                console.log("theAds variable:", finalAds)     
+                res.json(finalAds);    
      }
     catch(e) {
         console.log("error occured!", e)
@@ -226,11 +211,9 @@ app.get('/api/myads', MiddleWare.isAuth, async(req,res) => {
 
 app.put('/api/myads', async(req,res) => {
     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
-    // console.log("user variable",user)
     const { adID } = req.body;
     console.log("adID to update isActive status",adID)
-    let theAdToChange = await Ad.findByIdAndUpdate({_id: adID}, { isActive : false});
-    // console.log("the clicked ads id:", adID)
+    await Ad.findByIdAndUpdate({_id: adID}, { isActive : false});
     let adsToReturn = await user.populate('user_ads');
     let arrayToReturn = []
     
