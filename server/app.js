@@ -260,6 +260,22 @@ app.delete('/api/mypastads/:adid', MiddleWare.isAuth, async(req,res) => {
     res.json(deletedOne)
 })
 
+app.post('/api/searchresult/:adid', async(req,res) => {
+    const { adid } = req.params;
+    let foundAd = await Ad.findById(adid);
+    let adOwner = await User.findById(foundAd.owner_id)
+    // res.json({adver: foundAd, owner: adOwner})
+    store.clearAll();
+    store.set('theAdvertisement', JSON.stringify({foundAd, adOwner}))
+    res.sendStatus(200);
+})
+
+app.get('/api/searchresult/:adid', async(req,res) => {
+    let theAdToShow = JSON.parse(store.get('theAdvertisement'));
+    res.json(theAdToShow);
+    
+})
+
 app.listen(5000,()=>{
     console.log('server has started')
 })

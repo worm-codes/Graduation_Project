@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect, useCallback, useMemo } from 'react'
 import { AuthContext } from "../context/AuthContext";
+import { AdDetailContext } from "../context/AdDetailContext";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
 import Navbar from "./Navbar";
@@ -7,6 +8,7 @@ import { Country, State, City }  from 'country-state-city';
 import "../public/SearchResult.css";
 import  Slider  from '@mui/material/Slider';
 import Box from '@mui/material/Box';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 
@@ -22,6 +24,8 @@ function valuetext(value) {
 const SearchResult = () => {
 
     let useAuth=useContext(AuthContext)
+    const { advertisement, setAdvertisement, adOwner, setAdOwner } = useContext(AdDetailContext)
+    let navigate = useNavigate();
 
 	// Age Slider Logic Stuff
 	const [value1, setValue1] = useState([18,80])
@@ -294,7 +298,11 @@ const SearchResult = () => {
     }
   }
 
-  
+  let adIDToPass = [];
+
+  for(let i = 0; i < filteredAdState.length; i++){
+    adIDToPass.push(`/searchresult/${filteredAdState[i]._id}`)
+  }
 // ASIDE VE SECTION, MAIN'DEN GELEN ROW CLASS'INA SAHİP OLDUKLARI İÇİN FLEX-ITEM OLUCAKLAR
 //SECTION'UN KENDİ İÇİNDEKİ BAZI ELEMENTLERİ DE FLEX'E BAGLAMAYI DÜŞÜNÜYORUM, BAZI FİELDLARI
 // YANYANA KONUMLANDIRABİLMEK İÇİN. ÖRNEĞİN İMG SOLDA, AYNI HİZADA YANINDA DESCRİPTİON VESAİRE
@@ -507,19 +515,42 @@ const SearchResult = () => {
         <section className='query-results'>
         {filteredAdState.map((ad,key) => (
             <div className='query-content'>
-                <h2>{`${ad.state} - ${ad.country}`}</h2>
+              <div onClick={async(e) => {e.preventDefault();
+                const response = await axios.post(`http://localhost:5000/api/searchresult/${ad._id}`, {
+                });
+                console.log(response.data)
+                navigate(`/searchresult/${ad._id}`)
+              }}><h2> {`${ad.state} - ${ad.country}`}</h2></div>
+              {/* <form onSubmit={handleSubmit(async(data,event)=> {
+                event.preventDefault();
+                const response = await axios.post(`http://localhost:5000/api/searchresult/${ad._id}`, {
+                  
+                });
+                // console.log(response.data.adver)
+                 setAdvertisement(response.data.adver);
+                 setAdOwner(response.data.owner)
+                navigate(`/searchresult/${ad._id}`)
+
+              })}>
+                <button>Submit</button>
+                </form> */}
+        <div className='conditionalFlex'>      
 				<div className='query-text'>
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp6wPN6-0GRdNKIvLrdx4aVJP-X_QcPy5tjQ&usqp=CAU" alt="" />
+                <img className='imgBorder' height="200" width="200" src="https://images.unsplash.com/photo-1560969184-10fe8719e047?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="" />
 				<p id='bigscreentext'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quaerat impedit ad accusamus provident libero animi neque labore, iusto maiores odit. Veniam dolor non reprehenderit necessitatibus debitis architecto repellat ratione ullam.
         Repellendus quisquam voluptatum accusantium, debitis molestias accusamus libero sunt expedita minus aliquam pariatur molestiae voluptatem aperiam doloribus ullam ducimus consectetur! Quod laudantium inventore modi molestiae nesciunt, cupiditate numquam quasi. Odio?</p>
         
         <p id='mediumscreentext'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi autem reiciendis, reprehenderit quae fugit sed excepturi cumque sequi odio voluptate omnis hic accusantium natus minus magni, doloremque, ipsa ab cum?</p>
         <p id='smallscreenemptytext'></p>
 				</div>
-        <p>{`${ad.city}  ${ad.arriving_date_day.toString()} ${months[ad.arriving_date_month-1]} - ${ad.leaving_date_day.toString()} ${months[ad.leaving_date_month-1]}`}</p>
-        <p>{`From:  ${decideToPutZero(ad.minTimeHour)}:${decideToPutZero(ad.minTimeMinute)} - To: ${decideToPutZero(ad.maxTimeHour)}:${decideToPutZero(ad.maxTimeMinute)}`}</p>
+        <div style={{justifyContent:'space-between'}} className='dateAndTimeDiv'>
+        <p>{ad.city}</p>
+        <p>{`Date: ${ad.arriving_date_day.toString()} ${months[ad.arriving_date_month-1]} - ${ad.leaving_date_day.toString()} ${months[ad.leaving_date_month-1]}`}</p>
+        <p style={{marginRight:'3em'}} id='timeText'>{`From:  ${decideToPutZero(ad.minTimeHour)}:${decideToPutZero(ad.minTimeMinute)} - To: ${decideToPutZero(ad.maxTimeHour)}:${decideToPutZero(ad.maxTimeMinute)}`}</p>
+        </div>
+        </div> 
             </div>
-        ))}
+))}
             
         </section>
         </main>

@@ -119,7 +119,7 @@ input:focus {
 }
 
 @media (max-width: 728px) {
-	.containerr {
+	.container {
 		/* grid-template-columns: none;
 		grid-template-rows: repeat(auto-fit, minmax(100px, 1fr));
 	
