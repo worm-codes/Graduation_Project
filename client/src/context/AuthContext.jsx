@@ -24,15 +24,8 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
-    const logoutServer=async()=>{
-      const response=await axios.post('http://localhost:5000/api/logout',{
-                         
-        user_email:currentUser?.email,
-        LastSeen:new Date().toLocaleDateString(navigator.language, {hour: '2-digit', minute:'2-digit'})
-      }  
-      )    
-    }
-    await logoutServer()
+    
+    
     return await signOut(auth)
   }
 
@@ -54,7 +47,7 @@ export function AuthProvider({ children }) {
      
       if(response.data.message!='UnAuth'){
         
-        return await response.data
+        return  response.data
       }
       
                        

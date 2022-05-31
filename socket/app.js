@@ -57,11 +57,14 @@ const removeUser = (socketId) => {
 
 };
 const removeId=async(id)=>{
-
-  userIds=userIds.filter((onlineUserId)=>onlineUserId!==id)
-
-   await logoutServer(id)
+  if(userIds.includes(id)){
+    await logoutServer(id)
+    userIds=userIds.filter((onlineUserId)=>onlineUserId!==id)
     io.emit("getUsers", userIds);
+  }
+  
+  
+
 }
 
 const getUser = (userId) => {

@@ -10,7 +10,7 @@ MiddleWare=require('../middleware/CheckAuth');
 router.post('/',MiddleWare.isAuth,async(req,res)=>{
     
     
-    const newMessage=new Message(req.body.message)
+    const newMessage=new Message(req.body?.message)
     console.log(newMessage);
     try{
         const savedMessage=await newMessage.save();
@@ -26,11 +26,11 @@ router.post('/',MiddleWare.isAuth,async(req,res)=>{
 router.get('/:conversationId/:userId',MiddleWare.isAuth,async(req,res)=>{
     try{
         const messages=await Message.find({
-            conversationId:req.params.conversationId
+            conversationId:req.params?.conversationId
         })
     
      
-       await Message.updateMany({receiver: req.params.userId,conversationId:req.params.conversationId}, {$set: {unread: false}})
+       await Message.updateMany({receiver: req.params?.userId,conversationId:req.params?.conversationId}, {$set: {unread: false}})
         
         res.json(messages)
     }
@@ -44,10 +44,10 @@ router.post('/AllUnreadMessages/:mail',async(req,res)=>{
      
     
     try{
-        const usertoFind=await User.findOne({user_email:req.params.mail});
+        const usertoFind=await User.findOne({user_email:req.params?.mail});
    
         const messages=await Message.find({
-            receiver:usertoFind._id,unread:true
+            receiver:usertoFind?._id,unread:true
         })
    
         res.json(messages.length)
@@ -67,7 +67,7 @@ router.get('/:conversationId',MiddleWare.isAuth,async(req,res)=>{
     try{
         console.log('called !!!!!!!!!!!!!');
         const messages=await Message.find({
-            conversationId:req.params.conversationId
+            conversationId:req.params?.conversationId
         })
         res.json(messages)
       

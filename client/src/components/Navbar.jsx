@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState,useRef } from 'react'
+import React, { useContext, useEffect, useState,useRef, useLayoutEffect } from 'react'
 import { Link,useLocation } from 'react-router-dom'
 import {AuthContext} from '../context/AuthContext'
 import '../public/Nav.css'
@@ -37,7 +37,9 @@ const Navbar = () => {
        
       
     }
+    if(currentPath==='/messenger'){
      logoutServer()
+    }
      await useAuth.logout()
     
 
@@ -49,15 +51,17 @@ const Navbar = () => {
 
    const getCurrentUserInfo=async()=>{
     
-    const response=await useAuth.getCurrentUserInfo()
+    const response=await useAuth?.getCurrentUserInfo()
+    if(response){
     setUser(response)
+    }
             
   }
-  useEffect(() => {
-    if(!user ){
+  useLayoutEffect(() => {
+    if(!user&&useAuth.currentUser ){
       getCurrentUserInfo()
     }
-    if(currentPath!=='/messenger'){
+    if(currentPath!=='/messenger' && useAuth.currentUser){
      socket.current = io("ws://localhost:8900");
 
       socket.current?.on("getMessage", (data) => {
@@ -74,10 +78,10 @@ const Navbar = () => {
     }
   
     
-  }, [])
+  }, [useAuth.currentUser])
 
   useEffect(() => {
-   if(arrivalMessage &&currentPath!=='/messenger'){
+   if(arrivalMessage && useAuth.currentUser&&currentPath!=='/messenger'){
     setUnreadMessages(unreadMessages+1)
    }
     
@@ -85,7 +89,7 @@ const Navbar = () => {
   
 
   useEffect(()=>{
-    if(user && currentPath!=='/messenger'){
+    if(user &&useAuth.currentUser&& currentPath!=='/messenger'){
         
       
        const addUserBySocket=async()=>{
@@ -114,31 +118,9 @@ const Navbar = () => {
 
    
   }
-  },[user])
+  },[user,useAuth.currentUser])
 
-  /* okunmamis mesajlari saymak icin anlik gostermek icin burayi ayarlayabilirim
-  useEffect(() => {
-   
   
-    
-
-    
-    
-  }, []);
-
-   useEffect(() => {
-     if(user){
-       const addUserBySocket=async()=>{
-         let user={_id:'624cafea3e5ee7aee8cdb1d932323'}
-       socket.current.emit("addUser", user);
-       }
-       addUserBySocket()
-    
-
-     }
-    
-  }, [user]);*/
-
 
 
 
@@ -146,29 +128,40 @@ const Navbar = () => {
   return (
     <div style={{backgroundColor:'white'}}> 
     <nav style={{height:'3.5rem'}} className="navbar navbar-expand-lg navbar-light ">
-    <a className="navbar-brand" href="/"><b className='h3'>L🤝G</b></a>
+      {currentPath!=='/messenger'?<Link className='navbar-brand ' to='/'><b className='h3'>L🤝G</b></Link>
+      : <a className="navbar-brand " href="/"><b className='h3'>L🤝G</b></a>}
+    
     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-5"
       aria-controls="navbarSupportedContent-5" aria-expanded="false" aria-label="Toggle navigation">
       <span className="navbar-toggler-icon"></span>
     </button>
     <div className="collapse navbar-collapse" id="navbarSupportedContent-5"> 
-    {user ? <>
+    {user&&useAuth.currentUser ? <>
       <ul className="navbar-nav ml-auto mr-2 text-right">
       
         <li className="nav-item active">
-          <a className="nav-link" href="/">Home
-            <span className="sr-only">(current)</span>
-          </a>
+        {currentPath!=='/messenger'?<Link className='nav-link' to='/'>Home</Link>
+      : <a className="nav-link" href="/">Home
+            
+          </a>}
+        
+         
         </li>
         <li className="nav-item">
-          <a className="nav-link" href="#">Features</a>
+        {currentPath!=='/messenger'?<Link className='nav-link' to='/resetPassword'>Password Reset</Link>
+      : <a className="nav-link" href="/resetPassword">Password Reset
+           
+          </a>}
+        
+         
         </li>
-        <li className="hidden-profile d-none nav-item">
-          <a className="nav-link" href="#">Profile</a>
-        </li>
+        
+       
  <li className="nav-item">
         {unreadMessages!==0 &&currentPath!='/messenger'? <span className="badge badge-pill badge-danger" style={{float:"right" ,marginBottom:"-6px"}}>{unreadMessages}</span>:''}
-						<a className="nav-link" href="/messenger"><i className="fa fa-envelope fa-lg" style={{fontSize:'1.40rem'}} aria-hidden="true"></i> <span className="sr-only">(current)</span></a>
+          {currentPath!=='/messenger'?	<a className="nav-link" href="/messenger"><i className="fa fa-envelope fa-lg" style={{fontSize:'1.40rem'}} aria-hidden="true"></i> <span className="sr-only">(current)</span></a>
+      : 	<i className="fa fa-envelope fa-lg" style={{fontSize:'1.40rem', paddingTop:'20px'}} aria-hidden="true"></i> }
+					
     </li>
         <li className="hidden-profile d-none nav-item">
          <a className="nav-link" onClick={handleLogout} href="/">Logout</a>
@@ -185,8 +178,11 @@ const Navbar = () => {
             style={{width:'3.3rem',height:'3.4rem'}} className="rounded-circle z-depth-0" alt="avatar image" />
           </a>
           <div className="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
-            <a className="dropdown-item" href="#">Hello</a>
-          <a className="dropdown-item" href="#">Profile</a>
+            {currentPath!=='/messenger'?<Link className='nav-link' to='#'>Profile</Link>
+      : <a className="nav-link" href="#">Profile
+            <span className="sr-only">(current)</span>
+          </a>}
+          
          
            
             <a className="dropdown-item" onClick={handleLogout} href="/">Logout</a>
