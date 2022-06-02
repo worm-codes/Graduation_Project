@@ -10,19 +10,110 @@ img {
     max-width: 100%;
     margin-right: 1em;
 }
+.outerContainer {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1540px;
+    margin: 0 auto;
+    /* border:3px solid green; */
+}
 
 .innerContainer {
     display:flex;
-    justify-content: center;
-    border: 2px solid red;
+    /* border: 2px solid red; */
+    background-color: #eff0eb;
     flex-direction: column;
-    margin-top: 3em;
+    border-radius: 25px;
+    margin-top: 1em;
+    margin-left: 5em;
+    width: 65%;
 }
 
 .innerContainer > *:not(:last-child) {
     margin-bottom: 1.5em; 
 } 
 
-.adDetailHeader {
-    margin: 0 auto;
+.containerToHoldImageAndText {
+    display: flex;
+    white-space: normal;
+    word-wrap: break-word;   
+    overflow-wrap: break-word;
+    word-break: break-word;
+    margin: 0 .8em;
 }
+
+.adDetailHeader {
+    margin-bottom: 0.7em;
+    margin-left: .3em;
+}
+
+.descText {
+    margin-top:1em;
+}
+
+.avatar:hover {
+    opacity: 0.9;
+}
+
+.dateAndTimeDivInAdDetail {
+    display:flex;
+    margin: 0 1em;
+}
+
+.sideBarInfo {
+    width: 18%;
+    padding: 1em;
+    text-align: center;
+    color: #fff;
+    background-color: #136c72;
+}
+
+/* THESE STYLES ARE FOR THE ANIMATED BUTTONS */
+
+.button {
+    position: relative;
+    cursor: pointer;
+    padding-left: 0;
+    padding-right: 0;
+    
+    
+}
+.button span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    line-height: 58px;
+    text-transform: uppercase;
+    font-size: 18px;
+    letter-spacing: 1px;
+    font-weight: 300;
+    padding-left: 0;
+    padding-right: 0;
+    
+}
+.button .border {
+    fill: none;
+    stroke-width: 1;
+    border: 3px solid #91c9ff;
+}
+.button .bg-line {
+    fill: #5ca4ea;
+    stroke: #91c9ff;
+    transition: all 0.8s ease-in-out;
+}
+.button .hl-line {
+    stroke: #fff;
+    stroke-dasharray: 40 480;
+    stroke-dashoffset: 40;
+    transition: all 0.8s ease-in-out;
+}
+.button:hover .bg-line {
+    fill: #4f95da;
+}
+.button:hover .hl-line {
+    stroke-dashoffset: -480;
+}
+
