@@ -194,15 +194,32 @@ console.log("countryVar variable:", countryVar)
     let finalFilteredCities = cities.filter((city) => city.countryCode === countryVar.isoCode && city.stateCode === stateVar.isoCode &&
       city.name.toLowerCase().startsWith(cityInput.toLowerCase()))
 
-    let isLeavingSelected = false;
-	  let isDatesSelected = false;
-	  if(arrivalDate && leavingDate) {
-		  isDatesSelected = true
-	  }
-	
-	  if(leavingDate){
-		  isLeavingSelected = true;
-	  }
+      let isLeavingSelected = false;
+      let isDatesSelected = false;
+      let isArrivingDateSelected = false;
+      let isMinTimeSelected = false;
+      let isTimeSelected = false;
+  
+      if(arrivalDate && leavingDate) {
+        isDatesSelected = true
+      }
+      
+      if(arrivalDate){
+        isArrivingDateSelected = true;
+      }
+    
+      if(leavingDate){
+        isLeavingSelected = true;
+      }
+  
+      if(minTime){
+        isMinTimeSelected = true;
+      }
+  
+      if(minTime && maxTime){
+        isTimeSelected = true;
+      }
+
     let cityObject = {}
     finalFilteredCities.forEach((city)=> {
       if(city.name === cityInput) {
@@ -254,20 +271,20 @@ console.log("countryVar variable:", countryVar)
               onSubmit={handleSubmit(async (data,event) => {
                 event.preventDefault();
                 const response = await axios.post("http://localhost:5000/api/ad/searchresult", {
-                  arrivingDateYear: parseInt(data.arriving.substring(0,4)),
-								  arrivingDateMonth: parseInt(data.arriving.substring(5,7)),
-								  arrivingDateDay: parseInt(data.arriving.substring(8,10)),
-								  leavingDateYear: parseInt(data.leaving.substring(0,4)),
-								  leavingDateMonth: parseInt(data.leaving.substring(5,7)),
-								  leavingDateDay: parseInt(data.leaving.substring(8,10)),
+                  arrivingDateYear: parseInt(data.arriving?.substring(0,4)),
+								  arrivingDateMonth: parseInt(data.arriving?.substring(5,7)),
+								  arrivingDateDay: parseInt(data.arriving?.substring(8,10)),
+								  leavingDateYear: parseInt(data.leaving?.substring(0,4)),
+								  leavingDateMonth: parseInt(data.leaving?.substring(5,7)),
+								  leavingDateDay: parseInt(data.leaving?.substring(8,10)),
                   city: cityVar?.name,
                   country: countryVar?.name,
                   host: data.host,
                   maxPeopleToPass: data.maxPeople,
-                  minTimeHourToPass: parseInt(data.minTime.substring(0,2)),
-								  minTimeMinuteToPass: parseInt(data.minTime.substring(3,5)),
-								  maxTimeHourToPass: parseInt(data.maxTime.substring(0,2)),
-								  maxTimeMinuteToPass: parseInt(data.maxTime.substring(3,5)),
+                  minTimeHourToPass: parseInt(data.minTime?.substring(0,2)),
+								  minTimeMinuteToPass: parseInt(data.minTime?.substring(3,5)),
+								  maxTimeHourToPass: parseInt(data.maxTime?.substring(0,2)),
+								  maxTimeMinuteToPass: parseInt(data.maxTime?.substring(3,5)),
                   state: stateVar?.name,
                   gender: data.gender,
                   minAge: value1[0],
@@ -377,18 +394,19 @@ console.log("countryVar variable:", countryVar)
                     <input
                       min={todayDate}
                       max={isLeavingSelected === false ? `${new Date().getFullYear() + 1}-${finalMonthToUse}-${day}` : leavingDate}
-                      {...register("arriving", { required: "You have to select an arrival date" })}
+                      {...register("arriving")}
                       name="arriving"
                       id="arriving"
                       type="date"
                     />
-                    {(errors.arriving && !errors.country && !errors.state && !errors.city && isFoundCountry && isFoundState && cityInput) ? <p style={{color:'red'}}>{errors.arriving.message}</p> : ''}
+                    {/* {(errors.arriving && !errors.country && !errors.state && !errors.city && isFoundCountry && isFoundState && cityInput) ? <p style={{color:'red'}}>{errors.arriving.message}</p> : ''} */}
                   </div>
   
                   <div className="columnn">
                     <label htmlFor="leaving">Leaving in:</label>
-                    <input min={`${arrivalDate}`} {...register("leaving", { required: "You have to select a leaving date" })} id="leaving" name="leaving" type="date" />
-                    {(errors.leaving && !errors.country && !errors.state && !errors.city && !errors.arriving && isFoundCountry && isFoundState && cityInput && arrivalDate) ? <p style={{color:'red'}}>{errors.leaving.message}</p> : ''}
+                    <input min={`${arrivalDate}`} {...register("leaving")} disabled={!isArrivingDateSelected}
+                    required={isArrivingDateSelected} id="leaving" name="leaving" type="date" />
+                    {/* {(errors.leaving && !errors.country && !errors.state && !errors.city && !errors.arriving && isFoundCountry && isFoundState && cityInput && arrivalDate) ? <p style={{color:'red'}}>{errors.leaving.message}</p> : ''} */}
                   </div>
                 </div>
                 <div className="roww">
@@ -396,7 +414,7 @@ console.log("countryVar variable:", countryVar)
                     <label id="people" htmlFor="maxPeople">
                       For:
                     </label>
-                    <select {...register("maxPeople", { required: true })} name="maxPeople" id="maxPeople">
+                    <select {...register("maxPeople")} name="maxPeople" id="maxPeople">
                       <option selected value={1}>
                         One People
                       </option>
@@ -409,29 +427,31 @@ console.log("countryVar variable:", countryVar)
                     <label htmlFor="minTime">From:</label>
                     <input
                       disabled={!isDatesSelected}
-                      {...register("minTime", { required: 'Please choose your lower time range' })}
+                      {...register("minTime")}
                       name="minTime"
                       id="minTime"
                       type="time"
                     />
-                    {(errors.minTime && !errors.country && !errors.state && !errors.city && !errors.arriving && !errors.leaving && isFoundCountry && isFoundState && cityInput && arrivalDate && leavingDate) ? <p style={{color:'red'}}>{errors.minTime.message}</p> : ''}
+                    {/* {(errors.minTime && !errors.country && !errors.state && !errors.city && !errors.arriving && !errors.leaving && isFoundCountry && isFoundState && cityInput && arrivalDate && leavingDate) ? <p style={{color:'red'}}>{errors.minTime.message}</p> : ''} */}
                   </div>
   
                   <div className="columnn" id="maxTime">
                     <label htmlFor="maxTime">To:</label>
-                    <input disabled={!isDatesSelected}
-                     {...register("maxTime", { required: 'Please choose your upper time range' })}
+                    <input
+                     disabled={!isDatesSelected && !isMinTimeSelected}
+                     required={isMinTimeSelected}
+                     {...register("maxTime")}
                       name="maxTime"
                        id="maxTime"
                         type="time"
                          />
-                    {(errors.maxTime && !errors.country && !errors.state && !errors.city && !errors.arriving && !errors.leaving && !errors.minTime && isFoundCountry && isFoundState && cityInput && arrivalDate && leavingDate && minTime) ? <p style={{color:'red'}}>{errors.maxTime.message}</p> : ''}
+                    {/* {(errors.maxTime && !errors.country && !errors.state && !errors.city && !errors.arriving && !errors.leaving && !errors.minTime && isFoundCountry && isFoundState && cityInput && arrivalDate && leavingDate && minTime) ? <p style={{color:'red'}}>{errors.maxTime.message}</p> : ''} */}
                   </div>
                 </div>
                 <div className='roww'>
                   <div className='columnn' id='gender'>
                     <label htmlFor="gender">Gender</label>
-                    <select {...register("gender", { required: true })} name="gender" id="gender">
+                    <select {...register("gender")} name="gender" id="gender">
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                       <option value={undefined}>Doesn't Matter</option>
@@ -441,7 +461,7 @@ console.log("countryVar variable:", countryVar)
 
                   <div className='columnn' id='host'>
                     <label htmlFor="host">Looking for a host?</label>
-                    <select {...register("host", { required: true })} name="host" id="host">
+                    <select {...register("host")} name="host" id="host">
                       <option value={true}>Yes</option>
                       <option value={false}>No</option> 
                     </select>
