@@ -4,7 +4,7 @@ import {useForm} from 'react-hook-form'
 import {Link} from 'react-router-dom'
 import axios from 'axios'
 import {AuthContext} from '../context/AuthContext'
-import Navbar from './Navbar'
+import Navbar from '../components/Navbar'
 
 
 
@@ -39,7 +39,7 @@ const sign_up = () => {
 
   return (
     <>
-    <Navbar/>
+    {/* <Navbar/> */}
       <div className="addedStyle">
     <div className="container-fluid">
     <div className="row">

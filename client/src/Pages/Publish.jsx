@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import "../public/Publish.css";
 import { Country, State, City } from "country-state-city";
 import axios from "axios";
-import Navbar from "./Navbar";
+import Navbar from '../components/Navbar'
 
 const Publish = () => {
 	// const [isHost, setIsHost] = useState(false)
@@ -260,12 +260,12 @@ const Publish = () => {
 				"flexDirection": "column",
 				"justifyContent": "center",
 				"alignItems": "center",
-				height: "100vh",
+				height: "88.5vh",
 				width: "100vw",
 			}}
 		>
 			{/*  important */}
-			<Navbar />
+			{/* <Navbar /> */}
 			<div className="general">
 				<div className="containerr">
 					<h1>PUBLISH AN AD</h1>
@@ -276,7 +276,7 @@ const Publish = () => {
 							 if(State.getStatesOfCountry(countryVar.isoCode).includes(stateVar) === true
 								&& City.getCitiesOfState(countryVar.isoCode, stateVar.isoCode).includes(cityVar) === true ){
 
-							const response = await axios.post("http://localhost:5000/api/publish", {
+							const response = await axios.post("http://localhost:5000/api/ad/publish", {
 								arrivingDateYear: parseInt(data.arriving.substring(0,4)),
 								arrivingDateMonth: parseInt(data.arriving.substring(5,7)),
 								arrivingDateDay: parseInt(data.arriving.substring(8,10)),

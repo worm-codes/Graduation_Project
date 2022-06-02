@@ -6,7 +6,7 @@ import { Country, State, City }  from 'country-state-city';
 import axios from "axios";
 import  Slider  from '@mui/material/Slider';
 import Box from '@mui/material/Box';
-import Navbar from './Navbar';
+import Navbar from '../components/Navbar'
 
 
 function valuetext(value) {
@@ -16,6 +16,8 @@ const minDistance = 0;
 
 
 const Search = () => {
+
+ 
 
   const { currentUser } = useContext(AuthContext);
 	let useAuth=useContext(AuthContext)
@@ -207,6 +209,10 @@ console.log("countryVar variable:", countryVar)
         cityObject = city;
       }
     })
+
+    useEffect(() => {
+      localStorage.clear()
+    }, [])
   
       useEffect(() => {	
         setCountryVar(countryToSetStateObj)
@@ -234,12 +240,12 @@ console.log("countryVar variable:", countryVar)
           "flexDirection": "column",
           "justifyContent": "center",
           "alignItems": "center",
-          height: "100vh",
+          height: "88.5vh",
           width: "100vw",
         }}
       >
         {/*  important */}
-        <Navbar />
+        {/* <Navbar /> */}
         <div className="generall">
           <div className="containerr">
             <h1>SEARCH FOR AN AD</h1>
@@ -247,7 +253,7 @@ console.log("countryVar variable:", countryVar)
             <form
               onSubmit={handleSubmit(async (data,event) => {
                 event.preventDefault();
-                const response = await axios.post("http://localhost:5000/api/searchresult", {
+                const response = await axios.post("http://localhost:5000/api/ad/searchresult", {
                   arrivingDateYear: parseInt(data.arriving.substring(0,4)),
 								  arrivingDateMonth: parseInt(data.arriving.substring(5,7)),
 								  arrivingDateDay: parseInt(data.arriving.substring(8,10)),
@@ -403,7 +409,6 @@ console.log("countryVar variable:", countryVar)
                     <label htmlFor="minTime">From:</label>
                     <input
                       disabled={!isDatesSelected}
-                      min={boolVarForMinTime ? minimumTime : ''}
                       {...register("minTime", { required: 'Please choose your lower time range' })}
                       name="minTime"
                       id="minTime"

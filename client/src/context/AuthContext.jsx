@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react"
 import { auth } from "../Auth/Firebase-Config"
+import axios from "axios"
 import { createUserWithEmailAndPassword, onAuthStateChanged,signInWithEmailAndPassword,signOut,sendPasswordResetEmail } from 'firebase/auth'
 
 export const AuthContext = React.createContext()
@@ -10,7 +11,7 @@ export default function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState('')
-  const [currentToken,setCurrentToken]=useState('')
+  
   const [loading, setLoading] = useState(true)
 
   async function signup(email, password) {
@@ -18,16 +19,38 @@ export function AuthProvider({ children }) {
   }
 
   async function login(email, password) {
+    
     return await signInWithEmailAndPassword(auth,email, password)
   }
 
   async function logout() {
-    setCurrentToken('')
+    
+    
     return await signOut(auth)
   }
 
   async function resetPassword(email) {
     return await sendPasswordResetEmail(auth,email)
+  }
+   async function getCurrentUserInfo(){
+    
+    const response=await axios.post('http://localhost:5000/api/getUser',{
+                         
+        user_email:currentUser?.email,
+        user_last_sign_in:currentUser?.metadata.lastSignInTime,
+        createdAt:currentUser?.metadata.creationTime,
+      },
+      {
+        headers:{Authorization: 'Bearer ' + await currentUser?.getIdToken(true)}
+      }
+      )
+     
+      if(response.data.message!='UnAuth'){
+        
+        return  response.data
+      }
+      
+                       
   }
 
   
@@ -41,21 +64,18 @@ export function AuthProvider({ children }) {
 
     return unsubscribe
   }, [])
+
   
  
-  useEffect(()=>{
-    if(currentUser){
-    currentUser.getIdToken(true).then((idToken)=>{setCurrentToken(idToken)})
-    }
-    
-    
- },[currentUser])
+  
+ 
+  
 
  
 
   const value = {
     currentUser,
-    currentToken,
+    getCurrentUserInfo,
     login,
     signup,
     logout,

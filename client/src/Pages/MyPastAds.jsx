@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { AuthContext } from "../context/AuthContext";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
-import Navbar from "./Navbar";
+import Navbar from '../components/Navbar'
 
 const MyPastAds = () => {
 
@@ -16,7 +16,7 @@ const MyPastAds = () => {
     }, [])
     useEffect(() => {
         const getAds = async () => {
-            const response = await axios.get(`http://localhost:5000/api/mypastads`,{
+            const response = await axios.get(`http://localhost:5000/api/ad/mypastads`,{
                 headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
               }) 
                setAdArrState(response.data[0])
@@ -29,7 +29,7 @@ const MyPastAds = () => {
   return (
     <>
         <div>
-            <Navbar/>
+            {/* <Navbar/> */}
         <div className="table-responsive">
             <table className="table table hover">
                 
@@ -54,7 +54,7 @@ const MyPastAds = () => {
               <td>{ad.city}</td>
               <td>
                   <form onSubmit={handleSubmit(async (data) => {
-                      const deletedAd = await axios.delete(`http://localhost:5000/api/mypastads/${ad._id}`, {
+                      const deletedAd = await axios.delete(`http://localhost:5000/api/ad/mypastads/${ad._id}`, {
                         headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
                       })
                     setAdArrState(adArrState.filter((ads) => ads._id !== deletedAd.data._id))

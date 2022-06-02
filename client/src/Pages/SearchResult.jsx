@@ -1,9 +1,8 @@
 import React, { useState, useContext, useEffect, useCallback, useMemo } from 'react'
 import { AuthContext } from "../context/AuthContext";
-import { AdDetailContext } from "../context/AdDetailContext";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
-import Navbar from "./Navbar";
+import Navbar from '../components/Navbar'
 import { Country, State, City }  from 'country-state-city';
 import "../public/SearchResult.css";
 import  Slider  from '@mui/material/Slider';
@@ -24,7 +23,6 @@ function valuetext(value) {
 const SearchResult = () => {
 
     let useAuth=useContext(AuthContext)
-    const { advertisement, setAdvertisement, adOwner, setAdOwner } = useContext(AdDetailContext)
     let navigate = useNavigate();
 
 	// Age Slider Logic Stuff
@@ -75,23 +73,32 @@ const SearchResult = () => {
 
     useEffect(() => {      
       const getFilteredAds = async () => {
-              const response = await axios.get(`http://localhost:5000/api/searchresult`,{
+              const response = await axios.get(`http://localhost:5000/api/ad/searchresult`,{
             headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
             }) 
               console.log("response coming from the backend inside if:", response.data)
-              setFilteredAdState(response.data)
-              setprevAdState(response.data)  
-            
-             if(prevAdState === null && JSON.stringify(response.data) === JSON.stringify(filteredAdState)){
-              setprevAdState(filteredAdState)
               
-            }
-            else if(prevAdState !== null && JSON.stringify(response.data) !== JSON.stringify(prevAdState)) {
-                setprevAdState(response.data)
-            }                          
+              if(response.data !== "undefined string"){
+                localStorage.clear();
+                localStorage.setItem('ads',JSON.stringify(response.data))
+                console.log("first if getItem result",JSON.parse(localStorage.getItem('ads')))
+                console.log("localstorage length'i, setledikten sonra", localStorage.length);
+                setFilteredAdState(response.data)
+                
+              }
+               else if(response.data === 'undefined string' && localStorage.length !== 0){
+              console.log("localStorage length inside else if", localStorage.length);
+              console.log("localStorage getItem inside else if", JSON.parse(localStorage.getItem('ads')));
+              setFilteredAdState(JSON.parse(localStorage.getItem('ads')))
+            }                                   
         };
-
-        getFilteredAds(); 
+        if(localStorage.length === 0){
+          getFilteredAds(); 
+        }
+        else {
+          setFilteredAdState(JSON.parse(localStorage.getItem('ads')))
+        }       
+           
     }, [])
 
    
@@ -307,16 +314,16 @@ const SearchResult = () => {
 //SECTION'UN KENDİ İÇİNDEKİ BAZI ELEMENTLERİ DE FLEX'E BAGLAMAYI DÜŞÜNÜYORUM, BAZI FİELDLARI
 // YANYANA KONUMLANDIRABİLMEK İÇİN. ÖRNEĞİN İMG SOLDA, AYNI HİZADA YANINDA DESCRİPTİON VESAİRE
   
- 
+ let tempStateVar = [];
 
   return (
     <>
-        <Navbar/>
+        {/* <Navbar/> */}
         <main className='main container row'>
         <aside className='sidebar'>
             <form onSubmit={handleSubmit(async (data,event) => {
               event.preventDefault();
-              const response = await axios.post("http://localhost:5000/api/searchresult", {
+              const response = await axios.post("http://localhost:5000/api/ad/searchresult", {
                   arrivingDateYear: parseInt(data.arriving?.substring(0,4)),
 								  arrivingDateMonth: parseInt(data.arriving?.substring(5,7)),
 								  arrivingDateDay: parseInt(data.arriving?.substring(8,10)),
@@ -336,7 +343,11 @@ const SearchResult = () => {
                   minAge: value1[0],
                   maxAge: value1[1]
                 });
+
                  setFilteredAdState(response.data);
+                 localStorage.clear();
+                 localStorage.setItem('ads', JSON.stringify(response.data));
+                 tempStateVar.push(response.data);
             })}>        
                         
                         <div className="col">
@@ -468,7 +479,6 @@ const SearchResult = () => {
 				  <div className="col" id="minTime">
                     <label htmlFor="minTime">From:</label>
                     <input
-                      min={boolVarForMinTime ? minimumTime : ''}
                       {...register("minTime")}
                       name="minTime"
                       id="minTime"
@@ -513,27 +523,15 @@ const SearchResult = () => {
 
                                          
         <section className='query-results'>
-        {filteredAdState.map((ad,key) => (
+        {filteredAdState.length > 0 ? filteredAdState.map((ad,key) => (
             <div className='query-content'>
               <div onClick={async(e) => {e.preventDefault();
-                const response = await axios.post(`http://localhost:5000/api/searchresult/${ad._id}`, {
+                const response = await axios.post(`http://localhost:5000/api/ad/searchresult/${ad._id}`, {
                 });
                 console.log(response.data)
                 navigate(`/searchresult/${ad._id}`)
               }}><h2> {`${ad.state} - ${ad.country}`}</h2></div>
-              {/* <form onSubmit={handleSubmit(async(data,event)=> {
-                event.preventDefault();
-                const response = await axios.post(`http://localhost:5000/api/searchresult/${ad._id}`, {
-                  
-                });
-                // console.log(response.data.adver)
-                 setAdvertisement(response.data.adver);
-                 setAdOwner(response.data.owner)
-                navigate(`/searchresult/${ad._id}`)
 
-              })}>
-                <button>Submit</button>
-                </form> */}
         <div className='conditionalFlex'>      
 				<div className='query-text'>
                 <img className='imgBorder' height="200" width="200" src="https://images.unsplash.com/photo-1560969184-10fe8719e047?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="" />
@@ -550,6 +548,32 @@ const SearchResult = () => {
         </div>
         </div> 
             </div>
+)) : tempStateVar.map((ad,key) => (
+    <div className='query-content'>
+      <div onClick={async(e) => {e.preventDefault();
+                const response = await axios.post(`http://localhost:5000/api/ad/searchresult/${ad._id}`, {
+                });
+                console.log(response.data)
+                navigate(`/searchresult/${ad._id}`)
+              }}><h2> {`${ad.state} - ${ad.country}`}</h2>
+      </div>
+
+      <div className='conditionalFlex'>      
+				<div className='query-text'>
+                <img className='imgBorder' height="200" width="200" src="https://images.unsplash.com/photo-1560969184-10fe8719e047?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="" />
+				<p id='bigscreentext'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quaerat impedit ad accusamus provident libero animi neque labore, iusto maiores odit. Veniam dolor non reprehenderit necessitatibus debitis architecto repellat ratione ullam.
+        Repellendus quisquam voluptatum accusantium, debitis molestias accusamus libero sunt expedita minus aliquam pariatur molestiae voluptatem aperiam doloribus ullam ducimus consectetur! Quod laudantium inventore modi molestiae nesciunt, cupiditate numquam quasi. Odio?</p>
+        
+        <p id='mediumscreentext'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi autem reiciendis, reprehenderit quae fugit sed excepturi cumque sequi odio voluptate omnis hic accusantium natus minus magni, doloremque, ipsa ab cum?</p>
+        <p id='smallscreenemptytext'></p>
+				</div>
+        <div style={{justifyContent:'space-between'}} className='dateAndTimeDiv'>
+        <p>{ad.city}</p>
+        <p>{`Date: ${ad.arriving_date_day.toString()} ${months[ad.arriving_date_month-1]} - ${ad.leaving_date_day.toString()} ${months[ad.leaving_date_month-1]}`}</p>
+        <p style={{marginRight:'3em'}} id='timeText'>{`From:  ${decideToPutZero(ad.minTimeHour)}:${decideToPutZero(ad.minTimeMinute)} - To: ${decideToPutZero(ad.maxTimeHour)}:${decideToPutZero(ad.maxTimeMinute)}`}</p>
+        </div>
+        </div>
+    </div>
 ))}
             
         </section>

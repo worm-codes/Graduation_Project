@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import { AuthContext } from "../context/AuthContext";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
-import Navbar from "./Navbar";
+import Navbar from '../components/Navbar'
 
 const MyAds = () => {
 
@@ -21,7 +21,7 @@ const MyAds = () => {
     }, [])
     useEffect(() => {
         const getAds = async () => {
-            const response = await axios.get(`http://localhost:5000/api/myads`,{
+            const response = await axios.get(`http://localhost:5000/api/ad/myads`,{
                 headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
               }) 
               setAdArrState(response.data[0])
@@ -45,7 +45,7 @@ const MyAds = () => {
   return (
     <>
         <div>
-            <Navbar/>
+            {/* <Navbar/> */}
         <div className="table-responsive">
             <table className="table table hover">
                 
@@ -71,7 +71,7 @@ const MyAds = () => {
               <td>
                   <form onSubmit={handleSubmit(async (data) => {
                    
-                      const changedAd = await axios.put(`http://localhost:5000/api/myads`, {adID: ad._id})
+                      const changedAd = await axios.put(`http://localhost:5000/api/ad/myads`, {adID: ad._id})
                     //   console.log("changedAd.data.user_ads var inside form",changedAd.data)
                       setActiveAdsArr(changedAd.data);
                     // console.log("changedAd var:", changedAd)

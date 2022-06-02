@@ -3,6 +3,7 @@ import React, { useRef, useState,useContext } from "react"
 import { Link } from "react-router-dom"
 import {AuthContext} from '../context/AuthContext'
 import '../public/passwordReset.css'
+import Navbar from '../components/Navbar'
 
 export default function ForgotPassword() {
   let useAuth=useContext(AuthContext)
@@ -29,6 +30,8 @@ export default function ForgotPassword() {
   }
 
   return (
+    <>
+    {/* <Navbar/> */}
     <div className="addedStyle">
      <div className="wrapper fadeInDown">
      <div id="formContent">
@@ -56,5 +59,6 @@ export default function ForgotPassword() {
   </div>
 </div>
 </div>
+</>
   )
 }
