@@ -71,7 +71,7 @@ router.get('/getUsersInChat/:convid',async(req,res)=>{
         
         const currentConversation=await Conversation.findById({_id:req.params?.convid}).clone().catch(function(err){ console.log(err)})
         
-        res.json(currentConversation.UsersInChat)
+        res.json(currentConversation?.UsersInChat)
         
     }
     catch(err){

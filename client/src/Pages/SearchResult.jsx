@@ -338,6 +338,8 @@ const SearchResult = () => {
 								  minTimeMinuteToPass: parseInt(data.minTime?.substring(3,5)),
 								  maxTimeHourToPass: parseInt(data.maxTime?.substring(0,2)),
 								  maxTimeMinuteToPass: parseInt(data.maxTime?.substring(3,5)),
+                  minTimeTotal: ((parseInt(data.minTime?.substring(0,2)) * 60) + (parseInt(data.minTime?.substring(3,5)))),
+                  maxTimeTotal: ((parseInt(data.maxTime?.substring(0,2)) * 60) + (parseInt(data.maxTime?.substring(3,5)))),
                   state: stateVar?.name,
                   gender: data.gender,
                   minAge: value1[0],
@@ -345,6 +347,7 @@ const SearchResult = () => {
                 });
 
                  setFilteredAdState(response.data);
+                 console.log(response.data)
                  localStorage.clear();
                  localStorage.setItem('ads', JSON.stringify(response.data));
                  tempStateVar.push(response.data);

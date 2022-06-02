@@ -18,12 +18,15 @@ router.post('/publish', async(req,res) =>{
         theUserAge = new Date().getFullYear() - parseInt(theUser.user_date_of_birth.substring(0,4).toString());
         // console.log("theEmail variable",theEmail)
         // console.log("theUser variable",theUser)
+        let minTimeFinal = (minTimeHour * 60) + (minTimeMinute);
+        let maxTimeFinal = (maxTimeHour * 60) + (maxTimeMinute);
     
     const theAd = await new Ad({ arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,
             arriving_date_day: arrivingDateDay, city: city, country, description, host, leaving_date_year:leavingDateYear,
             leaving_date_month: leavingDateMonth, leaving_date_day: leavingDateDay, maxPeople, minTimeHour: minTimeHour,
             maxTimeHour: maxTimeHour, minTimeMinute: minTimeMinute, maxTimeMinute: maxTimeMinute,state,
-            owner_gender:theUser.user_gender,owner_email: theUser.user_email, owner_age: theUserAge, owner_id: theUser._id})
+            owner_gender:theUser.user_gender,owner_email: theUser.user_email, owner_age: theUserAge, owner_id: theUser._id,
+            minTimeOfAd: minTimeFinal, maxTimeOfAd: maxTimeFinal})
 
     await theUser.populate('user_ads');
 
@@ -46,16 +49,16 @@ router.post('/searchresult', async(req,res) => {
 
         const { arrivingDateYear, arrivingDateMonth, arrivingDateDay, leavingDateYear, leavingDateMonth, leavingDateDay,
              city, country, host, maxPeopleToPass, minTimeHourToPass, minTimeMinuteToPass, maxTimeHourToPass, maxTimeMinuteToPass,
-              state, gender, minAge, maxAge } = req.body;
+              state, gender, minAge, maxAge, minTimeTotal, maxTimeTotal } = req.body;
               let theAds = [];
               let finalAds = [];
+              
 
                 if(minTimeHourToPass !== null && arrivingDateDay !== null){
                     theAds = await Ad.find({
                         $and: [
                             { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge},  arriving_date_day: {$gte:arrivingDateDay}, 
-                            minTimeHour: {$gte: minTimeHourToPass}, maxTimeHour: {$lte: maxTimeHourToPass},
-                            minTimeMinute: {$gte: minTimeMinuteToPass}, maxTimeMinute: {$lte: maxTimeMinuteToPass}, leaving_date_day: {$lte: leavingDateDay} }
+                            minTimeOfAd : {$gte: minTimeTotal}, maxTimeOfAd: {$lte: maxTimeTotal}, leaving_date_day: {$lte: leavingDateDay} }
                         ],
                         arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,leaving_date_year: leavingDateYear,
                          leaving_date_month: leavingDateMonth,city: city, state: state, country: country, host: host, maxPeople: maxPeopleToPass, owner_gender: gender
@@ -74,8 +77,8 @@ router.post('/searchresult', async(req,res) => {
                     theAds = await Ad.find({
                         $and: [
                             { owner_age: {$gte : minAge}, owner_age: {$lte: maxAge},
-                            minTimeHour: {$gte: minTimeHourToPass}, maxTimeHour: {$lte: maxTimeHourToPass},
-                            minTimeMinute: {$gte: minTimeMinuteToPass}, maxTimeMinute: {$lte: maxTimeMinuteToPass} }
+                            minTimeOfAd: {$gte: minTimeTotal}, maxTimeOfAd: {$lte: maxTimeTotal}
+                            }
                         ],
                        city: city, state: state, country: country, host: host, maxPeople: maxPeopleToPass, owner_gender: gender
                     })
@@ -186,7 +189,7 @@ router.get('/mypastads', MiddleWare.isAuth, async(req,res) => {
     let arrayToPass = []
     userAdArr = await user.populate('user_ads');
     for(let ad of userAdArr.user_ads){
-         let temp = await Ad.findById(ad._id)
+        let temp = await Ad.findById(ad._id)
          if(temp.isActive === false || temp.isDateActive() === false){
             arrayToPass.push(temp)
          }          

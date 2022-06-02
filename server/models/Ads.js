@@ -19,8 +19,10 @@ var adSchema=new mongoose.Schema({
     maxPeople: {type:Number, required:true},
     maxTimeHour: {type: Number, required:true},
     maxTimeMinute: {type: Number, required:true},
+    maxTimeOfAd: {type: Number, required: true},
     minTimeHour: {type:Number, required:true},
     minTimeMinute: {type:Number, required:true},
+    minTimeOfAd: {type: Number, required: true},
     isActive: {type:Boolean, default:true}
     	
 },{collection:'adData'});

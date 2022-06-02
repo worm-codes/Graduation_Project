@@ -148,44 +148,44 @@ console.log("countryVar variable:", countryVar)
         boolVarForMinTime = true;
     }
 
-    if(errors.country){
-      errors.state.message = ''
-      errors.city.message = ''
-      errors.arriving.message = ''
-      errors.leaving.message = ''
-      errors.minTime.message = ''
-      errors.maxTime.message = ''
-    }
+    // if(errors.country){
+    //   errors?.state.message = ''
+    //   errors?.city.message = ''
+    //   errors?.arriving.message = ''
+    //   errors?.leaving.message = ''
+    //   errors?.minTime.message = ''
+    //   errors?.maxTime.message = ''
+    // }
 
-    if(errors.state){
-      errors.city.message = ''
-      errors.arriving.message = ''
-      errors.leaving.message = ''
-      errors.minTime.message = ''
-      errors.maxTime.message = ''
-    }
+    // if(errors.state){
+    //   errors.city?.message = ''
+    //   errors.arriving?.message = ''
+    //   errors.leaving?.message = ''
+    //   errors.minTime?.message = ''
+    //   errors.maxTime?.message = ''
+    // }
 
-    if(errors.city){
-      errors.arriving.message = ''
-      errors.leaving.message = ''
-      errors.minTime.message = ''
-      errors.maxTime.message = ''
-    }
+    // if(errors.city){
+    //   errors.arriving?.message = ''
+    //   errors.leaving?.message = ''
+    //   errors.minTime?.message = ''
+    //   errors.maxTime?.message = ''
+    // }
 
-    if(errors.arriving){
-      errors.leaving.message = ''
-      errors.minTime.message = ''
-      errors.maxTime.message = ''
-    }
+    // if(errors.arriving){
+    //   errors.leaving?.message = ''
+    //   errors.minTime?.message = ''
+    //   errors.maxTime?.message = ''
+    // }
 
-    if(errors.leaving){
-      errors.minTime.message = ''
-      errors.maxTime.message = ''
-    }
+    // if(errors.leaving){
+    //   errors.minTime?.message = ''
+    //   errors.maxTime?.message = ''
+    // }
 
-    if(errors.minTime){
-      errors.maxTime.message = ''
-    }
+    // if(errors.minTime){
+    //   errors.maxTime?.message = ''
+    // }
 
     let selectedStatesIsoCode = chosenStateArr[1];
     let selectedStatesCountryCode = chosenStateArr[2];
@@ -285,6 +285,8 @@ console.log("countryVar variable:", countryVar)
 								  minTimeMinuteToPass: parseInt(data.minTime?.substring(3,5)),
 								  maxTimeHourToPass: parseInt(data.maxTime?.substring(0,2)),
 								  maxTimeMinuteToPass: parseInt(data.maxTime?.substring(3,5)),
+                  minTimeTotal: ((parseInt(data.minTime?.substring(0,2)) * 60) + (parseInt(data.minTime?.substring(3,5)))),
+                  maxTimeTotal: ((parseInt(data.maxTime?.substring(0,2)) * 60) + (parseInt(data.maxTime?.substring(3,5)))),
                   state: stateVar?.name,
                   gender: data.gender,
                   minAge: value1[0],
@@ -308,6 +310,7 @@ console.log("countryVar variable:", countryVar)
                       {...register("country", {required:'Please select a country'})}
                       list="countries"
                       name="country"
+                      required
                       id="country"
                       type="text"
                     />
@@ -329,6 +332,7 @@ console.log("countryVar variable:", countryVar)
                       {...register("state", {required:'Please select a state'})}
                       //value={stateInput}
                       //ref={inputEl}
+                      required
                       type="text"
                       name="state"
                       id="state"
@@ -353,7 +357,7 @@ console.log("countryVar variable:", countryVar)
                       autoComplete="off"
                       placeholder="Type in City"
                       disabled={!isFoundState}
-                      {...register("city", {required:'Please select a city'})}
+                      {...register("city")}
                       type="text"
                       name="city"
                       id="city"
