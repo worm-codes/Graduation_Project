@@ -7,7 +7,12 @@ import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
-import { Button } from 'semantic-ui-react'
+import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
+import { faCalendarDays } from '@fortawesome/free-solid-svg-icons'
+import { faHourglass } from '@fortawesome/free-solid-svg-icons'
+// import { Button } from 'semantic-ui-react'
+import Button from '@mui/material/Button';
+import SendIcon from '@mui/icons-material/Send';
 
 const AdDetail = () => {
     const [theAd, setTheAd] = useState({});
@@ -79,10 +84,15 @@ console.log("theAd state var:",theAd)
         <p className='descText'>naberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlannaberlan</p>
         </div>
         <div style={{justifyContent:'space-between'}} className='dateAndTimeDivInAdDetail'>
-            <p>{theAd?.foundAd?.city}</p>
-            <p>{`Date: ${theAd?.foundAd?.arriving_date_day.toString()} ${months[theAd?.foundAd?.arriving_date_month-1]} - ${theAd?.foundAd?.leaving_date_day.toString()} ${months[theAd?.foundAd?.leaving_date_month-1]}`}</p>
+            <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faLocationDot} />{`Country: ${theAd?.foundAd?.country}`}</p>
+            <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faLocationDot} />{`State: ${theAd?.foundAd?.state}`}</p>
+            <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faLocationDot} />{`City: ${theAd?.foundAd?.city}`}</p>
+            <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faHourglass} />{`Time:  ${decideToPutZero(theAd?.foundAd?.minTimeHour)}:${decideToPutZero(theAd?.foundAd?.minTimeMinute)} -  ${decideToPutZero(theAd?.foundAd?.maxTimeHour)}:${decideToPutZero(theAd?.foundAd?.maxTimeMinute)}`}</p>
+            <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faCalendarDays} />{`Date: ${theAd?.foundAd?.arriving_date_day.toString()} ${months[theAd?.foundAd?.arriving_date_month-1]} - ${theAd?.foundAd?.leaving_date_day.toString()} ${months[theAd?.foundAd?.leaving_date_month-1]}`}</p>
             {/* <p style={{marginRight:'3em'}} id='timeTextInAdDetail'>{`From:  ${decideToPutZero(theAd?.foundAd?.minTimeHour)}:${decideToPutZero(theAd?.foundAd?.minTimeMinute)} - To: ${decideToPutZero(theAd?.foundAd?.maxTimeHour)}:${decideToPutZero(theAd?.foundAd?.maxTimeMinute)}`}</p> */}
         </div>
+        <hr style={{marginTop:'5em'}} />
+        
         
         
         </div>
@@ -102,23 +112,13 @@ console.log("theAd state var:",theAd)
                 <p><FontAwesomeIcon icon={faStar} size="lg" /> 4,9/5</p>
                 {loggedInUser?._id === theAd?.adOwner?._id ? '' : 
                   <div>
-                    <button onClick={()=>makeConversationAndRedirect(theAd?.adOwner?._id)} style={{marginBottom:'1em', marginTop:'.5em'}} type="button" class="btn btn-info">Contact</button>                
+                    <Button style={{marginBottom:'1em', marginTop:'.5em'}} onClick={()=>makeConversationAndRedirect(theAd?.adOwner?._id)} variant="contained" endIcon={<SendIcon />}>
+                        Send
+                    </Button>
                   </div>
                 }
-               
-
                 <h2 class="sideBar-title">Quality</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-                {/* <Typography component="legend">{`${theAd?.adOwner?.user_name}'s Rating`}</Typography>
-                <Rating name="read-only" value={rating} readOnly /> */}
-                
-                {/* <div class="button" onclick="void(0);">
-                    <span>Message</span>
-                    <svg width="180px" height="60px" viewBox="0 0 180 60" class="border">
-                        <polyline points="179,1 179,59 1,59 1,1 179,1" class="bg-line" />
-                        <polyline points="179,1 179,59 1,59 1,1 179,1" class="hl-line" />
-                    </svg> 
-                </div> */}
 
             </aside>
      </div>

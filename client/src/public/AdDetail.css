@@ -12,11 +12,13 @@ img {
 }
 .outerContainer {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
+    
     width: 100%;
     max-width: 1540px;
     margin: 0 auto;
     /* border:3px solid green; */
+    
 }
 
 .innerContainer {
@@ -24,7 +26,7 @@ img {
     /* border: 2px solid red; */
     background-color: #eff0eb;
     flex-direction: column;
-    border-radius: 25px;
+    
     margin-top: 1em;
     margin-left: 5em;
     width: 65%;
@@ -58,11 +60,12 @@ img {
 
 .dateAndTimeDivInAdDetail {
     display:flex;
-    margin: 0 1em;
+    margin: 2.5em 1em;
 }
 
 .sideBarInfo {
     width: 18%;
+    margin-top: 1em;
     padding: 1em;
     text-align: center;
     color: #fff;
