@@ -63,18 +63,20 @@ const Dashboard = () => {
 
       }
       
+     let validUsers = users.filter((q) => q._id !== userFromServer._id);
   
-  const showUsers=users.map((userDB)=>{
+  let showUsers=validUsers.map((userDB)=>{
       return (<div key={userDB.user_ID}>
       <a href='#' onClick={()=>makeConversationAndRedirect(userDB._id)}> {userDB.user_ID}</a>
       </div>)
     })
   
-   
+  
+   console.log(users)
 
   return (
     <div>
-     <h1> {userFromServer.user_ID} </h1>
+     <h1> {userFromServer._id} </h1>
      <h1> {useAuth.currentUser.email} </h1>
      <div>
      {showUsers}

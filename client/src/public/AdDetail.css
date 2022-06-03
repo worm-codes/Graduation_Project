@@ -12,7 +12,7 @@ img {
 }
 .outerContainer {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     width: 100%;
     max-width: 1540px;
     margin: 0 auto;
@@ -69,51 +69,5 @@ img {
     background-color: #136c72;
 }
 
-/* THESE STYLES ARE FOR THE ANIMATED BUTTONS */
 
-.button {
-    position: relative;
-    cursor: pointer;
-    padding-left: 0;
-    padding-right: 0;
-    
-    
-}
-.button span {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
-    line-height: 58px;
-    text-transform: uppercase;
-    font-size: 18px;
-    letter-spacing: 1px;
-    font-weight: 300;
-    padding-left: 0;
-    padding-right: 0;
-    
-}
-.button .border {
-    fill: none;
-    stroke-width: 1;
-    border: 3px solid #91c9ff;
-}
-.button .bg-line {
-    fill: #5ca4ea;
-    stroke: #91c9ff;
-    transition: all 0.8s ease-in-out;
-}
-.button .hl-line {
-    stroke: #fff;
-    stroke-dasharray: 40 480;
-    stroke-dashoffset: 40;
-    transition: all 0.8s ease-in-out;
-}
-.button:hover .bg-line {
-    fill: #4f95da;
-}
-.button:hover .hl-line {
-    stroke-dashoffset: -480;
-}
 

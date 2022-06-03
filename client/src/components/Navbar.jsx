@@ -4,6 +4,9 @@ import {AuthContext} from '../context/AuthContext'
 import '../public/Nav.css'
 import axios from 'axios'
 import { io } from "socket.io-client";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
+
 
 const Navbar = () => {
 	let useAuth=useContext(AuthContext);
@@ -196,8 +199,8 @@ const Navbar = () => {
 
 								<li className="nav-item">
         							{unreadMessages!==0 &&currentPath!='/messenger'? <span className="badge badge-pill badge-danger" style={{float:"right" ,marginBottom:"-6px"}}>{unreadMessages}</span>:''}
-          							{currentPath!=='/messenger'?	<a className="nav-link" href="/messenger"><i className="fa fa-envelope fa-lg" style={{fontSize:'1.40rem'}} aria-hidden="true"></i> <span className="sr-only">(current)</span></a>
-      								: 	<i className="fa fa-envelope fa-lg" style={{fontSize:'1.40rem', paddingTop:'20px'}} aria-hidden="true"></i> }					
+          							{currentPath!=='/messenger'?	<a className="nav-link" href="/messenger"><FontAwesomeIcon style={{fontSize:'1.40rem'}} icon={faEnvelope} size="lg" /> <span className="sr-only">(current)</span></a>
+      								: 	<FontAwesomeIcon style={{fontSize:'1.40rem', paddingTop:'9px'}} icon={faEnvelope} size="lg" /> }					
     							</li>
 
 								<li className="hidden-profile d-none nav-item">

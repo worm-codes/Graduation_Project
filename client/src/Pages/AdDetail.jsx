@@ -1,14 +1,19 @@
-import React, {  useEffect, useState, useLayoutEffect } from 'react'
+import React, { useEffect, useState, useLayoutEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import Navbar from "../components/Navbar";
+import {AuthContext} from '../context/AuthContext'
 import axios from "axios";
 import '../public/AdDetail.css'
 import Rating from '@mui/material/Rating';
 import Typography from '@mui/material/Typography';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStar } from '@fortawesome/free-solid-svg-icons'
+import { Button } from 'semantic-ui-react'
 
 const AdDetail = () => {
     const [theAd, setTheAd] = useState({});
     const [rating, setRating] = useState(4);
+    const [loggedInUser,setLoggedInUser]=useState(null)
+    let useAuth=useContext(AuthContext);
     let { ID } = useParams();
 useLayoutEffect(() => {
     const getTheAd = async () => {
@@ -30,14 +35,38 @@ let decideToPutZero = (num) => {
     }
   }
 
+const getCurrentUserInfo=async()=>{   
+  const response=await useAuth?.getCurrentUserInfo()
+    if(response){
+    setLoggedInUser(response)
+    }            
+  }
+
+  const makeConversationAndRedirect=async(id)=>{
+    const response=await axios.post(`http://localhost:5000/api/conversation/`,{
+                     senderId:loggedInUser._id,
+                     receiverId:id
+    },{
+                       headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
+                     }
+                     
+                     )
+                     console.log(response.data)
+                     if(response.data.message!='UnAuth'){
+                      window.location.href='/messenger'
+                     }
+ }
+
+useEffect(() => {
+  getCurrentUserInfo();
+}, [])
+
+console.log("logged-in user:", loggedInUser);
 let currentYear = new Date().getFullYear();
 
 console.log("theAd state var:",theAd)
   return (
       <>
-      {/* <Navbar/> */}
-      
-     {/* <div>{`${theAd.adOwner.user_ID}'s ${theAd.foundAd.city} Tour!`}</div> */}
      
      <div className='outerContainer'>
          <div className='innerContainer'>
@@ -69,19 +98,28 @@ console.log("theAd state var:",theAd)
                 <p>{`Name: ${theAd?.adOwner?.user_name}`}</p>
                 <p>{`Surname: ${theAd?.adOwner?.user_surname}`}</p>
                 <p>{`Gender: ${theAd?.adOwner?.user_gender}`}</p>
-                <p>{`Age: ${currentYear - parseInt(theAd?.adOwner?.user_date_of_birth.substring(0,4))}`}</p>
+                <p style={{marginBottom:'1.5em'}}>{`Age: ${currentYear - parseInt(theAd?.adOwner?.user_date_of_birth.substring(0,4))}`}</p>
+                <p><FontAwesomeIcon icon={faStar} size="lg" /> 4,9/5</p>
+                {loggedInUser?._id === theAd?.adOwner?._id ? '' : 
+                  <div>
+                    <button onClick={()=>makeConversationAndRedirect(theAd?.adOwner?._id)} style={{marginBottom:'1em', marginTop:'.5em'}} type="button" class="btn btn-info">Contact</button>                
+                  </div>
+                }
+               
 
                 <h2 class="sideBar-title">Quality</h2>
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p>
-                <Typography component="legend">{`${theAd?.adOwner?.user_name}'s Rating`}</Typography>
-                <Rating name="read-only" value={rating} readOnly />
-                <div class="button" onclick="void(0);">
+                {/* <Typography component="legend">{`${theAd?.adOwner?.user_name}'s Rating`}</Typography>
+                <Rating name="read-only" value={rating} readOnly /> */}
+                
+                {/* <div class="button" onclick="void(0);">
                     <span>Message</span>
                     <svg width="180px" height="60px" viewBox="0 0 180 60" class="border">
                         <polyline points="179,1 179,59 1,59 1,1 179,1" class="bg-line" />
                         <polyline points="179,1 179,59 1,59 1,1 179,1" class="hl-line" />
                     </svg> 
-                </div>
+                </div> */}
+
             </aside>
      </div>
     </>
