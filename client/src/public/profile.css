@@ -49,13 +49,23 @@
     max-width: 100%
 }
 
-.profile-header-info h4 {
+.profile-header-info h3 {
     font-weight: 500;
-    color: #fff
+    color: #fff;
+    text-shadow: 2px 2px black;
+    
+}
+.profile-header-info p {
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 2px 2px black;
+    
 }
 
+
 .profile-header-img+.profile-header-info {
-    margin-left: 140px
+    margin-left: 140px;
+    
 }
 
 .profile-header .profile-header-content,
@@ -399,9 +409,7 @@ body.flat-black {
     display: table-cell;
     vertical-align: top;
 }
-select.form-control:not([size]):not([multiple]) {
-    height: 34px;
-}
+
 .form-control.input-inline {
     display: inline;
     width: auto;
@@ -542,7 +550,12 @@ select.form-control:not([size]):not([multiple]) {
 .timeline-content {
     letter-spacing: .25px;
     line-height: 18px;
-    font-size: 13px
+    font-size: 13px;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    
 }
 
 .timeline-content:after,

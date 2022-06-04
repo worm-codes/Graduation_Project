@@ -132,10 +132,10 @@ const Navbar = () => {
   },[user,useAuth.currentUser])
 
 
-	return (
+	return  (
 		/* important */
 		<div className="nav-bar" style={{ backgroundColor: "bisque", width: "100%" }}>
-			<nav className="navbar navbar-expand-lg navbar-light">
+			<nav className="navbar navbar-expand-lg navbar-light" style={{height:'68px'}}>
 			{currentPath!=='/messenger'?<Link className='navbar-brand ' to='/'><b className='h3'>L🤝G</b></Link>
       			: <a className="navbar-brand " href="/"><b className='h3'>L🤝G</b></a>}
 				<button
@@ -155,11 +155,11 @@ const Navbar = () => {
 							<ul className="navbar-nav ml-auto mr-2 text-right">
 							<li className="nav-item ">
 								{currentPath !== '/messenger' ? 
-									<NavLink className="nav-link" to="/myads">
-									My Ads
+									<NavLink className="nav-link"  to={`/profile/${user?._id}`}>
+									Profile
 								</NavLink> :
-								<a className="nav-link" href="/myads">
-										My Ads
+								<a className="nav-link" href={`/profile/${user?._id}`}>
+										Profile
 									</a>
 								}
 									
@@ -187,10 +187,10 @@ const Navbar = () => {
 								
 								<li className="hidden-profile d-none nav-item">
 								{currentPath !== '/messenger' ? 
-									<Link className="nav-link" to="/profile">
+									<Link className="nav-link" to={`/profile/${user?._id}`}>
 									Profile
 								</Link> :
-								<a className="nav-link" href="/profile">
+								<a className="nav-link" href={`/profile/${user?._id}`}>
 										Profile
 									</a>
 								}
@@ -227,8 +227,8 @@ const Navbar = () => {
 									</a>
 
 									<div  className="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
-            							{currentPath!=='/messenger'?<Link className='nav-link' to='#'>Profile</Link>
-      									: <a  className="nav-link" href="#">Profile
+            							{currentPath!=='/messenger'?<Link className='nav-link' to={`/profile/${user?._id}`}>Profile</Link>
+      									: <a  className="nav-link" href={`/profile/${user?._id}`}>Profile
             							<span className="sr-only">(current)</span>
           							</a>}
 

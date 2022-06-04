@@ -262,7 +262,7 @@ const Messenger = () => {
 
 
 
-return (
+return user ?(
     <>
      
       <div className="messenger">
@@ -414,7 +414,7 @@ return (
        
       </div>
     </>
-  );
+  ):''
 
 
 

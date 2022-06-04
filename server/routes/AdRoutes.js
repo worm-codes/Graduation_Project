@@ -8,7 +8,7 @@ var store = require('store')
 
 router.post('/publish', async(req,res) =>{
     try{
-        // console.log('inside the try block')
+       
         let theEmail = req.body.userToProcess.email;
         const { arrivingDateYear, arrivingDateMonth, arrivingDateDay,
                 leavingDateYear, leavingDateMonth, leavingDateDay,

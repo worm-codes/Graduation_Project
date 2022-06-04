@@ -13,6 +13,8 @@ import Sign_In from './Pages/Sign_In';
 import Messenger from './Pages/Messenger';
 import Profile from './Pages/Profile';
 import SearchResult from './Pages/SearchResult';
+import Publish from './Pages/Publish';
+import Search from './Pages/Search';
 
 
 
@@ -36,11 +38,13 @@ const App = () => {
       
        <Route path='/' element={<PreventForms><Sign_In/></PreventForms>}></Route>
        <Route path='/register' element={<PreventForms><Sign_up /></PreventForms>}></Route>
-       <Route path='/search' element={<PrivateIndex><Dashboard /></PrivateIndex>}></Route>
+       
        <Route path='/messenger' element={<PrivateIndex><Messenger /></PrivateIndex>}></Route>
        <Route path='/resetPassword' element={<PrivateIndex><PasswordReset /></PrivateIndex>}></Route>
-       <Route path='/profile' element={<PrivateIndex><Profile /></PrivateIndex>}></Route>
+       <Route path='/profile/:id' element={<PrivateIndex><Profile /></PrivateIndex>}></Route>
        <Route path='/searchresult' element={<PrivateIndex><SearchResult /></PrivateIndex>}></Route>
+       <Route path='/publish' element={<PrivateIndex><Publish /></PrivateIndex>}></Route>
+       <Route path='/search' element={<PrivateIndex><Search /></PrivateIndex>}></Route>
        <Route path='*' element={ <Errorpage/>}></Route>
         
 

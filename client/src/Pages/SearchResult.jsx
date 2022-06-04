@@ -316,7 +316,7 @@ const SearchResult = () => {
   
  let tempStateVar = [];
 
-  return (
+  return filteredAdState?(
     <>
         {/* <Navbar/> */}
         <main className='main container row'>
@@ -582,7 +582,7 @@ const SearchResult = () => {
         </section>
         </main>
     </>
-  )
+  ):''
 }
 
 export default SearchResult
