@@ -20,6 +20,7 @@
     "helmet": "^5.0.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.7",
-    "nodemon": "^1.11.1"
+    "nodemon": "^1.11.1",
+    "store": "^2.0.12"
   }
 }

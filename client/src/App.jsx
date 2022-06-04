@@ -11,6 +11,8 @@ import PrivateIndex from './ProtectedRoutes/PrivateIndex';
 import PreventForms from './ProtectedRoutes/PreventForms';
 import Sign_In from './Pages/Sign_In';
 import Messenger from './Pages/Messenger';
+import Profile from './Pages/Profile';
+import SearchResult from './Pages/SearchResult';
 
 
 
@@ -37,6 +39,8 @@ const App = () => {
        <Route path='/search' element={<PrivateIndex><Dashboard /></PrivateIndex>}></Route>
        <Route path='/messenger' element={<PrivateIndex><Messenger /></PrivateIndex>}></Route>
        <Route path='/resetPassword' element={<PrivateIndex><PasswordReset /></PrivateIndex>}></Route>
+       <Route path='/profile' element={<PrivateIndex><Profile /></PrivateIndex>}></Route>
+       <Route path='/searchresult' element={<PrivateIndex><SearchResult /></PrivateIndex>}></Route>
        <Route path='*' element={ <Errorpage/>}></Route>
         
 

@@ -8,7 +8,8 @@ mongoURI="mongodb://localhost/Local_Guide",
 helmet=require('helmet'),
 UserRoutes=require('./routes/UserRoutes'),
 ConversationRoutes=require('./routes/ConversationRoutes'),
-MessageRoutes=require('./routes/MessageRoutes');
+MessageRoutes=require('./routes/MessageRoutes'),
+AdRoutes=require('./routes/AdRoutes');
 
 
 
@@ -24,6 +25,7 @@ mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
 app.use('/api',UserRoutes);
 app.use('/api/conversation',ConversationRoutes);
 app.use('/api/message',MessageRoutes)
+app.use('/api/ad', AdRoutes);
 
 //add socket connection to update dom after db update
 
