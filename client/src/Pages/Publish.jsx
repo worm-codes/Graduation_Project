@@ -460,6 +460,8 @@ const Publish = () => {
 							<div className="columnn">
 								<label htmlFor="description">Describe your guidance plan</label>
 								<textarea
+									maxLength={600}
+									minLength={200}
 									name="description"
 									{...register("description", { required: 'Please describe your plan of guidance' })}
 									id="description"

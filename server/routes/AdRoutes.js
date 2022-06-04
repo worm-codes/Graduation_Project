@@ -28,8 +28,6 @@ router.post('/publish', async(req,res) =>{
             owner_gender:theUser.user_gender,owner_email: theUser.user_email, owner_age: theUserAge, owner_id: theUser._id,
             minTimeOfAd: minTimeFinal, maxTimeOfAd: maxTimeFinal})
 
-    await theUser.populate('user_ads');
-
 
     theUser.user_ads.push(theAd);
     await theAd.save();
@@ -219,6 +217,8 @@ router.delete('/mypastads/:adid', MiddleWare.isAuth, async(req,res) => {
 router.post('/searchresult/:adid', async(req,res) => {
     const { adid } = req.params;
     let foundAd = await Ad.findById(adid);
+    foundAd = await foundAd.populate('appliedUsers');
+    await foundAd.save();
     let adOwner = await User.findById(foundAd.owner_id)
     // res.json({adver: foundAd, owner: adOwner})
     store.clearAll();
@@ -228,8 +228,50 @@ router.post('/searchresult/:adid', async(req,res) => {
 
 router.get('/searchresult/:adid', async(req,res) => {
     let theAdToShow = JSON.parse(store.get('theAdvertisement'));
-    res.json(theAdToShow);
     
+    res.json(theAdToShow);
+    // store.clearAll();
+    
+})
+
+router.post('/searchresult/:adid/:userid', async(req,res) => {
+    const { adid, userid} = req.params;
+    let theFoundAd = await Ad.findById(adid);
+    let adOwner = await User.findById(theFoundAd.owner_id);
+    let appliedUser = await User.findById(userid);
+
+
+    if(theFoundAd.appliedUsers.length <= theFoundAd.maxPeople && !theFoundAd.bannedUsers.includes(userid) &&
+        !theFoundAd.appliedUsers.includes(userid) && !appliedUser.appliedAds.includes(adid)) {
+
+        let populatedAppliedUser = await appliedUser.populate('appliedAds');
+        let foundAd = await theFoundAd.populate('appliedUsers')
+     
+
+        appliedUser.appliedAds.push(theFoundAd);
+        theFoundAd.appliedUsers.push(appliedUser)
+        await appliedUser.save();
+        await theFoundAd.save();
+        store.set('theAdvertisement', JSON.stringify({foundAd, adOwner}))
+        // let userOwnerAdData = {populatedAd,populatedAppliedUser,adOwner}
+        res.json({foundAd,adOwner,populatedAppliedUser})
+        
+    }
+    else {
+        res.json("User has already applied for this ad or can't apply for this ad.")
+    }
+    
+})
+
+router.get('/searchresult/:adid/:userid', async(req,res) => {
+    const { adid, userid} = req.params;
+    let foundAd = await Ad.findById(adid);
+    let adOwner = await User.findById(foundAd.owner_id);
+    let appliedUser = await User.findById(userid);
+
+    let dataToSend = [foundAd,adOwner,appliedUser];
+
+    res.json(dataToSend);
 })
 
 

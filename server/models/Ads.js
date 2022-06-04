@@ -23,6 +23,18 @@ var adSchema=new mongoose.Schema({
     minTimeHour: {type:Number, required:true},
     minTimeMinute: {type:Number, required:true},
     minTimeOfAd: {type: Number, required: true},
+    appliedUsers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'UserData'
+    }],
+    acceptedUsers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'UserData'
+    }],
+    bannedUsers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'UserData'
+    }],
     isActive: {type:Boolean, default:true}
     	
 },{collection:'adData'});
