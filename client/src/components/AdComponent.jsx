@@ -71,7 +71,7 @@ return (
                                         <div style={{marginLeft:'1.5em'}}>
                                        <p><i class="fa fa-map-marker mr-2" style={{marginTop:'20px'}} aria-hidden="true"></i>{printProvince(activeAd)}</p>
                                        <p><i class="fa-solid fa-people-group mr-2"></i>MaxPeople: {activeAd.maxPeople}</p>
-                                       <p><i class="fa-solid fa-bed mr-2"></i>{activeAd.host==='true'? Avaliable:'Not Avaliable'}</p>
+                                       <p><i class="fa-solid fa-bed mr-2"></i>{activeAd.host==='true'? "Host: Avaliable" : "Host: Not Avaliable"}</p>
                                     </div>
                                     <i className="fa fa-quote-right fa-fw pull-right"></i>
                                  </p>
