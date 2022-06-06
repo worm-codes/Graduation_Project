@@ -228,8 +228,15 @@ router.post('/searchresult/:adid', async(req,res) => {
 
 router.get('/searchresult/:adid', async(req,res) => {
     let theAdToShow = JSON.parse(store.get('theAdvertisement'));
-    
-    res.json(theAdToShow);
+    let theTrueAd = await Ad.findById(theAdToShow.foundAd._id);
+    let theAdToPass = await theTrueAd.populate('acceptedUsers');
+    let finalTheAdToPass = await theAdToPass.populate('appliedUsers');
+    let realFinalTheAdToPass = await finalTheAdToPass.populate('bannedUsers');
+    let foundAd = realFinalTheAdToPass;
+
+    let adOwner = await User.findById(theAdToShow.foundAd.owner_id);
+    console.log("realFinalTheAdToPass:", realFinalTheAdToPass)
+    res.json({foundAd, adOwner});
     // store.clearAll();
     
 })
@@ -261,6 +268,129 @@ router.post('/searchresult/:adid/:userid', async(req,res) => {
         res.json("User has already applied for this ad or can't apply for this ad.")
     }
     
+})
+
+router.put('/searchresult/:adid/:userid/accept', async(req,res) => {
+    const { adid, userid} = req.params;
+    let theFoundAd = await Ad.findById(adid);
+    let adOwner = await User.findById(theFoundAd.owner_id);
+    let appliedUser = await User.findById(userid);
+
+    if(theFoundAd.acceptedUsers.length <= theFoundAd.maxPeople && !theFoundAd.bannedUsers.includes(userid) &&
+        !theFoundAd.acceptedUsers.includes(userid) && !appliedUser.acceptedAds.includes(adid) &&
+         theFoundAd.appliedUsers.includes(userid) && appliedUser.appliedAds.includes(adid)){
+
+    await User.findByIdAndUpdate({_id : appliedUser._id}, {$pull: { appliedAds: adid}})
+    await Ad.findByIdAndUpdate({_id : theFoundAd._id}, {$pull: { appliedUsers: appliedUser._id}})
+    await appliedUser.save();
+    await theFoundAd.save();
+
+    let initialPopulatedAcceptedUser = await appliedUser.populate('appliedAds');
+    let initialFoundAd = await theFoundAd.populate('appliedUsers');
+    let populatedAcceptedUser = await initialPopulatedAcceptedUser.populate('acceptedAds');
+    let foundAd = await initialFoundAd.populate('acceptedUsers');
+    
+    populatedAcceptedUser.acceptedAds.push(theFoundAd);
+    //önceki hali bu
+    // foundAd.acceptedUsers.push(appliedUser);
+    foundAd.acceptedUsers.push(populatedAcceptedUser);
+
+    await appliedUser.save();
+    await theFoundAd.save();
+
+    let finalAdArrToPass = await Ad.findById(adid).populate('acceptedUsers');
+    let realFinalAdArrToPass = await finalAdArrToPass.populate('appliedUsers');
+    let lastRealFinalAdArrToPass = await realFinalAdArrToPass.populate('acceptedUsers')
+    let theTrueLastAdArrToPass = await lastRealFinalAdArrToPass.populate('bannedUsers')
+    foundAd = theTrueLastAdArrToPass;
+    
+    console.log("lastRealFinalAdArrToPass:", lastRealFinalAdArrToPass)
+    
+    store.clearAll();
+    store.set('theAdvertisement', JSON.stringify({foundAd, adOwner}))
+    res.json({foundAd, adOwner})
+}
+else {
+    res.json("User has already been accepted for this ad or can't apply for this ad.")  
+}
+
+})
+
+router.put('/searchresult/:adid/:userid/decline', async(req,res) => {
+    const { adid, userid} = req.params;
+    let theFoundAd = await Ad.findById(adid);
+    let adOwner = await User.findById(theFoundAd.owner_id);
+    let appliedUser = await User.findById(userid);
+
+
+    if(!theFoundAd.bannedUsers.includes(userid)){
+        if((theFoundAd.appliedUsers.includes(userid) && appliedUser.appliedAds.includes(adid))) {
+   
+    await User.findByIdAndUpdate({_id : appliedUser._id}, {$pull: { appliedAds: adid}})
+    await Ad.findByIdAndUpdate({_id : theFoundAd._id}, {$pull: { appliedUsers: appliedUser._id}})
+    await appliedUser.save();
+    await theFoundAd.save();
+
+    let initialPopulatedAcceptedUser = await appliedUser.populate('appliedAds');
+    let initialFoundAd = await theFoundAd.populate('appliedUsers');
+    let populatedAcceptedUser = await initialPopulatedAcceptedUser.populate('acceptedAds');
+    let preFoundAd = await initialFoundAd.populate('bannedUsers')
+    let foundAd = await preFoundAd.populate('acceptedUsers');
+    
+    
+    foundAd.bannedUsers.push(appliedUser);
+
+    await appliedUser.save();
+    await theFoundAd.save();
+
+    let finalAdArrToPass = await Ad.findById(adid).populate('acceptedUsers');
+    let realFinalAdArrToPass = await finalAdArrToPass.populate('appliedUsers');
+    let lastRealFinalAdArrToPass = await realFinalAdArrToPass.populate('acceptedUsers')
+    let theTrueLastAdArrToPass = await lastRealFinalAdArrToPass.populate('bannedUsers')
+    foundAd = theTrueLastAdArrToPass;
+    
+    console.log("theTrueLastAdArrToPass inside applied user condition:", theTrueLastAdArrToPass)
+    
+    store.clearAll();
+    store.set('theAdvertisement', JSON.stringify({foundAd, adOwner}))
+    res.json({foundAd, adOwner})
+}
+    else if(theFoundAd.acceptedUsers.includes(userid) && appliedUser.acceptedAds.includes(adid)) {
+
+        await User.findByIdAndUpdate({_id : appliedUser._id}, {$pull: { acceptedAds: adid}})
+        await Ad.findByIdAndUpdate({_id : theFoundAd._id}, {$pull: { acceptedUsers: appliedUser._id}})
+        await appliedUser.save();
+        await theFoundAd.save();
+    
+        let initialPopulatedAcceptedUser = await appliedUser.populate('appliedAds');
+        let initialFoundAd = await theFoundAd.populate('appliedUsers');
+        let populatedAcceptedUser = await initialPopulatedAcceptedUser.populate('acceptedAds');
+        let preFoundAd = await initialFoundAd.populate('bannedUsers')
+        let foundAd = await preFoundAd.populate('acceptedUsers');
+        
+        
+        foundAd.bannedUsers.push(appliedUser);
+    
+        await appliedUser.save();
+        await theFoundAd.save();
+    
+        let finalAdArrToPass = await Ad.findById(adid).populate('acceptedUsers');
+        let realFinalAdArrToPass = await finalAdArrToPass.populate('appliedUsers');
+        let lastRealFinalAdArrToPass = await realFinalAdArrToPass.populate('acceptedUsers')
+        let theTrueLastAdArrToPass = await lastRealFinalAdArrToPass.populate('bannedUsers')
+        foundAd = theTrueLastAdArrToPass;
+        
+        console.log("theTrueLastAdArrToPass inside accepted user condition:", theTrueLastAdArrToPass)
+        
+        store.clearAll();
+        store.set('theAdvertisement', JSON.stringify({foundAd, adOwner}))
+        res.json({foundAd, adOwner})
+    }
+}
+else {
+    res.json("User has already been rejected for this ad.")  
+}
+
 })
 
 router.get('/searchresult/:adid/:userid', async(req,res) => {

@@ -13,6 +13,8 @@ import { faHourglass } from '@fortawesome/free-solid-svg-icons'
 import { faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
 import { faBed } from '@fortawesome/free-solid-svg-icons'
 import { faBan } from '@fortawesome/free-solid-svg-icons'
+import { faXmark } from '@fortawesome/free-solid-svg-icons'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
 // import { Button } from 'semantic-ui-react'
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
@@ -48,7 +50,7 @@ let decideToPutZero = (num) => {
 
 const getCurrentUserInfo=async()=>{   
   const response=await useAuth?.getCurrentUserInfo()
-  console.log("currentUser response",response)
+  // console.log("currentUser response",response)
     if(response){
     setLoggedInUser(response)
     }            
@@ -73,11 +75,11 @@ useEffect(() => {
   getCurrentUserInfo();
 }, [])
 
-console.log("logged-in user:", loggedInUser);
+ console.log("logged-in user:", loggedInUser);
 let currentYear = new Date().getFullYear();
 
-let appliedUserRenderFunc = theAd?.foundAd?.appliedUsers?.map((appliedUsr)=> {
-    return (<div className='appliedUser'>
+let acceptedUserRenderFunc = theAd?.foundAd?.acceptedUsers?.map((acceptedUsr)=> {
+    return (<div className='acceptedUser'>
       <img
         src="https://www.kindpng.com/picc/m/22-223941_transparent-avatar-png-male-avatar-icon-transparent-png.png"
         className="rounded-circle z-depth-0 avatar userAvatar"
@@ -85,15 +87,69 @@ let appliedUserRenderFunc = theAd?.foundAd?.appliedUsers?.map((appliedUsr)=> {
 
         {loggedInUser?._id === theAd?.adOwner?._id ?
           <a onClick={async(e) => {preventDefault(e);
-          const response = await axios.post(`http://localhost:5000/api/ad/searchresult/${theAd?.foundAd?._id}/${loggedInUser._id}`, {
-          });
+            const response = await axios.put(`http://localhost:5000/api/ad/searchresult/${theAd?.foundAd?._id}/${acceptedUsr._id}/decline`, {
+            });
+            response.data !== "User has already been rejected for this ad." ?     
+                  setTheAd(response.data) : ''
+                  console.log(response.data)
         }} href="#" ><FontAwesomeIcon style={{marginBottom:'2em', color:'red', fontSize:'1.2rem', marginLeft:'-.8em'}} icon={faBan} />
         </a>
         : ''}
-          <p className='appliedUserName' ><b>{appliedUsr?.user_ID}</b></p>
-          <p className='appliedUserStar' ><FontAwesomeIcon style={{marginLeft:'2em'}}  icon={faStar} size="xs" /> 4,9/5</p>
+          <p className='acceptedUserName' ><b>{acceptedUsr?.user_ID}</b></p>
+          <p className='acceptedUserStar' ><FontAwesomeIcon style={{marginLeft:'2em'}}  icon={faStar} size="xs" /> 4,9/5</p>
     </div>
     )
+})
+
+let currentlyUnacceptedAppliedUsers = theAd?.foundAd?.appliedUsers?.filter((usr) => !theAd?.foundAd?.acceptedUsers.includes(usr))
+console.log("currentlyUnacceptedAppliedUsers var:", currentlyUnacceptedAppliedUsers);
+
+let appliedUserRenderFunc = theAd?.foundAd?.appliedUsers?.map((appliedUsr) => {
+  
+  return (
+    <>
+    <img
+   src="https://www.kindpng.com/picc/m/22-223941_transparent-avatar-png-male-avatar-icon-transparent-png.png"
+   className="rounded-circle z-depth-0 avatar appliedUserAvatar"
+   alt="avatar image"/>
+   
+           <div className='sideBarAppliedContent'>
+           <a onClick={async(e) => {e.preventDefault();
+            const response = await axios.put(`http://localhost:5000/api/ad/searchresult/${theAd?.foundAd?._id}/${appliedUsr._id}/decline`, {
+            });
+            response.data !== "User has already been rejected for this ad." ?     
+                  setTheAd(response.data) : ''
+                  console.log(response.data)
+          }} href="#"><FontAwesomeIcon style={{color:'red', marginRight:'.75em'}} size='xl' icon={faXmark} /></a>
+           <a onClick={async(e) => {e.preventDefault();
+              const response = await axios.put(`http://localhost:5000/api/ad/searchresult/${theAd?.foundAd?._id}/${appliedUsr._id}/accept`, {
+              });
+              response.data !== "User has already been accepted for this ad or can't apply for this ad." ?
+                  
+                  setTheAd(response.data) : ''
+                  // theAd?.foundAd?.appliedUsers?.filter((usr) => usr._id !== appliedUsr._id)
+                  console.log(response.data)
+            }} href="#"><FontAwesomeIcon size='xl' style={{color:'blue'}} icon={faCheck} /></a>
+           <h2 class="sideBar-title">{appliedUsr?.user_ID}</h2>
+           <p>{`Name: ${appliedUsr?.user_name}`}</p>
+           <p>{`Surname: ${appliedUsr?.user_surname}`}</p>
+           <p>{`Gender: ${appliedUsr?.user_gender}`}</p>
+           <p>{`Age: ${currentYear - parseInt(appliedUsr?.user_date_of_birth?.substring(0,4))}`}</p>
+           <p><FontAwesomeIcon style={{fontSize:'1.5em', marginBottom:'.1em'}} icon={faStar} size="lg" /> <span style={{fontSize:'1.3em'}}>4,9/5</span></p>
+           {loggedInUser?._id !== theAd?.adOwner?._id ? '' : 
+             <div>
+               <Button style={{marginBottom:'1em'}} onClick={()=>
+                 makeConversationAndRedirect(appliedUsr?._id)} variant="contained" endIcon={<SendIcon />}>
+                   Send
+               </Button>
+             </div>
+           }
+          
+           
+         </div>
+         </>
+  )
+ 
 })
    
 
@@ -102,7 +158,15 @@ console.log("theAd state var:",theAd)
   return (
       <>
      
-     <div className='outerContainer'>
+     <div  className='outerContainer'>
+     
+      {loggedInUser?._id === theAd?.adOwner?._id ?
+          <aside class="sideBarAppliedInfo">
+          {theAd?.foundAd?.appliedUsers?.length > 0 ? appliedUserRenderFunc : ''}
+          </aside>
+             : ''}
+            
+
          <div className='innerContainer'>
         
         <div className='imageHeaderDescContainer'>
@@ -124,8 +188,8 @@ console.log("theAd state var:",theAd)
         </div>
         <hr style={{marginTop:'3em'}} />
 
-        <div className='appliedUserContainer'>
-            {appliedUserRenderFunc}
+        <div className='acceptedUserContainer'>
+            {acceptedUserRenderFunc}
    
         </div>
 
@@ -155,7 +219,7 @@ console.log("theAd state var:",theAd)
                   <div onClick={async(e) => {e.preventDefault();
                   const response = await axios.put(`http://localhost:5000/api/ad/myads`, {adID: ad._id})
                   }}>
-                 <button className='btn btn-warning btn-lg'>Cancel</button>
+                 <button className='btn btn-warning btn-lg'>Cancel Ad</button>
                  </div> : ''
                  }
 
@@ -170,8 +234,7 @@ console.log("theAd state var:",theAd)
                     <Button style={{width:'7em'}} variant="contained" color="success">Apply</Button>
                   </div>
                 }
-                {/* <h2 class="sideBar-title">Quality</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.</p> */}
+               
               </div>
             </aside>
      </div>

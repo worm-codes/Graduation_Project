@@ -17,9 +17,16 @@ img {
     margin-left: 1em;
 }
 
+.appliedUserAvatar {
+    width: 4rem;
+    height: 4rem;
+    margin-left: 1em;
+}
+
 .outerContainer {
     display: flex;
     justify-content: center;
+    
     
     width: 100%;
     max-width: 1540px;
@@ -30,14 +37,19 @@ img {
     
 }
 
+.outerContainer .sideBarAppliedInfo {
+    flex-grow: 1;
+    height: 40em;
+}
+
 .innerContainer {
     display:flex;
     /* border: 2px solid red; */
+    /* border-radius: 15px 0px 0px 15px; */
     background-color: #ffcd4f;
     flex-direction: column;
-    border-radius: 15px 0px 0px 15px;
     margin-top: 1em;
-    margin-left: 5em;
+   
     width: 65%;
 }
 
@@ -72,23 +84,27 @@ img {
     margin: 2.5em 1em;
 }
 
-.appliedUserContainer {
+.acceptedUserContainer {
     display:flex;
     justify-content: space-around;
 }
 
-.appliedUserName {
+.acceptedUserName {
     /* margin-left: 2em; */
     text-align: center;
 }
 
-.appliedUserStar {
+.acceptedUserStar {
     margin-top: -.7em
 }
 
 .sideBarContent > * {
     margin-top: 1.5em;
 }
+
+/* .sideBarAppliedContent > * {
+    margin-top: 1.5em;
+} */
 
 .sideBar-title {
     margin-top: .5em;
@@ -100,9 +116,28 @@ img {
     padding: 1em;
     text-align: center;
     color: #fff;
-    background-color: #136c72;
+    /* background-color: #136c72; */
+    background-color: #7b9cb3;
     /* border:4px solid purple; */
     border-radius: 0px 15px 15px 0px;
+}
+
+.sideBarAppliedInfo {
+    width: 18%;
+    margin-top: 1em;
+    padding: 1em;
+    text-align: center;
+    color: #fff;
+    /* background-color: #136c72; */
+    background-color: #7b9cb3;
+    /* border:4px solid purple; */
+    border-radius: 15px 0px 0px 15px;
+    overflow:auto;
+    min-height: 0;
+    transition-property: width;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
+    
 }
 
 
