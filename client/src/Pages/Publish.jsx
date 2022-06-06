@@ -299,8 +299,9 @@ const Publish = () => {
 								userToProcess: currentUser
 								
 							})
-							if(response.data === 'success'){
-								window.location.assign({/*shop page e at */})
+							if(response.data){
+								
+								window.location.assign('/searchresult/'+response.data?._id)
 							}
 						} 
 

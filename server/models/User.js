@@ -14,6 +14,14 @@ var userSchema=new mongoose.Schema({
     user_ads: [{
         type: mongoose.Schema.Types.ObjectId,
         ref:'AdData'
+    }],
+    appliedAds: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'AdData'
+    }],
+    acceptedAds: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'AdData'
     }]
     
 	

@@ -2,7 +2,8 @@
 const express=require('express'),
 router=express.Router(),
 User=require('../models/User'),
-Conversation=require('../models/Conversation'),
+Ad=require('../models/Ads'),
+
 MiddleWare=require('../middleware/CheckAuth');
 
 
@@ -94,6 +95,23 @@ router.get('/getAllUsers',MiddleWare.isAuth,async(req,res)=>{
         }
     }).clone().catch(function(err){ console.log(err)})
 
+})
+
+
+router.get('/profile/:profileId',async(req,res)=>{
+    try{
+        let ownerUser=await User.findById(req.params.profileId)
+    let populatedUserWithAds=await ownerUser.populate('user_ads')
+         populatedUserWithAds=await populatedUserWithAds.populate('acceptedAds')
+         populatedUserWithAds=await populatedUserWithAds.populate('appliedAds')
+   console.log(populatedUserWithAds);
+    res.json(populatedUserWithAds)
+
+    }
+    catch(err){
+        console.log(err);
+    }
+    
 })
 
 router.post('/logout',async(req,res)=>{

@@ -227,10 +227,7 @@ const Navbar = () => {
 									</a>
 
 									<div  className="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
-            							{currentPath!=='/messenger'?<Link className='nav-link' to={`/profile/${user?._id}`}>Profile</Link>
-      									: <a  className="nav-link" href={`/profile/${user?._id}`}>Profile
-            							<span className="sr-only">(current)</span>
-          							</a>}
+            							
 
             						<a  className="nav-link" onClick={handleLogout} href="/">Logout</a>
           							</div>

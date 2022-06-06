@@ -15,6 +15,7 @@ import Profile from './Pages/Profile';
 import SearchResult from './Pages/SearchResult';
 import Publish from './Pages/Publish';
 import Search from './Pages/Search';
+import AdDetail from './Pages/AdDetail';
 
 
 
@@ -41,10 +42,11 @@ const App = () => {
        
        <Route path='/messenger' element={<PrivateIndex><Messenger /></PrivateIndex>}></Route>
        <Route path='/resetPassword' element={<PrivateIndex><PasswordReset /></PrivateIndex>}></Route>
-       <Route path='/profile/:id' element={<PrivateIndex><Profile /></PrivateIndex>}></Route>
+       <Route path='/profile/:profileId' element={<PrivateIndex><Profile /></PrivateIndex>}></Route>
        <Route path='/searchresult' element={<PrivateIndex><SearchResult /></PrivateIndex>}></Route>
        <Route path='/publish' element={<PrivateIndex><Publish /></PrivateIndex>}></Route>
        <Route path='/search' element={<PrivateIndex><Search /></PrivateIndex>}></Route>
+       <Route path='/searchresult/:id' element={<PrivateIndex><AdDetail /></PrivateIndex>}></Route>
        <Route path='*' element={ <Errorpage/>}></Route>
         
 

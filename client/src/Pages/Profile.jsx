@@ -9,43 +9,38 @@ import AdComponent from '../components/AdComponent';
 
 const Profile = () => {
 
-   
-const { currentUser } = useContext(AuthContext);
-const [user,setUser]=useState(null)
-const {id}=useParams()
-    let useAuth=useContext(AuthContext)
-    const getCurrentUserInfo=async()=>{
-       
-    const response=await axios.get('http://localhost:5000/api/getUser/'+id,{
-          headers:{Authorization: 'Bearer ' + await currentUser?.getIdToken(true)}
-        })
-    setUser(response.data)
-            
-  }
 
-    const [adArrState, setAdArrState] = useState([])
-    const[showActive,setShowActive]=useState(true)
+const [user,setUser]=useState(null)
+const {profileId}=useParams()
+    let useAuth=useContext(AuthContext)
+    
+
+   
+    const[show,setShow]=useState('active')
     const [activeAdsArr, setActiveAdsArr] = useState([])
     const [disabledAdsArr, setDisabledAdArr] = useState([])
+    const [acceptedAdsArr, setAcceptedAdsArr] = useState([])
+    const [appliedAdsArr, setAppliedAdsArr] = useState([])
 
   
 
-    useEffect(()=> {
-      setAdArrState([])
-      getCurrentUserInfo()
-    }, [])
+   
     useEffect(() => {
         const getAds = async () => {
-            const response = await axios.get(`http://localhost:5000/api/ad/myads`,{
+            const response = await axios.get(`http://localhost:5000/api/profile/${profileId}`,{
                 headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
               }) 
-              setAdArrState(response.data[0])
-              setActiveAdsArr(response.data[0].filter((ad) => ad.isActive === true));
-              setDisabledAdArr(response.data[0].filter((ad) => ad.isActive === false));
-               
+             
+              setActiveAdsArr(response.data?.user_ads?.filter((ad) => ad.isActive === true));
+              setDisabledAdArr(response.data?.user_ads?.filter((ad) => ad.isActive === false));
+              console.log('accepted',response.data?.acceptedAds)
+              setAcceptedAdsArr(response.data?.acceptedAds);
+              setAppliedAdsArr(response.data?.appliedAds)
+              setUser(response.data)
         } 
-        getAds();
-    }, [])
+        if(profileId){ getAds();}
+       
+    }, [profileId])
 
    
 
@@ -91,9 +86,10 @@ return  activeAdsArr && disabledAdsArr?(
                   </div>
                 
                   <ul className="profile-header-tab nav nav-tabs">
-                     <li className="nav-item"><a href="#profile-post" onClick={()=>setShowActive(true)} className="nav-link active show" data-toggle="tab">Active Ads</a></li>
-                     <li className="nav-item"><a href="#profile-about"onClick={()=>setShowActive(false)} className="nav-link" data-toggle="tab">Past Ads</a></li>
-                     
+                     <li className="nav-item"><a href="#profile-post" onClick={()=>setShow('active')} className="nav-link active show" data-toggle="tab">Active Ads</a></li>
+                     <li className="nav-item"><a href="#profile-about"onClick={()=>setShow('past')} className="nav-link" data-toggle="tab">Past Ads</a></li>
+                     <li className="nav-item"><a href="#profile-about"onClick={()=>setShow('accepted')} className="nav-link" data-toggle="tab">Accepted Ads</a></li>
+                     <li className="nav-item"><a href="#profile-about"onClick={()=>setShow('applied')} className="nav-link" data-toggle="tab">Applied Ads</a></li>
                   </ul>
                  
                </div>
@@ -106,7 +102,7 @@ return  activeAdsArr && disabledAdsArr?(
                   <div className="tab-pane fade active show" id="profile-post">
                      <ul className="timeline"> 
                         
-                         <AdComponent disabledAdsArr={disabledAdsArr} activeAdsArr={activeAdsArr} user={user} showActive={showActive} />
+                         <AdComponent disabledAdsArr={disabledAdsArr} activeAdsArr={activeAdsArr} appliedAdsArr={appliedAdsArr} acceptedAdsArr={acceptedAdsArr} user={user} show={show} />
                         
                      </ul>
                      

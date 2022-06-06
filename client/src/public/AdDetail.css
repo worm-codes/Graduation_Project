@@ -1,0 +1,148 @@
+img {
+    max-width: 100%;
+    margin-right: 1em;
+}
+.userAvatar :hover{
+    
+    opacity: 0.1;
+}
+
+.userAvatar {
+    cursor: pointer;
+    width: 5rem;
+    height: 5rem;
+    margin-left: 1em;
+}
+.appliedUserAvatar :hover{
+    opacity: 0.1;
+    
+}
+
+.appliedUserAvatar {
+    cursor: pointer;
+    width: 4rem;
+    height: 4rem;
+    margin-left: 1em;
+}
+
+.outerContainer {
+    display: flex;
+    justify-content: center;
+    
+    height:  630px;
+    width: 100%;
+    max-width: 1540px;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-right: 5em;
+    padding-left: 5em;
+    /* border:3px solid green; */
+    
+}
+
+.outerContainer .sideBarAppliedInfo {
+    flex-grow: 1;
+  
+}
+
+.innerContainer {
+    display:flex;
+    /* border: 2px solid red; */
+    /* border-radius: 15px 0px 0px 15px; */
+    background-color: #ffcd4f;
+    flex-direction: column;
+    margin-top: 1em;
+   
+    width: 65%;
+}
+
+.innerContainer > *:not(:last-child) {
+    margin-bottom: 1.5em; 
+} 
+
+.containerToHoldImageAndText {
+    display: flex;
+    white-space: normal;
+    word-wrap: break-word;   
+    overflow-wrap: break-word;
+    word-break: break-word;
+    margin: 0 .8em;
+}
+
+.adDetailHeader {
+    margin-bottom: 0.7em;
+    margin-left: .3em;
+}
+
+.descText {
+    margin-top:1em;
+}
+
+.avatar:hover {
+    opacity: 0.9;
+}
+
+.dateAndTimeDivInAdDetail {
+    display:flex;
+    margin: 2.5em 1em;
+}
+
+.acceptedUserContainer {
+    display:flex;
+    justify-content: space-around;
+}
+
+
+.acceptedUserName {
+    
+    /* margin-left: 2em; */
+    text-align: center;
+}
+
+.acceptedUserStar {
+    margin-top: -.7em
+}
+
+.sideBarContent > * {
+    margin-top: 1.5em;
+}
+
+/* .sideBarAppliedContent > * {
+    margin-top: 1.5em;
+} */
+
+
+.sideBar-title {
+    color: white;
+    margin-top: .5em;
+}
+
+.sideBarInfo {
+    width: 18%;
+    margin-top: 1em;
+    padding: 1em;
+    text-align: center;
+    color: #fff;
+    /* background-color: #136c72; */
+    background-color: #7b9cb3;
+    /* border:4px solid purple; */
+    border-radius: 0px 15px 15px 0px;
+}
+
+.sideBarAppliedInfo {
+    width: 18%;
+    margin-top: 1em;
+    padding: 1em;
+    text-align: center;
+    color: #fff;
+    /* background-color: #136c72; */
+    background-color: #7b9cb3;
+    /* border:4px solid purple; */
+    border-radius: 15px 0px 0px 15px;
+    overflow:auto;
+    min-height: 0;
+    transition-property: width;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
+    
+}
