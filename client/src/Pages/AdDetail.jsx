@@ -24,6 +24,8 @@ const AdDetail = () => {
     const [theAd, setTheAd] = useState({});
     const [rating, setRating] = useState(4);
     const [loggedInUser,setLoggedInUser]=useState(null)
+    const [buttonText, setButtonText] = useState('Apply')
+
     let useAuth=useContext(AuthContext);
     let { ID } = useParams();
 
@@ -86,7 +88,7 @@ let acceptedUserRenderFunc = theAd?.foundAd?.acceptedUsers?.map((acceptedUsr)=> 
         alt="avatar image"/>
 
         {loggedInUser?._id === theAd?.adOwner?._id ?
-          <a onClick={async(e) => {preventDefault(e);
+          <a onClick={async(e) => {e.preventDefault();
             const response = await axios.put(`http://localhost:5000/api/ad/searchresult/${theAd?.foundAd?._id}/${acceptedUsr._id}/decline`, {
             });
             response.data !== "User has already been rejected for this ad." ?     
@@ -151,23 +153,36 @@ let appliedUserRenderFunc = theAd?.foundAd?.appliedUsers?.map((appliedUsr) => {
   )
  
 })
-   
+let borderRadiusConditionalStyle = {};
+let decidingOfAppliedUserRenderFunc = loggedInUser?._id === theAd?.adOwner?._id && theAd?.foundAd?.appliedUsers.length > 0;
+if(!decidingOfAppliedUserRenderFunc){
+  borderRadiusConditionalStyle = {borderRadius: '15px 0px 0px 15px;'};
+}
+else {
+  borderRadiusConditionalStyle = {}
+}
 
 
 console.log("theAd state var:",theAd)
+
+let applyButtonDisplayCondition = true;
+if(theAd?.foundAd?.bannedUsers?.some(item => item?._id === loggedInUser?._id) || theAd?.foundAd?.acceptedUsers?.some(item => item?._id === loggedInUser?._id)){
+  applyButtonDisplayCondition = false;
+}
+
   return (
       <>
      
      <div  className='outerContainer'>
      
-      {loggedInUser?._id === theAd?.adOwner?._id ?
+      {decidingOfAppliedUserRenderFunc ?
           <aside class="sideBarAppliedInfo">
-          {theAd?.foundAd?.appliedUsers?.length > 0 ? appliedUserRenderFunc : ''}
+          {appliedUserRenderFunc}
           </aside>
              : ''}
             
 
-         <div className='innerContainer'>
+         <div style={{borderRadius: decidingOfAppliedUserRenderFunc === false ? '15px 0px 0px 15px' : ''}} className='innerContainer'>
         
         <div className='imageHeaderDescContainer'>
         <h2 className='adDetailHeader'>{`${theAd?.adOwner?.user_ID}'s ${theAd?.foundAd?.city} Tour!`}</h2>
@@ -223,16 +238,19 @@ console.log("theAd state var:",theAd)
                  </div> : ''
                  }
 
-                {loggedInUser?._id === theAd?.adOwner?._id ? '' : 
+                {loggedInUser?._id !== theAd?.adOwner?._id && applyButtonDisplayCondition ?  
                   <div onClick={async(e) => {e.preventDefault();
                     const response = await axios.post(`http://localhost:5000/api/ad/searchresult/${theAd?.foundAd?._id}/${loggedInUser._id}`, {
                   });
                   response.data !== "User has already applied for this ad or can't apply for this ad." ?
                   setTheAd(response.data) : ''
                   console.log(response.data)
+                  setButtonText('Pending')
+                  
                   }}>
-                    <Button style={{width:'7em'}} variant="contained" color="success">Apply</Button>
+                    <Button style={{width:'7em'}} variant="contained" color="success">{buttonText}</Button>
                   </div>
+                  : ''
                 }
                
               </div>

@@ -368,7 +368,7 @@ router.put('/searchresult/:adid/:userid/decline', async(req,res) => {
         let preFoundAd = await initialFoundAd.populate('bannedUsers')
         let foundAd = await preFoundAd.populate('acceptedUsers');
         
-        
+        //populatedAcceptedUser'ı pushlamayı deneyebilirsin olmazsa...
         foundAd.bannedUsers.push(appliedUser);
     
         await appliedUser.save();
