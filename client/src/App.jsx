@@ -3,7 +3,6 @@ import {BrowserRouter as Router,Routes,Route, Navigate} from 'react-router-dom';
 import Sign_in from './Pages/Sign_in'
 import Sign_up from './Pages/Sign_up'
 import PasswordReset from './Pages/PassswordReset'
-import Dashboard from './Pages/Dashboard';
 import Navbar from './components/Navbar';
 import Errorpage from './ERRORpage'
 import { AuthProvider,AuthContext } from './context/AuthContext';

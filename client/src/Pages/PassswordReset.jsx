@@ -1,4 +1,4 @@
-import React, { useRef, useState,useContext } from "react"
+import React, { useRef, useState,useContext, useEffect } from "react"
 
 import { Link } from "react-router-dom"
 import {AuthContext} from '../context/AuthContext'
@@ -6,10 +6,12 @@ import '../public/passwordReset.css'
 
 export default function ForgotPassword() {
   let useAuth=useContext(AuthContext)
-  const emailRef = useRef()
+  
   const [error, setError] = useState("")
   const [message, setMessage] = useState("")
   const [loading, setLoading] = useState(false)
+  
+ 
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -18,7 +20,7 @@ export default function ForgotPassword() {
       setMessage("")
       setError("")
       setLoading(true)
-      await useAuth.resetPassword(emailRef.current.value)
+      await useAuth.resetPassword(useAuth?.currentUser?.email )
       setMessage("Check your inbox for further instructions")
     } catch (err){
       let message=err.message.substr(err.message.indexOf('/')+1).replace(')',' ').replace('.',' ').replace(/-/g,' ')
@@ -44,8 +46,8 @@ export default function ForgotPassword() {
 
 
     <form onSubmit={handleSubmit}>
-      <input ref={emailRef} type="email" id="login" className="fadeIn second" required name="login" placeholder="Ehter Your E-Mail"/>
-      <button disabled={loading}  type="submit" className="fadeIn fourth" value="Log In">Submit </button>
+      <b className='h5'>Your mail is: {useAuth?.currentUser?.email}</b>
+      <button disabled={loading}  type="submit" className="fadeIn fourth" value="Log In">Reset</button>
     </form>
 
   

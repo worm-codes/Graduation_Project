@@ -228,7 +228,7 @@ const Navbar = () => {
 
 									<div  className="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
             							
-
+                                    	<a  className="nav-link"  href="/resetPassword">Password Reset</a>
             						<a  className="nav-link" onClick={handleLogout} href="/">Logout</a>
           							</div>
 								</li>
