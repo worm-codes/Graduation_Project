@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState,useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import {AuthContext} from '../context/AuthContext'
 import "../public/currentchat.css";
 
@@ -7,6 +8,7 @@ export default function Conversation({ conversation, currentUser,onlineUsers }) 
   const [user, setUser] = useState(null);
   let useAuth=useContext(AuthContext)
   const friendId = conversation?.members?.find((m) => m !== currentUser._id);
+  let navigate=useNavigate();
 
  
   const getUser = async () => {
@@ -54,7 +56,7 @@ export default function Conversation({ conversation, currentUser,onlineUsers }) 
 
 
   return user?(
-    <div className="Currentconversation" >
+    <div className="Currentconversation" onClick={()=>{navigate(`/profile/${friendId}`)}} >
       <img
         className="conversationImg"
         src='https://cdn-icons-png.flaticon.com/512/1077/1077114.png'

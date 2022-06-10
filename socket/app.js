@@ -23,7 +23,7 @@ const logoutServer=async(userID)=>{
    
 let users = [];
 let userIds=[];
-let outsideOfTheChat=[]
+
 
 const addUser = (user, socketId) => {
   
@@ -122,9 +122,13 @@ io.on("connection", (socket) => {
     console.log('usersinchat from func',usersInChat)
     if(receiverUser?.user && userIds.includes(receiverId)&&usersInChat?.includes(receiverId)){
     console.log('first if');
-     io.to(receiverUser.socketId).to(senderUser.socketId).emit("getCurrentUsersInChat", {
+     io.to(receiverUser.socketId).emit("getCurrentUsersInChat", {
       usersInChat
     });
+    io.to(senderUser.socketId).emit("getCurrentUsersInChat", {
+      usersInChat
+    });
+    
      
   }
    if(receiverUser?.user &&userIds.includes(receiverId)&& !(usersInChat?.includes(receiverId) )){
@@ -178,7 +182,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", async() => {
     console.log("a user disconnected!");
     users.map(async(userInfo)=>{
-    //ENTERCHAT VE USERSINCHAT CALISIYOR LEAVECHAT TE KALDIN IKI KISILI DENEMEDIN DENE
+   
       if(userInfo.socketId==socket.id){
     
          await leaveChats(userInfo.user._id)

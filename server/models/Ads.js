@@ -47,29 +47,30 @@ adSchema.methods.isDateActive = function(){
     let currentHour = new Date().getHours();
     let currentMinute = new Date().getMinutes();
 
-    if(this.leaving_date_year > currentYear){
+    if(this.arriving_date_year > currentYear){
         return true;
     }
 
-    if(this.leaving_date_year === currentYear && this.leaving_date_month > currentMonth){
+    if(this.arriving_date_year === currentYear && this.arriving_date_month > currentMonth){
         return true;
     }
 
-    if(this.leaving_date_year === currentYear && this.leaving_date_month === currentMonth && this.leaving_date_day > currentDay){
+    if(this.arriving_date_year === currentYear && this.arriving_date_month === currentMonth && this.arriving_date_day > currentDay){
         return true;
     }
     
-    if(this.leaving_date_year === currentYear && this.leaving_date_month === currentMonth && this.leaving_date_day === currentDay && 
-        this.maxTimeHour > currentHour) {
+    if(this.arriving_date_year === currentYear && this.arriving_date_month === currentMonth && this.arriving_date_day === currentDay && 
+        this.minTimeHour > currentHour) {
             return true;
         }
 
-    if(this.leaving_date_year === currentYear && this.leaving_date_month === currentMonth && this.leaving_date_day === currentDay && 
-        this.maxTimeHour === currentHour && this.maxTimeMinute > currentMinute) {
+    if(this.arriving_date_year === currentYear && this.arriving_date_month === currentMonth && this.arriving_date_day === currentDay && 
+        this.minTimeHour === currentHour && this.minTimeMinute > currentMinute) {
             return true;
         }
+        this.isActive = false;
 
-    return false;
+    return this.isActive;
 }
 
 module.exports=mongoose.model("AdData",adSchema);

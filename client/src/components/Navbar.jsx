@@ -156,11 +156,11 @@ const Navbar = () => {
 							<ul className="navbar-nav ml-auto mr-2 text-right">
 							<li className="nav-item ">
 								{currentPath !== '/messenger' ? 
-									<NavLink className="nav-link" to="/myads">
-									My Ads
+									<NavLink className="nav-link"  to={`/profile/${user?._id}`}>
+									Profile
 								</NavLink> :
-								<a className="nav-link" href="/myads">
-										My Ads
+								<a className="nav-link" href={`/profile/${user?._id}`}>
+										Profile
 									</a>
 								}
 									
@@ -188,19 +188,20 @@ const Navbar = () => {
 								
 								<li className="hidden-profile d-none nav-item">
 								{currentPath !== '/messenger' ? 
-									<Link className="nav-link" to="/profile">
+									<Link className="nav-link" to={`/profile/${user?._id}`}>
 									Profile
 								</Link> :
-								<a className="nav-link" href="/profile">
+								<a className="nav-link" href={`/profile/${user?._id}`}>
 										Profile
 									</a>
 								}
 								</li>
 
+
 								<li className="nav-item">
         							{unreadMessages!==0 &&currentPath!='/messenger'? <span className="badge badge-pill badge-danger" style={{float:"right" ,marginBottom:"-6px"}}>{unreadMessages}</span>:''}
-          							{currentPath!=='/messenger'?	<a className="nav-link" href="/messenger"><FontAwesomeIcon style={{fontSize:'1.40rem'}} icon={faEnvelope} size="lg" /> <span className="sr-only">(current)</span></a>
-      								: 	<FontAwesomeIcon style={{fontSize:'1.40rem', paddingTop:'9px'}} icon={faEnvelope} size="lg" /> }					
+          							{currentPath!=='/messenger'?	<a className="nav-link" href="/messenger"><i className="fa fa-envelope fa-lg" style={{fontSize:'1.40rem'}} aria-hidden="true"></i> <span className="sr-only">(current)</span></a>
+      								: 	<i className="fa fa-envelope fa-lg" style={{fontSize:'1.40rem', paddingTop:'20px'}} aria-hidden="true"></i> }					
     							</li>
 
 								<li className="hidden-profile d-none nav-item">
@@ -228,13 +229,9 @@ const Navbar = () => {
 									</a>
 
 									<div  className="dropdown-menu dropdown-menu-right dropdown-secondary" aria-labelledby="navbarDropdownMenuLink-5">
-            							{currentPath!=='/messenger'?<Link className='nav-link' to='#'>Profile</Link>
-      									: <a  className="nav-link" href="#">Profile
-            							<span className="sr-only">(current)</span>
-          							</a>}
-
             						<a  className="nav-link" onClick={handleLogout} href="/">Logout</a>
           							</div>
+									  
 								</li>
 							</ul>
 						</>): <>

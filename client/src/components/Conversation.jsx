@@ -103,7 +103,7 @@ export default function Conversation({ conversation, currentUser,currentChat,soc
  
  
 
-  return ((conversation.members[0]===currentUser._id && messages.length===0 )||(messages.length!==0))? (
+  return (
     <div  className="conversation" onClick={()=>setUnreadMessageCounter(0)}>
       <img
         className="conversationImg"
@@ -113,5 +113,5 @@ export default function Conversation({ conversation, currentUser,currentChat,soc
       <span className="conversationName">{user?.user_name} {unreadMessageCounter!==0?  <span className="badge badge-pill badge-danger" style={{float:"right" ,marginBottom:"-7px"}}>{unreadMessageCounter?.toString()}</span>:''}  </span>
       
     </div>
-  ) :''
+  ) 
 }

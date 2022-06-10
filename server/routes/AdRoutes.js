@@ -33,7 +33,7 @@ router.post('/publish', async(req,res) =>{
     await theAd.save();
     await theUser.save();
 
-        res.json('success')
+        res.json(theAd)
         //res.redirect('/myads')
 }
     catch(err){
@@ -106,24 +106,7 @@ router.post('/searchresult', async(req,res) => {
 
 
 router.get('/searchresult', async(req,res) => {
-    // let counter = 0;
-    // let copyArr = [];
-    // let searchedAds = [];
-    // let theResponse = store.get('advertisements')
-    // console.log("theResponse",theResponse)
-    // if(theResponse !== undefined && theResponse.length > 0){
-    //     console.log("JSON PARSE THE RESPONSE",JSON.parse(theResponse))
-    //     searchedAds = JSON.parse(theResponse);
-    //     copyArr = searchedAds.map(adv => {return {...adv}});
-    //     res.json(searchedAds)
-    // }
-    // else {
-    //     console.log("copyArr when no post req is sent:", copyArr)
-    //     res.json(copyArr)
-    // }
-    // store.each(function(value, key) {
-    //     console.log(key, '==', value)
-    // })
+
     if(store.get('advertisements') === undefined){
         return res.json('undefined string')
     }
@@ -133,21 +116,6 @@ router.get('/searchresult', async(req,res) => {
 
     store.clearAll();
 
-    // let adsToCheck = JSON.parse();
-    // console.log("searchedAds:", searchedAds)
-    // if(adsToCheck !== undefined && adsToCheck.length > 0){
-    //     searchedAds = adsToCheck.map(ad => {return {...ad}});
-    //     copyArr = searchedAds.map(adv => {return {...adv}});
-    //     // counter++;
-    // }
-    
-    // console.log("copyArr:", copyArr)
-    // if(searchedAds.length > 0){
-    //     res.json(searchedAds)
-    // }
-    // else {
-    //     res.json(copyArr)
-    // }
 })
 
 
@@ -166,7 +134,7 @@ router.get('/myads', MiddleWare.isAuth, async(req,res) => {
 router.put('/myads', async(req,res) => {
     let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
     const { adID } = req.body;
-    console.log("adID to update isActive status",adID)
+    // console.log("adID to update isActive status",adID)
     await Ad.findByIdAndUpdate({_id: adID}, { isActive : false});
     let adsToReturn = await user.populate('user_ads');
     let arrayToReturn = []
@@ -176,7 +144,7 @@ router.put('/myads', async(req,res) => {
             arrayToReturn.push(ads)
          }    
     }
-    console.log("arrayToReturn var in myads put:",arrayToReturn)
+    // console.log("arrayToReturn var in myads put:",arrayToReturn)
      res.json(arrayToReturn)
 
 })
@@ -198,20 +166,65 @@ router.get('/mypastads', MiddleWare.isAuth, async(req,res) => {
 })
 
 router.delete('/mypastads/:adid', MiddleWare.isAuth, async(req,res) => {
-    const { adid } = req.params;
-    let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
-    console.log("adID to be deleted:", adid)
+    try{
+        const { adid } = req.params;
 
-    await User.findByIdAndUpdate({_id : user._id}, {$pull: { user_ads: adid}})
-    
-    let deletedOne = await Ad.findByIdAndDelete(adid);
+        
+        let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
+        let adToBeDeleted = await Ad.findById(adid);
 
-    console.log("deletedOne var:", deletedOne)
-        // NOT: BAŞVURANLAR, KABUL ALANLAR ARRAY'I YARATILDIKTAN SONRA BURASI DEĞİŞECEK.
-    // AD'I SİLMEDEN ÖNCE, USERLARIN "BAŞVURDUKLARIM" ARRAY'INDAN PULL İLE ÇIKARTILACAK
-    // AD'I SILMEDEN ONCE, USERLARIN "KABUL ALDIKLARIM" ARRAY'INDAN PULL İLE ÇIKARTILACAK
-    //let theAdToChange = await Ad.findByIdAndUpdate({_id: adID}, { isActive : false});
-    res.json(deletedOne)
+        if(adToBeDeleted.isDateActive()){
+
+        
+
+        let adToBeDeletedPopulatedAppliedUsers = await adToBeDeleted.populate('appliedUsers');
+        let adToBeDeletedPopulatedAcceptedUsers = await adToBeDeletedPopulatedAppliedUsers.populate('acceptedUsers');
+        let adToBeDeletedPopulatedBannedUsers = await adToBeDeletedPopulatedAcceptedUsers.populate('bannedUsers');
+
+        console.log("adToBeDeleted var:", adToBeDeleted)
+        console.log("adToBeDeletedPopulatedBannedUsers var:", adToBeDeletedPopulatedBannedUsers)
+        let adToBeDeletedsAcceptedUsers = [];
+        for(let i = 0; i < adToBeDeletedPopulatedBannedUsers.acceptedUsers.length; i++){
+            adToBeDeletedsAcceptedUsers.push(await User.findById(adToBeDeletedPopulatedBannedUsers.acceptedUsers[i]._id))
+        }
+        
+        for(let i = 0; i < adToBeDeletedsAcceptedUsers.length; i++){
+            await User.findByIdAndUpdate({_id : adToBeDeletedsAcceptedUsers[i]._id}, {$pull: { acceptedAds: adid  }})
+        }
+
+        let adToBeDeletedsAppliedUsers = [];
+        for(let i = 0; i < adToBeDeletedPopulatedBannedUsers.appliedUsers.length; i++){
+            adToBeDeletedsAppliedUsers.push(await User.findById(adToBeDeletedPopulatedBannedUsers.appliedUsers[i]._id))
+        }
+
+        for(let i = 0; i < adToBeDeletedsAppliedUsers.length; i++){    
+            await User.findByIdAndUpdate({_id : adToBeDeletedsAppliedUsers[i]._id}, {$pull: { appliedAds: adid  }})
+        }
+
+        let adToBeDeletedsBannedUsers = [];
+        for(let i = 0; i < adToBeDeletedPopulatedBannedUsers.bannedUsers.length; i++){
+            adToBeDeletedsBannedUsers.push(await User.findById(adToBeDeletedPopulatedBannedUsers.bannedUsers[i]._id))
+        }
+
+        for(let i = 0; i < adToBeDeletedsBannedUsers.length; i++){    
+            await User.findByIdAndUpdate({_id : adToBeDeletedsBannedUsers[i]._id}, {$pull: { bannedAds: adid  }})
+        }
+
+        await User.findByIdAndUpdate({_id : user._id}, {$pull: { user_ads: adid}})
+        await Ad.findByIdAndUpdate({_id : adToBeDeleted._id}, {$pull: { acceptedUsers: { $exists: true } }})
+        await Ad.findByIdAndUpdate({_id : adToBeDeleted._id}, {$pull: { appliedUsers: { $exists: true } }})
+        await Ad.findByIdAndUpdate({_id : adToBeDeleted._id}, {$pull: { bannedUsers: { $exists: true } }})
+        
+        let deletedOne = await Ad.findByIdAndDelete(adid);
+
+        //store.clearAll() fonksiyonunu çalıştırmam gerekebilir. Çünkü store'da en son bu silinen advertisement vardı.
+        let adOwner = user;
+        res.json({adOwner, message:'ad has been deleted'})
+    }
+    } catch {
+        res.json("Could not delete the ad")
+    }
+   
 })
 
 router.post('/searchresult/:adid', async(req,res) => {
@@ -226,19 +239,20 @@ router.post('/searchresult/:adid', async(req,res) => {
     res.sendStatus(200);
 })
 
-router.get('/searchresult/:adid', async(req,res) => {
-    let theAdToShow = JSON.parse(store.get('theAdvertisement'));
-    let theTrueAd = await Ad.findById(theAdToShow.foundAd._id);
-    let theAdToPass = await theTrueAd.populate('acceptedUsers');
-    let finalTheAdToPass = await theAdToPass.populate('appliedUsers');
-    let realFinalTheAdToPass = await finalTheAdToPass.populate('bannedUsers');
-    let foundAd = realFinalTheAdToPass;
-
-    let adOwner = await User.findById(theAdToShow.foundAd.owner_id);
-    console.log("realFinalTheAdToPass:", realFinalTheAdToPass)
-    res.json({foundAd, adOwner});
-    // store.clearAll();
-    
+router.get('/searchresult/:adid', async(req,res) => {	
+    //let theAdToShow = JSON.parse(store.get('theAdvertisement'));	
+    // console.log(req.params.adid);	
+    let theTrueAd = await Ad.findById(req.params.adid);	
+    let theAdToPass = await theTrueAd.populate('acceptedUsers');	
+    let finalTheAdToPass = await theAdToPass.populate('appliedUsers');	
+    let realFinalTheAdToPass = await finalTheAdToPass.populate('bannedUsers');	
+    let foundAd = realFinalTheAdToPass;	
+    let adOwner = await User.findById(theTrueAd.owner_id);	
+    // console.log(theTrueAd);	
+    	
+    res.json({foundAd, adOwner});	
+    // store.clearAll();	
+    	
 })
 
 router.post('/searchresult/:adid/:userid', async(req,res) => {
@@ -247,27 +261,22 @@ router.post('/searchresult/:adid/:userid', async(req,res) => {
     let adOwner = await User.findById(theFoundAd.owner_id);
     let appliedUser = await User.findById(userid);
 
-
     if(theFoundAd.appliedUsers.length <= theFoundAd.maxPeople && !theFoundAd.bannedUsers.includes(userid) &&
         !theFoundAd.appliedUsers.includes(userid) && !appliedUser.appliedAds.includes(adid)) {
 
         let populatedAppliedUser = await appliedUser.populate('appliedAds');
         let foundAd = await theFoundAd.populate('appliedUsers')
      
-
         appliedUser.appliedAds.push(theFoundAd);
         theFoundAd.appliedUsers.push(appliedUser)
         await appliedUser.save();
         await theFoundAd.save();
         store.set('theAdvertisement', JSON.stringify({foundAd, adOwner}))
-        // let userOwnerAdData = {populatedAd,populatedAppliedUser,adOwner}
-        res.json({foundAd,adOwner,populatedAppliedUser})
-        
+        res.json({foundAd,adOwner,populatedAppliedUser})      
     }
     else {
         res.json("User has already applied for this ad or can't apply for this ad.")
-    }
-    
+    }   
 })
 
 router.put('/searchresult/:adid/:userid/accept', async(req,res) => {
@@ -304,7 +313,7 @@ router.put('/searchresult/:adid/:userid/accept', async(req,res) => {
     let theTrueLastAdArrToPass = await lastRealFinalAdArrToPass.populate('bannedUsers')
     foundAd = theTrueLastAdArrToPass;
     
-    console.log("lastRealFinalAdArrToPass:", lastRealFinalAdArrToPass)
+    // console.log("lastRealFinalAdArrToPass:", lastRealFinalAdArrToPass)
     
     store.clearAll();
     store.set('theAdvertisement', JSON.stringify({foundAd, adOwner}))
@@ -349,7 +358,7 @@ router.put('/searchresult/:adid/:userid/decline', async(req,res) => {
     let theTrueLastAdArrToPass = await lastRealFinalAdArrToPass.populate('bannedUsers')
     foundAd = theTrueLastAdArrToPass;
     
-    console.log("theTrueLastAdArrToPass inside applied user condition:", theTrueLastAdArrToPass)
+    // console.log("theTrueLastAdArrToPass inside applied user condition:", theTrueLastAdArrToPass)
     
     store.clearAll();
     store.set('theAdvertisement', JSON.stringify({foundAd, adOwner}))
@@ -380,7 +389,7 @@ router.put('/searchresult/:adid/:userid/decline', async(req,res) => {
         let theTrueLastAdArrToPass = await lastRealFinalAdArrToPass.populate('bannedUsers')
         foundAd = theTrueLastAdArrToPass;
         
-        console.log("theTrueLastAdArrToPass inside accepted user condition:", theTrueLastAdArrToPass)
+        // console.log("theTrueLastAdArrToPass inside accepted user condition:", theTrueLastAdArrToPass)
         
         store.clearAll();
         store.set('theAdvertisement', JSON.stringify({foundAd, adOwner}))

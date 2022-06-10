@@ -6,7 +6,6 @@ import Conversation from "../components/Conversation";
 import Message from "../components/Message";
 import CurrentChatComp from '../components/CurrentChat'
 import { io } from "socket.io-client";
-import Navbar from '../components/Navbar'
 
 const Messenger = () => {
    let useAuth=useContext(AuthContext)
@@ -21,7 +20,7 @@ const Messenger = () => {
   const [borderStyle,setBorderStyle]=useState({})
   const [onlineUsers,setOnlineUsers]=useState([])
   const [usersInChat,setUsersInChat]=useState([])
-  const [inComingMessageFromAnotherChat,setInComingMessageFromAnotherChat]=useState(null)
+ 
 
 
 
@@ -41,8 +40,6 @@ const Messenger = () => {
           headers:{Authorization: 'Bearer ' + await useAuth?.currentUser?.getIdToken(true)}
         }
       )
-
-     
       if(response?.data.message!='UnAuth'){
         console.log(response.data);
         setConversations(response.data)
@@ -123,9 +120,11 @@ const Messenger = () => {
          console.log('entered chat current',currentChat);
          console.log(socket.current);
          if(socket.current){
+           console.log('enteredd')
        socket?.current?.on("getCurrentUsersInChat", async(data) => {
-    
+        console.log(data)
        if(data!==undefined){
+        
        setUsersInChat(data?.usersInChat);
       console.log('boolean',data?.usersInChat.length===2);
       if(data?.usersInChat.length===2){
@@ -256,14 +255,14 @@ const Messenger = () => {
 
  
 
-  console.log(onlineUsers);
+
   console.log('usersinchat',usersInChat);
 
 
 
 
 
-return (
+return user ?(
     <>
      
       <div className="messenger">
@@ -415,7 +414,7 @@ return (
        
       </div>
     </>
-  );
+  ):''
 
 
 

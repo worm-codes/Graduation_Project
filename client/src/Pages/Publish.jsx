@@ -297,8 +297,8 @@ const Publish = () => {
 								userToProcess: currentUser
 								
 							})
-							if(response.data === 'success'){
-								window.location.assign('/myads')
+							if(response?.data){
+								window.location.assign(`/searchresult/${response?.data?._id}`)
 							}
 						} 
 
