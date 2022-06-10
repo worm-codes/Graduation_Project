@@ -276,7 +276,7 @@ return user ?(
               return  <div  key={c?._id+'dsdsds'} style={currentChat?._id===c?._id?{pointerEvents: 'none'}:{}} onClick={async()=> {
                 if(user){
                 if(currentChat===null){
-               
+                  console.log('nulll')
                   const enterChat=async()=>{
                    const resp=await axios.post(`http://localhost:5000/api/conversation/userEntersChat/${c._id}/`+user?._id,{
                             headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
@@ -285,11 +285,14 @@ return user ?(
                          setCurrentChat(c);
                        let receiver=await c.members.find((dbuser) => dbuser!== user?._id)
                         console.log('receiver socket',receiver);
-                        socket.current?.emit("openChat", {
+                      const sendReq=async(receiverId)=>{
+                         await socket.current?.emit("openChat", {
                         senderId: user._id,
-                        receiverId:receiver,
+                        receiverId:receiverId,
                         convId: c._id,
                       });
+                      }
+                      sendReq(receiver)
                   
                }
                setCurrentChat(c);
@@ -309,7 +312,7 @@ return user ?(
                      
 
                           let receiver=currentChat.members.find((dbuser) => dbuser!== user?._id)
-                          socket.current?.emit("closeChat", {
+                          await socket.current?.emit("closeChat", {
                        
                         receiverId:receiver,
                         convId: currentChat._id,
@@ -327,7 +330,7 @@ return user ?(
 
                          let receiver=c.members.find((dbuser) => dbuser!== user?._id)
                         console.log('receiver socket',receiver);
-                        socket.current?.emit("openChat", {
+                        await socket.current?.emit("openChat", {
                         senderId: user._id,
                         receiverId:receiver,
                         convId: c._id,

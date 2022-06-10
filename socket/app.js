@@ -16,7 +16,7 @@ const logoutServer=async(userID)=>{
       }
       
       )
-      console.log('logout',response.data);
+      console.log('logout',response?.data);
       
     }
 
@@ -46,7 +46,7 @@ const getCurrentUsersInChat=async(convId)=>{
   
   const resp=await axios.get('http://localhost:5000/api/conversation/getUsersInChat/'+convId)
       
-        return await resp.data        
+        return await resp?.data        
 }   
 
 
@@ -60,7 +60,7 @@ const removeId=async(id)=>{
   if(userIds.includes(id)){
     await logoutServer(id)
     userIds=userIds.filter((onlineUserId)=>onlineUserId!==id)
-    io.emit("getUsers", userIds);
+    io?.emit("getUsers", userIds);
   }
   
   
@@ -80,7 +80,7 @@ io.on("connection", (socket) => {
   socket.on("addUser", (user) => {
     console.log(user);
     if(user._id!=null){
-    addUser(user, socket.id);
+    addUser(user, socket?.id);
     }
     io.emit("getUsers", userIds);
   });
@@ -90,7 +90,7 @@ io.on("connection", (socket) => {
     const user = getUser(receiverId);
  
     if(user?.user){
-    io.to(user.socketId).emit("getMessage", {
+    io.to(user?.socketId)?.emit("getMessage", {
       senderId,
       receiverId,
       currentConversation,
@@ -120,29 +120,46 @@ io.on("connection", (socket) => {
     let usersInChat=await getCurrentUsersInChat(convId)
      console.log('receiver',receiverUser);
     console.log('usersinchat from func',usersInChat)
+    
+
     if(receiverUser?.user && userIds.includes(receiverId)&&usersInChat?.includes(receiverId)){
-    console.log('first if');
-     io.to(receiverUser.socketId).emit("getCurrentUsersInChat", {
-      usersInChat
-    });
-    io.to(senderUser.socketId).emit("getCurrentUsersInChat", {
+    console.log('first if`````````````````````````````````````````````````');
+     io.to(receiverUser?.socketId)?.emit("getCurrentUsersInChat", {
       usersInChat
     });
     
-     
-  }
-   if(receiverUser?.user &&userIds.includes(receiverId)&& !(usersInChat?.includes(receiverId) )){
-     console.log('second if');
-     
-     await io.to(senderUser.socketId).emit("getCurrentUsersInChat", {
+     io.to(senderUser?.socketId)?.emit("getCurrentUsersInChat", {
       usersInChat
     });
+    
+    
+     
+  }
+   if(receiverUser?.user && userIds.includes(receiverId)&& !(usersInChat?.includes(receiverId) )){
+     console.log('second if`````````````````````````````````````````````');
+     
+      io.to(senderUser?.socketId)?.emit("getCurrentUsersInChat", {
+      usersInChat
+    });
+    
+    
  
   }
-  if(!receiverUser &&!(userIds.includes(receiverId))){
-    console.log('not online');
+  if(receiverUser?.user && !(userIds.includes(receiverId))&& !(usersInChat?.includes(receiverId) )){
+     console.log('second if`````````````````````````````````````````````');
+     
+      io.to(senderUser?.socketId)?.emit("getCurrentUsersInChat", {
+      usersInChat
+    });
+    
+    
+ 
+  }
+  
+  if(typeof receiverUser==='undefined' &&!(userIds.includes(receiverId))){
+    console.log('not online````````````````````````````````````');
     console.log('currentChat',convId);
-    await io.to(senderUser.socketId).emit("getCurrentUsersInChat", {
+     io.to(senderUser?.socketId)?.emit("getCurrentUsersInChat", {
       usersInChat
     });
 
@@ -163,7 +180,7 @@ io.on("connection", (socket) => {
     console.log('usersinchat from func leavechat',usersInChat)
     if(receiverUser?.user &&userIds.includes(receiverId)&& usersInChat?.includes(receiverId)){
     console.log('sending that i am leaving');
-    io.to(receiverUser.socketId).emit("getCurrentUsersInChat", {
+     io.to(receiverUser?.socketId)?.emit("getCurrentUsersInChat", {
       usersInChat
     });
      
@@ -185,19 +202,19 @@ io.on("connection", (socket) => {
    
       if(userInfo.socketId==socket.id){
     
-         await leaveChats(userInfo.user._id)
-         removeId(userInfo.user._id)
+         await leaveChats(userInfo?.user?._id)
+         removeId(userInfo?.user?._id)
    
-         let usersInChat =await getCurrentUsersInChat(userInfo.user?.lastCurrentChat);
+         let usersInChat =await getCurrentUsersInChat(userInfo?.user?.lastCurrentChat);
          console.log(usersInChat);
         if(usersInChat!==[] && getUser(usersInChat[0])){
           console.log('entered array check');
           console.log('usersinchat 0',getUser(usersInChat[0]));
-        io.to(getUser(usersInChat[0]).socketId).emit("getCurrentUsersInChat", {
+          io.to(getUser(usersInChat[0])?.socketId)?.emit("getCurrentUsersInChat", {
         usersInChat
     });}
       
-      removeUser(socket.id);
+      removeUser(socket?.id);
       console.log('socketli user array',users)
    
       }

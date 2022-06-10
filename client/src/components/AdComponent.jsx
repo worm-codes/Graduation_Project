@@ -118,7 +118,7 @@ const showDisabledAds=disabledAdsArr?.map((disabledAd)=>{
                                      <div style={{marginLeft:'1.5em'}}>
                                     <p><i class="fa fa-map-marker mr-2 " style={{marginTop:'20px'}} aria-hidden="true"></i>{printProvince(disabledAd)}</p>
                                        <p><i class="fa-solid fa-people-group mr-2"></i>MaxPeople: {disabledAd.maxPeople}</p>
-                                       <p><i class="fa-solid fa-bed mr-2"></i>{disabledAd.host==='true'? Avaliable:'Not Avaliable'}</p>
+                                       <p><i class="fa-solid fa-bed mr-2"></i>{disabledAd.host==='true'? "Host: Avaliable" : "Host: Not Avaliable"}</p>
                                     </div>
                                     <i className="fa fa-quote-right fa-fw pull-right"></i>
                                  </p> 
@@ -151,12 +151,7 @@ const showAcceptedAds=acceptedAdsArr?.map((acceptedAd)=>{
                          
                           
                            <div className="timeline-body">
-                              <div className="timeline-header"> 
-                                 <span className="userimage">
-                                 <img src="https://www.kindpng.com/picc/m/22-223941_transparent-avatar-png-male-avatar-icon-transparent-png.png" alt=""/></span>
-                                 <span className="username">{user?.user_name} {user?.user_surname}</span>
-                                 <span className="pull-right text-muted">{/*views */}</span>
-                              </div>
+                              
                               <div className="timeline-content">
                                  <p className="lead">
                                     <i className="fa fa-quote-left fa-fw pull-left"></i>
@@ -164,7 +159,7 @@ const showAcceptedAds=acceptedAdsArr?.map((acceptedAd)=>{
                                      <div style={{marginLeft:'1.5em'}}>
                                     <p><i class="fa fa-map-marker mr-2 " style={{marginTop:'20px'}} aria-hidden="true"></i>{printProvince(acceptedAd)}</p>
                                        <p><i class="fa-solid fa-people-group mr-2"></i>MaxPeople: {acceptedAd.maxPeople}</p>
-                                       <p><i class="fa-solid fa-bed mr-2"></i>{acceptedAd.host==='true'? Avaliable:'Not Avaliable'}</p>
+                                       <p><i class="fa-solid fa-bed mr-2"></i>{acceptedAd.host==='true'? "Host: Avaliable" : "Host: Not Avaliable"}</p>
                                     </div>
                                     <i className="fa fa-quote-right fa-fw pull-right"></i>
                                  </p> 
@@ -197,12 +192,7 @@ const showAppliedAds=appliedAdsArr?.map((appliedAd)=>{
                          
                           
                            <div className="timeline-body">
-                              <div className="timeline-header"> 
-                                 <span className="userimage">
-                                 <img src="https://www.kindpng.com/picc/m/22-223941_transparent-avatar-png-male-avatar-icon-transparent-png.png" alt=""/></span>
-                                 <span className="username">{user?.user_name} {user?.user_surname}</span>
-                                 <span className="pull-right text-muted">{/*views */}</span>
-                              </div>
+                              
                               <div className="timeline-content">
                                  <p className="lead">
                                     <i className="fa fa-quote-left fa-fw pull-left"></i>
@@ -210,7 +200,7 @@ const showAppliedAds=appliedAdsArr?.map((appliedAd)=>{
                                      <div style={{marginLeft:'1.5em'}}>
                                     <p><i class="fa fa-map-marker mr-2 " style={{marginTop:'20px'}} aria-hidden="true"></i>{printProvince(appliedAd)}</p>
                                        <p><i class="fa-solid fa-people-group mr-2"></i>MaxPeople: {appliedAd.maxPeople}</p>
-                                       <p><i class="fa-solid fa-bed mr-2"></i>{appliedAd.host==='true'? Avaliable:'Not Avaliable'}</p>
+                                       <p><i class="fa-solid fa-bed mr-2"></i>{appliedAd.host==='true'? "Host: Avaliable" : "Host: Not Avaliable"}</p>
                                     </div>
                                     <i className="fa fa-quote-right fa-fw pull-right"></i>
                                  </p> 

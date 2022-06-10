@@ -10,6 +10,7 @@ export default function Message({ message, own,bothInChat }) {
   return (
     <div  className={own ? "message own" : "message"}>
       <div className="messageTop">
+      
         <img
           className="messageImg"
           src={own ?"https://www.kindpng.com/picc/m/22-223941_transparent-avatar-png-male-avatar-icon-transparent-png.png" :"https://cdn-icons-png.flaticon.com/512/1077/1077114.png"}

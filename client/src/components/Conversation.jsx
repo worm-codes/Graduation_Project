@@ -13,7 +13,8 @@ export default function Conversation({ conversation, currentUser,currentChat,soc
 
   
   let useAuth=useContext(AuthContext);
- const friendId = conversation.members.find((m) => m !== currentUser._id);
+  
+ const friendId = conversation?.members?.find((m) => m !== currentUser?._id);
 
  const getMessages=async()=>{
       try {
@@ -34,6 +35,7 @@ export default function Conversation({ conversation, currentUser,currentChat,soc
     
 
     const getUser = async () => {
+      
       if(friendId){
       try {
         const res = await axios.get("http://localhost:5000/api/getUser/" + friendId,{
