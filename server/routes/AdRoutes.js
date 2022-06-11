@@ -168,14 +168,11 @@ router.get('/mypastads', MiddleWare.isAuth, async(req,res) => {
 router.delete('/mypastads/:adid', MiddleWare.isAuth, async(req,res) => {
     try{
         const { adid } = req.params;
-
-        
+    
         let user=await User.findOne({user_email:MiddleWare.decodeValue.email})
         let adToBeDeleted = await Ad.findById(adid);
 
         if(adToBeDeleted.isDateActive()){
-
-        
 
         let adToBeDeletedPopulatedAppliedUsers = await adToBeDeleted.populate('appliedUsers');
         let adToBeDeletedPopulatedAcceptedUsers = await adToBeDeletedPopulatedAppliedUsers.populate('acceptedUsers');
