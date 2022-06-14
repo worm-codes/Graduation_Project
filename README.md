@@ -1,5 +1,5 @@
 # Graduation_Project - Local Guide
-### It is an Social App for Travellers. If you want to travel City with local people you can search for it with filters and apply after that you can get in contact via Chat app inside of app.
+### It is an Social App for Travellers. If you want to travel City with local people, you can search for it with filters and apply, after that you can get in contact with user via Chat app inside of app.
 ## Technologies
 - Node.js 
 - Socket.io
