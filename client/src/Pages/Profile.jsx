@@ -1,5 +1,5 @@
 import '../public/profile.css'
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, useMemo } from 'react'
 import { useParams } from 'react-router';
 import { AuthContext } from "../context/AuthContext";
 
@@ -12,36 +12,26 @@ const Profile = () => {
 const [user,setUser]=useState(null)
 const {profileId}=useParams()
     let useAuth=useContext(AuthContext)
-    
-
-   
+     
     const[show,setShow]=useState('active')
-    const [activeAdsArr, setActiveAdsArr] = useState([])
-    const [disabledAdsArr, setDisabledAdArr] = useState([])
-    const [acceptedAdsArr, setAcceptedAdsArr] = useState([])
-    const [appliedAdsArr, setAppliedAdsArr] = useState([])
 
-  
 
-   
     useEffect(() => {
         const getAds = async () => {
             const response = await axios.get(`http://localhost:5000/api/profile/${profileId}`,{
                 headers:{Authorization: 'Bearer ' + await useAuth.currentUser.getIdToken(true)}
               }) 
              
-              setActiveAdsArr(response.data?.user_ads?.filter((ad) => ad.isActive === true));
-              setDisabledAdArr(response.data?.user_ads?.filter((ad) => ad.isActive === false));
-              console.log('accepted',response.data?.acceptedAds)
-              setAcceptedAdsArr(response.data?.acceptedAds);
-              setAppliedAdsArr(response.data?.appliedAds)
               setUser(response.data)
         } 
         if(profileId){ getAds();}
        
     }, [profileId])
 
-   
+   const activeAdsArr = useMemo(() => user?.user_ads?.filter((ad) => ad.isActive === true),[user])
+   const disabledAdsArr = useMemo(() => user?.user_ads?.filter((ad) => ad.isActive === false),[user])
+   const acceptedAdsArr = useMemo(() => user?.acceptedAds, [user])
+   const appliedAdsArr = useMemo(() => user?.appliedAds, [user])
 
     let image=['https://images.unsplash.com/photo-1552832230-c0197dd311b5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1096&q=80',
 'https://images.unsplash.com/photo-1599946347371-68eb71b16afc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',

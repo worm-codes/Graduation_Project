@@ -3,23 +3,10 @@ import { useParams,Link,useNavigate } from 'react-router-dom'
 import {AuthContext} from '../context/AuthContext'
 import axios from "axios";
 import '../public/AdDetail.css'
-import Rating from '@mui/material/Rating';
-import Typography from '@mui/material/Typography';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar } from '@fortawesome/free-solid-svg-icons'
-import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
-import { faCalendarDays } from '@fortawesome/free-solid-svg-icons'
-import { faHourglass } from '@fortawesome/free-solid-svg-icons'
-import { faPeopleGroup } from '@fortawesome/free-solid-svg-icons'
-import { faBed } from '@fortawesome/free-solid-svg-icons'
-import { faBan } from '@fortawesome/free-solid-svg-icons'
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { decideToPutZero } from '../utilities/DecideToPutZero';
-// import { Button } from 'semantic-ui-react'
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
-import { async } from '@firebase/util';
+
 
 const AdDetail = () => {
     const [theAdOwner, setTheAdOwner] = useState({});
@@ -126,16 +113,8 @@ useEffect(() => {
 }, [isAdActive])
 
 
-
-
-
-
-
-
 let valueOfIsAdActive = isAdActive();
-// console.log("value of isAdActive method",valueOfIsAdActive);  
 
-//  console.log("logged-in user:", loggedInUser);
 let currentYear = new Date().getFullYear();
 
 let acceptedUserRenderFunc = theRealAd?.acceptedUsers?.map((acceptedUsr)=> {
@@ -187,7 +166,7 @@ let appliedUserRenderFunc = theRealAd?.appliedUsers?.map((appliedUsr) => {
                   setTheAdOwner(response.data.adOwner)
                    : ''
                   console.log(response.data)
-          }} href="#"><FontAwesomeIcon style={{color:'red', marginRight:'.75em'}} size='xl' icon={faXmark} /></a>
+          }} href="#"><i className='fa fa-xmark fa-xl' style={{color:'red', marginRight:'.75em'}} /></a>
            <a onClick={async(e) => {e.preventDefault();
               const response = await axios.put(`http://localhost:5000/api/ad/searchresult/${theRealAd?._id}/${appliedUsr._id}/accept`, {
               });
@@ -198,14 +177,14 @@ let appliedUserRenderFunc = theRealAd?.appliedUsers?.map((appliedUsr) => {
                    : ''
                   // theAd?.foundAd?.appliedUsers?.filter((usr) => usr._id !== appliedUsr._id)
                   console.log(response.data)
-            }} href="#"><FontAwesomeIcon size='xl' style={{color:'blue'}} icon={faCheck} /></a>
+            }} href="#"><i className='fa fa-check fa-xl' style={{color:'blue'}} /></a>
             </div>
            <Link to={'/profile/'+appliedUsr?._id} style={{textDecoration:'none'}} className="sideBar-title h2">{appliedUsr?.user_ID}</Link>
            <p>{`Name: ${appliedUsr?.user_name}`}</p>
            <p>{`Surname: ${appliedUsr?.user_surname}`}</p>
            <p>{`Gender: ${appliedUsr?.user_gender}`}</p>
            <p>{`Age: ${currentYear - parseInt(appliedUsr?.user_date_of_birth?.substring(0,4))}`}</p>
-           <p><FontAwesomeIcon style={{fontSize:'1.5em', marginBottom:'.1em'}} icon={faStar} size="lg" /> <span style={{fontSize:'1.3em'}}>4,9/5</span></p>
+           <p><i className='fa fa-start fa-lg' style={{fontSize:'1.5em', marginBottom:'.1em'}} /> <span style={{fontSize:'1.3em'}}>4,9/5</span></p>
            {loggedInUser?._id !== theAdOwner?._id ? '' : 
              <div>
                <Button style={{marginBottom:'1em'}} onClick={()=>
@@ -262,13 +241,11 @@ if(theRealAd?.bannedUsers?.some(item => item?._id === loggedInUser?._id) || theR
         <p className='descText'>{theRealAd?.description}</p>
         </div>
         <div style={{justifyContent:'space-between'}} className='dateAndTimeDivInAdDetail'>
-            <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faLocationDot} />{`${theRealAd?.city}`}</p>
-            {/* <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faLocationDot} />{`State: ${theRealAd?.state}`}</p>
-            <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faLocationDot} />{`City: ${theRealAd?.city}`}</p> */}
-            <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faPeopleGroup} />{`Max People: ${theRealAd?.maxPeople}`}</p>
-            <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faBed} />Host: {theRealAd?.host === "true" ? 'Available' : 'Not Available'}</p>
-            <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faHourglass} />{`${decideToPutZero(theRealAd?.minTimeHour)}:${decideToPutZero(theRealAd?.minTimeMinute)} -  ${decideToPutZero(theRealAd?.maxTimeHour)}:${decideToPutZero(theRealAd?.maxTimeMinute)}`}</p>
-            <p><FontAwesomeIcon style={{marginRight:'.5em'}} icon={faCalendarDays} />{`${theRealAd?.arriving_date_day?.toString()} ${months[theRealAd?.arriving_date_month-1]} - ${theRealAd?.leaving_date_day?.toString()} ${months[theRealAd?.leaving_date_month-1]}`}</p>
+            <p><i className='fa fa-location-dot' style={{marginRight:'.5em'}} />{`${theRealAd?.city}`}</p>
+            <p><i className='fa fa-people-group' style={{marginRight:'.5em'}} />{`Max People: ${theRealAd?.maxPeople}`}</p>
+            <p><i className='fa fa-bed' style={{marginRight:'.5em'}} />Host: {theRealAd?.host === "true" ? 'Available' : 'Not Available'}</p>
+            <p><i className='fa fa-hourglass' style={{marginRight:'.5em'}} />{`${decideToPutZero(theRealAd?.minTimeHour)}:${decideToPutZero(theRealAd?.minTimeMinute)} -  ${decideToPutZero(theRealAd?.maxTimeHour)}:${decideToPutZero(theRealAd?.maxTimeMinute)}`}</p>
+            <p><i className='fa fa-calendar-days' style={{marginRight:'.5em'}} />{`${theRealAd?.arriving_date_day?.toString()} ${months[theRealAd?.arriving_date_month-1]} - ${theRealAd?.leaving_date_day?.toString()} ${months[theRealAd?.leaving_date_month-1]}`}</p>
             {/* <p style={{marginRight:'3em'}} id='timeTextInAdDetail'>{`From:  ${decideToPutZero(theAd?.foundAd?.minTimeHour)}:${decideToPutZero(theAd?.foundAd?.minTimeMinute)} - To: ${decideToPutZero(theAd?.foundAd?.maxTimeHour)}:${decideToPutZero(theAd?.foundAd?.maxTimeMinute)}`}</p> */}
         </div>
         <hr style={{marginTop:'3em'}} />
@@ -292,7 +269,7 @@ if(theRealAd?.bannedUsers?.some(item => item?._id === loggedInUser?._id) || theR
                 <p>{`Surname: ${theAdOwner?.user_surname}`}</p>
                 <p>{`Gender: ${theAdOwner?.user_gender}`}</p>
                 <p style={{marginBottom:'1.5em'}}>{`Age: ${currentYear - parseInt(theAdOwner?.user_date_of_birth?.substring(0,4))}`}</p>
-                <p><FontAwesomeIcon style={{fontSize:'3em', marginBottom:'.1em'}} icon={faStar} size="2xl" /> <span style={{fontSize:'2em'}}>4,9/5</span></p>
+                <p><i className='fa fa-star fa-2xl' style={{fontSize:'3em', marginBottom:'.1em'}} /> <span style={{fontSize:'2em'}}>4,9/5</span></p>
                 {loggedInUser?._id === theAdOwner?._id ? '' : 
                   <div>
                     <Button style={{marginBottom:'1em', marginTop:'.5em'}} onClick={()=>makeConversationAndRedirect(theAdOwner?._id)} variant="contained" endIcon={<SendIcon />}>
