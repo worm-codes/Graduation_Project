@@ -1,13 +1,13 @@
-import React, { useState, useContext, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useContext, useEffect, useMemo } from 'react'
 import { AuthContext } from "../context/AuthContext";
 import { useForm } from 'react-hook-form'
 import axios from "axios";
-import Navbar from '../components/Navbar'
 import { Country, State, City }  from 'country-state-city';
 import "../public/SearchResult.css";
 import  Slider  from '@mui/material/Slider';
 import Box from '@mui/material/Box';
-import { Link, useNavigate } from 'react-router-dom';
+import { decideToPutZero } from '../utilities/DecideToPutZero';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -67,10 +67,6 @@ const SearchResult = () => {
 	let maxPeople = watch().maxPeople ? watch().maxPeople : '';
 
 
-
-
-  
-
     useEffect(() => {      
       const getFilteredAds = async () => {
               const response = await axios.get(`http://localhost:5000/api/ad/searchresult`,{
@@ -101,19 +97,6 @@ const SearchResult = () => {
            
     }, [])
 
-   
-
-         //BURAYA [filteredAdState] yazınca, sürekli re-render oluyor defalarca ve en sonunda firebase error auth quota exceeded hatası alıyorum
-        //BURAYA BOŞ ARRAY ATARSAM, INFINITE LOOP'A GİRMİYOR FAKAT DEĞİŞİMİ GÖRMEM İÇİN SAYFAYI REFRESHLEMEM GEREKIYOR
-        //setFilteredAdState yollamak ile boş array yollamak aynı sonuca ulaştırdı.
-        //LATEST: BURAYA filteredAdState yollayınca, refreshe gerek kalmadan content yenilendi ama
-        // infinite request atıyor hala backend'e, useMemo'dan sonra bile
-
-    // useEffect(() => {
-    //   getFilteredAds();
-    //   setRefresh(refresh)
-    // }, [refresh])
-    
 
     //COUNTRY --- STATE --- CITY FINDING CODES
   let states = [];
@@ -186,38 +169,7 @@ const SearchResult = () => {
    let filteredStates = states.filter((state) => state.name.toLowerCase().startsWith(stateInput.toLowerCase()));
    let filteredCities = City.getCitiesOfState(selectedStatesCountryCode, selectedStatesIsoCode).filter((city) =>
    city.name.toLowerCase().startsWith(cityInput.toLowerCase()));
-  //  let statesArrToUse = [];
-  //  if(isCountryVarEmpty){
-  //    statesArrToUse = State.getAllStates();
-  //  }
-  //  else {
-  //    statesArrToUse = filteredStates;
-  //  }
 
-  // let funcToDecideStates = (condition) => {
-  //   if(condition) {
-  //     return State.getAllStates().filter((state) => state.name.startsWith(stateInput));;
-  //   } else {
-  //     return filteredStates;
-  //   }
-  // }
-
-  // let funcToDecideCities = (condition) => {
-  //   if(condition) {
-  //     return City.getAllCities().filter((city) =>city.name.startsWith(cityInput));;
-  //   } else {
-  //     return filteredCities
-  //   }
-  // }
-
-
-
-  // let citiesArrToUse = [];
-  // if(isStateVarEmpty){
-  //   citiesArrToUse = City.getAllCities();
-  // } else {
-  //   citiesArrToUse = filteredCities;
-  // }
 
 	//DATE LOGIC
 
@@ -296,14 +248,7 @@ const SearchResult = () => {
   // console.log("countryInput var:", countryInput);
   // console.log("countryVar state:",countryVar);
 
-  // Function for adding 0 in front of hours & minutes that are 0 - 9.
-  let decideToPutZero = (num) => {
-    if(num < 10){
-      return '0'+num.toString();
-    } else {
-      return num.toString();
-    }
-  }
+
 
   let adIDToPass = [];
 

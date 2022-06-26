@@ -15,6 +15,7 @@ import { faBed } from '@fortawesome/free-solid-svg-icons'
 import { faBan } from '@fortawesome/free-solid-svg-icons'
 import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { decideToPutZero } from '../utilities/DecideToPutZero';
 // import { Button } from 'semantic-ui-react'
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
@@ -48,13 +49,6 @@ useLayoutEffect(() => {
 
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-let decideToPutZero = (num) => {
-    if(num < 10){
-      return '0'+num?.toString();
-    } else {
-      return num?.toString();
-    }
-  }
 
 const getCurrentUserInfo=async()=>{   
   const response=await useAuth?.getCurrentUserInfo()

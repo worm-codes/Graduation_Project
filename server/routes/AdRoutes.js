@@ -8,33 +8,29 @@ var store = require('store')
 
 router.post('/publish', async(req,res) =>{
     try{
-        // console.log('inside the try block')
         let theEmail = req.body.userToProcess.email;
         const { arrivingDateYear, arrivingDateMonth, arrivingDateDay,
                 leavingDateYear, leavingDateMonth, leavingDateDay,
-             city, country, description, host, maxPeople,
-              minTimeHour, minTimeMinute, maxTimeHour, maxTimeMinute, state, userToProcess } = req.body;
+             city, country, description, host, maxPeopleToPass,
+              minTimeHourToPass, minTimeMinuteToPass, maxTimeHourToPass, maxTimeMinuteToPass, minTimeTotal, maxTimeTotal, state, userToProcess } = req.body;
         let theUser = await User.findOne({user_email:theEmail})
         theUserAge = new Date().getFullYear() - parseInt(theUser.user_date_of_birth.substring(0,4).toString());
-        // console.log("theEmail variable",theEmail)
-        // console.log("theUser variable",theUser)
-        let minTimeFinal = (minTimeHour * 60) + (minTimeMinute);
-        let maxTimeFinal = (maxTimeHour * 60) + (maxTimeMinute);
+
+        console.log("Inside try block of /publish")
     
     const theAd = await new Ad({ arriving_date_year: arrivingDateYear, arriving_date_month: arrivingDateMonth,
             arriving_date_day: arrivingDateDay, city: city, country, description, host, leaving_date_year:leavingDateYear,
-            leaving_date_month: leavingDateMonth, leaving_date_day: leavingDateDay, maxPeople, minTimeHour: minTimeHour,
-            maxTimeHour: maxTimeHour, minTimeMinute: minTimeMinute, maxTimeMinute: maxTimeMinute,state,
+            leaving_date_month: leavingDateMonth, leaving_date_day: leavingDateDay, maxPeople: maxPeopleToPass, minTimeHour: minTimeHourToPass,
+            maxTimeHour: maxTimeHourToPass, minTimeMinute: minTimeMinuteToPass, maxTimeMinute: maxTimeMinuteToPass,state,
             owner_gender:theUser.user_gender,owner_email: theUser.user_email, owner_age: theUserAge, owner_id: theUser._id,
-            minTimeOfAd: minTimeFinal, maxTimeOfAd: maxTimeFinal})
+            minTimeOfAd: minTimeTotal, maxTimeOfAd: maxTimeTotal})
 
-
+        console.log("Newly created theAd variable", theAd)
     theUser.user_ads.push(theAd);
     await theAd.save();
     await theUser.save();
+    res.json(theAd)
 
-        res.json(theAd)
-        //res.redirect('/myads')
 }
     catch(err){
     console.log(err)
@@ -114,7 +110,7 @@ router.get('/searchresult', async(req,res) => {
 
     res.json(searchedAds);
 
-    store.clearAll();
+    store.clearAll(); // this code prevents other users from seeing the filtered advertisements of other users.
 
 })
 

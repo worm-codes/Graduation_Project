@@ -1,17 +1,18 @@
-import React, { useEffect } from 'react'
+import React from 'react'
+import { decideToPutZero } from '../utilities/DecideToPutZero';
 import '../public/profile.css'
 const AdComponent = ({user,show,activeAdsArr,disabledAdsArr,appliedAdsArr,acceptedAdsArr}) => {
 
      const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
   // Function for adding 0 in front of hours & minutes that are 0 - 9.
-  let decideToPutZero = (num) => {
-    if(num < 10){
-      return '0'+num?.toString();
-    } else {
-      return num?.toString();
-    }
-  }
+//   let decideToPutZero = (num) => {
+//     if(num < 10){
+//       return '0'+num?.toString();
+//     } else {
+//       return num?.toString();
+//     }
+//   }
 
   const printProvince=(ad)=>{
     let removedProvince=''
