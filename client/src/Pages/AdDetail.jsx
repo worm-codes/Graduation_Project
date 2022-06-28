@@ -20,6 +20,7 @@ const AdDetail = () => {
     let { id} = useParams();
     
 
+
 useLayoutEffect(() => {
     const getTheAd = async () => {
         
@@ -214,8 +215,10 @@ else {
 
 console.log("theRealAd var:", theRealAd);
 
+
 let applyButtonDisplayCondition = true;
-if(theRealAd?.bannedUsers?.some(item => item?._id === loggedInUser?._id) || theRealAd?.acceptedUsers?.some(item => item?._id === loggedInUser?._id)){
+if(theRealAd?.bannedUsers?.some(item => item?._id === loggedInUser?._id) || theRealAd?.acceptedUsers?.some(item => item?._id === loggedInUser?._id)
+  || theRealAd?.appliedUsers?.some(item => item?._id === loggedInUser?._id)){
   applyButtonDisplayCondition = false;
 }
 
